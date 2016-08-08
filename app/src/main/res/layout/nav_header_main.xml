@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_header_height"
+    android:background="@color/colorPrimary"
+    android:padding="16dp"
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/user_login_avatar"
+        android:padding="16dp"/>
+
+    <TextView
+        android:id="@+id/login_in_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_in"
+        android:textStyle="bold"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_name_textView"
+        android:textSize="15sp"
+        android:textStyle="bold"/>
+
+</LinearLayout>

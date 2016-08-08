@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Qribbble</string>
+    <string name="action_settings">设置</string>
+    <string name="login_in">请登陆</string>
+    <string name="main_home">主界面</string>
+    <string name="my_profile">个人中心</string>
+    <string name="title_activity_login"></string>
+    <string name="explore">发现</string>
+</resources>
