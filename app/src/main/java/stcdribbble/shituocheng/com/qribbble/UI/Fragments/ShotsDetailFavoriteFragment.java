@@ -43,6 +43,21 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
     public class usersAdapter extends RecyclerView.Adapter<usersAdapter.ViewHolder>{
 
 
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+
         public class ViewHolder extends RecyclerView.ViewHolder{
 
             private CircularNetworkImageView avatar_imageView;
@@ -51,7 +66,7 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
             public ViewHolder(View itemView) {
                 super(itemView);
                 avatar_imageView = (CircularNetworkImageView)itemView.findViewById(R.id.shots_detail_favorite_avatar);
-                name_textView = (TextView)
+                name_textView = (TextView)itemView.findViewById(R.id.shots_detail_favorite_name);
             }
         }
     }

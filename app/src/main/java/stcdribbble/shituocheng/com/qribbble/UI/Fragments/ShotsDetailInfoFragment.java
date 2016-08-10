@@ -142,6 +142,7 @@ public class ShotsDetailInfoFragment extends BaseFragment {
                             linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                             tagsRecyclerView.setLayoutManager(linearLayoutManager);
                             tagsRecyclerView.setAdapter(tagAdapter);
+                            tagsRecyclerView.setNestedScrollingEnabled(false);
                         }
                     });
                 } catch (IOException e) {
