@@ -33,6 +33,7 @@ import java.net.URL;
 
 import stcdribbble.shituocheng.com.qribbble.Adapter.DetailViewPagerAdapter;
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFavoriteFragment;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 
@@ -63,6 +64,8 @@ public class ShotsDetailActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbar.setTitle(" ");
 
+        final ShotsDetailFavoriteFragment shotsDetailFavoriteFragment = new ShotsDetailFavoriteFragment();
+
         final FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,11 +82,13 @@ public class ShotsDetailActivity extends AppCompatActivity {
                         state = false;
                         fab.setImageResource(R.drawable.ic_favorite_white_36dp);
                         postShotsLike(access_token,String.valueOf(id),state);
+                        shotsDetailFavoriteFragment.fetchData(true,id);
                         Snackbar.make(view,"You Like the shot!", Snackbar.LENGTH_SHORT).show();
                     } else {
                         state = true;
                         fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
                         postShotsLike(access_token,String.valueOf(id),state);
+                        shotsDetailFavoriteFragment.fetchData(true,id);
                         Snackbar.make(view,"You dislike the shot!", Snackbar.LENGTH_SHORT).show();
                     }
                 }
@@ -174,9 +179,28 @@ public class ShotsDetailActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_favorite_white_36dp));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_chat_bubble_white_36dp));
 
-        DetailViewPagerAdapter detailViewPagerAdapter = new DetailViewPagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
+        final DetailViewPagerAdapter detailViewPagerAdapter = new DetailViewPagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
 
         viewPager.setAdapter(detailViewPagerAdapter);
+
+        viewPager.setOffscreenPageLimit(0);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 

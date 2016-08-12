@@ -112,6 +112,9 @@ public class ShotsDetailInfoFragment extends BaseFragment {
 
                     final String shots_author_avatar_img = userJsonObj.getString("avatar_url");
 
+                    if (getActivity() == null){
+                        return;
+                    }
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

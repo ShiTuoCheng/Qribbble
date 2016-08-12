@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFavoriteFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailInfoFragment;
 
 /**
@@ -26,14 +27,19 @@ public class DetailViewPagerAdapter extends FragmentStatePagerAdapter {
                 ShotsDetailInfoFragment shotsDetailInfoFragment = new ShotsDetailInfoFragment();
                 return shotsDetailInfoFragment;
             case 1:
-                ShotsDetailInfoFragment shotsDetailInfoFragment1 = new ShotsDetailInfoFragment();
-                return shotsDetailInfoFragment1;
+                ShotsDetailFavoriteFragment shotsDetailFavoriteFragment = new ShotsDetailFavoriteFragment();
+                return shotsDetailFavoriteFragment;
             case 2:
                 ShotsDetailInfoFragment shotsDetailInfoFragment2 = new ShotsDetailInfoFragment();
                 return shotsDetailInfoFragment2;
             default:
                 return null;
         }
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
     }
 
     @Override

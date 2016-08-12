@@ -115,7 +115,7 @@ public class RecentShotsFragment extends BaseFragment {
 
         mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setColorSchemeColors(R.color.colorAccent,R.color.colorPrimary,R.color.colorPrimaryDark);
+        swipeRefreshLayout.setColorSchemeColors(R.color.colorAccent);
 
     }
 
