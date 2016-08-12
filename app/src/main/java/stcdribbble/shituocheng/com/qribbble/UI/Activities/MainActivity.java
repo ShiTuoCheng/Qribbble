@@ -35,6 +35,7 @@ import java.net.URL;
 import stcdribbble.shituocheng.com.qribbble.Model.LoginUser;
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ExploreFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.TabFragments.MainTabFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
@@ -119,8 +120,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.main_home) {
-            // Handle the camera action
+            MainTabFragment mainTabFragment = new MainTabFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main,mainTabFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
         } else if (id == R.id.explore) {
+            ExploreFragment exploreFragment = new ExploreFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main,exploreFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
 
         } else if (id == R.id.profile) {
 

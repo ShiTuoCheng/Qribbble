@@ -38,11 +38,12 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ShotsDetailFavoriteFragment extends Fragment {
+public class ShotsDetailFavoriteFragment extends BaseFragment {
 
     private RecyclerView favorite_recyclerView;
     private TextView favorite_title_textView;
     private ArrayList<UserModel> users = new ArrayList<>();
+
 
     public ShotsDetailFavoriteFragment() {
         // Required empty public constructor

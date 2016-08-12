@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list_array">
+        <item>Animated</item>
+        <item>Attachments</item>
+        <item>Debuts</item>
+        <item>Playoffs</item>
+        <item>Rebounds</item>
+        <item>Teams</item>
+
+    </string-array>
+</resources>
