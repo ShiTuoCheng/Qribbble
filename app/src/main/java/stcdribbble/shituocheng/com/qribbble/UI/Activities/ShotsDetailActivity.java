@@ -1,12 +1,20 @@
 package stcdribbble.shituocheng.com.qribbble.UI.Activities;
 
+import android.Manifest;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,11 +33,13 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.acl.Permission;
 
 import stcdribbble.shituocheng.com.qribbble.Adapter.DetailViewPagerAdapter;
 import stcdribbble.shituocheng.com.qribbble.R;
@@ -43,6 +53,8 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 
 public class ShotsDetailActivity extends AppCompatActivity {
     private boolean state = true;
+    private String imageString = null;
+    private String imageName = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +62,8 @@ public class ShotsDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_shots_detail);
 
         Intent intent = getIntent();
-        final String imageString = intent.getStringExtra("fullImageUrl");
+        imageString = intent.getStringExtra("fullImageUrl");
+        imageName = intent.getStringExtra("imageName");
         final boolean isGif = intent.getBooleanExtra("isGif",false);
         final int id = intent.getIntExtra("id",0);
 
@@ -98,6 +111,8 @@ public class ShotsDetailActivity extends AppCompatActivity {
         loadBackdrop(imageString, isGif);
 
         setUpView();
+
+
     }
 
     private void loadBackdrop(String imageString, boolean isGif) {
@@ -235,7 +250,59 @@ public class ShotsDetailActivity extends AppCompatActivity {
 
         if (id == R.id.shots_detail_share){
 
+        }else if (id == R.id.shots_detail_download){
+
+            int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+            } else {
+                downloadFile(imageString);
+            }
+
         }
         return true;
+    }
+
+    public void downloadFile(String Url) {
+
+        DownloadManager mgr = (DownloadManager)this.getSystemService(Context.DOWNLOAD_SERVICE);
+
+        Uri downloadUri = Uri.parse(Url);
+        if (downloadUri.equals("")){
+
+            Toast.makeText(this, "Please wait, is Loading", Toast.LENGTH_SHORT).show();
+        }else {
+
+            DownloadManager.Request request = new DownloadManager.Request(
+                    downloadUri);
+
+            request.setAllowedNetworkTypes(
+                    DownloadManager.Request.NETWORK_WIFI
+                            | DownloadManager.Request.NETWORK_MOBILE)
+                    .setAllowedOverRoaming(false).setTitle(getResources().getString(R.string.app_name))
+                    .setDescription("Downloading "+imageName+".jpg")
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES,  imageName+".jpg");
+
+            mgr.enqueue(request);
+
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 0:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this,"Get permissions successfully, You can download resources now", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(this,"Failed to get permissions, You can give permission in the Setting", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 }

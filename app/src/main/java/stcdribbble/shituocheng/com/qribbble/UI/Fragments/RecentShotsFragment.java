@@ -184,8 +184,10 @@ public class RecentShotsFragment extends BaseFragment {
                                         ShotsModel shotsModel = shotsModels.get(position);
                                         String imageUrl = shotsModel.getShots_thumbnail_url();
                                         String fullImageUrl = shotsModel.getShots_full_imageUrl();
+                                        String imageName = shotsModel.getTitle();
                                         int id = shotsModel.getShots_id();
                                         boolean isGif = shotsModel.isAnimated();
+                                        intent.putExtra("imageName",imageName);
                                         intent.putExtra("imageURL",imageUrl);
                                         intent.putExtra("isGif",isGif);
                                         intent.putExtra("fullImageUrl",fullImageUrl);

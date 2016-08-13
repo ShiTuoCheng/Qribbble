@@ -35,11 +35,19 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_below="@id/explore_toolbar"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/explore_recyclerView"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:layout_below="@id/explore_toolbar"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@id/explore_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/explore_recyclerView"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    </android.support.v4.widget.NestedScrollView>
 
 </RelativeLayout>

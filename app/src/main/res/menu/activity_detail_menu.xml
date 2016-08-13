@@ -7,5 +7,10 @@
         android:icon="@drawable/ic_menu_share"
         android:title="Share"
         app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/shots_detail_download"
+        android:title="Download"
+        android:showAsAction="never">
+    </item>
 
 </menu>

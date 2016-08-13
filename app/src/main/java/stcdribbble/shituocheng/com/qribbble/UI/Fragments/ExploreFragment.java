@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import stcdribbble.shituocheng.com.qribbble.R;
 
@@ -29,12 +30,14 @@ public class ExploreFragment extends BaseFragment {
         setUpView(v);
         String[] lists = getResources().getStringArray(R.array.list_array);
         ArrayAdapter<String> list_spinner_adapter = new ArrayAdapter<>(getActivity(),R.layout.custom_array_list, lists);
-        list_spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        list_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
         list_spinner.setAdapter(list_spinner_adapter);
         list_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
+                String[] list = getResources().getStringArray(R.array.list_array);
+                Toast.makeText(getActivity(), "你点击的是:"+list[i], 2000).show();
             }
 
             @Override
