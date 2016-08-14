@@ -109,10 +109,7 @@ public class ShotsDetailActivity extends AppCompatActivity {
         });
 
         loadBackdrop(imageString, isGif);
-
         setUpView();
-
-
     }
 
     private void loadBackdrop(String imageString, boolean isGif) {

@@ -18,6 +18,7 @@ import java.util.List;
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.RecentShotsFragment;
+import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
@@ -50,6 +51,7 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
         private TextView each_shots_review_times_textView;
         private TextView each_shots_favorite_times_textView;
         private TextView each_shots_view_times_textView;
+        private CircularNetworkImageView each_shots_author_avatar;
         private ImageView isGifImageView;
 
 
@@ -63,6 +65,7 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
             each_shots_favorite_times_textView = (TextView)itemView.findViewById(R.id.shots_favorite_times);
             each_shots_review_times_textView = (TextView)itemView.findViewById(R.id.shots_review_times);
             each_shots_view_times_textView = (TextView)itemView.findViewById(R.id.shots_view_times);
+            each_shots_author_avatar = (CircularNetworkImageView)itemView.findViewById(R.id.shots_author_avatar);
             isGifImageView = (ImageView)itemView.findViewById(R.id.isGif);
         }
 
@@ -111,6 +114,8 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
         holder.each_shots_author_textView.setText(shotsModel.getShots_author_name());
 
         holder.each_shots_review_times_textView.setText(String.valueOf(shotsModel.getShots_review_count()));
+
+        holder.each_shots_author_avatar.setImageUrl(shotsModel.getShots_author_avatar(),mImageLoader);
 
         if (shotsModel.isAnimated()){
             holder.isGifImageView.setImageResource(R.drawable.ic_gif_black_24dp);

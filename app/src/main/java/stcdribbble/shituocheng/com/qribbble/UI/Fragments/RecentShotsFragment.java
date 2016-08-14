@@ -130,7 +130,7 @@ public class RecentShotsFragment extends BaseFragment {
                 public void run() {
                     shotsModels.clear();
                     try {
-                        connection = (HttpURLConnection)new URL(API.getShotsAPI()).openConnection();
+                        connection = (HttpURLConnection)new URL(API.getRecentShotsAPI()).openConnection();
                         connection.setRequestMethod("GET");
                         connection.connect();
 
@@ -161,6 +161,7 @@ public class RecentShotsFragment extends BaseFragment {
 
                             JSONObject userJsonObj = jsonObject.getJSONObject("user");
                             shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                            shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
 
                             shotsModels.add(shotsModel);
 
@@ -223,7 +224,7 @@ public class RecentShotsFragment extends BaseFragment {
                 public void run() {
                     current_page +=1;
                     try {
-                        connection = (HttpURLConnection)new URL(API.getShotsAPI()+"&page="+String.valueOf(current_page)).openConnection();
+                        connection = (HttpURLConnection)new URL(API.getRecentShotsAPI()+"&page="+String.valueOf(current_page)).openConnection();
                         connection.setRequestMethod("GET");
                         connection.connect();
 
@@ -254,6 +255,7 @@ public class RecentShotsFragment extends BaseFragment {
 
                             JSONObject userJsonObj = jsonObject.getJSONObject("user");
                             shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                            shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
 
                             shotsModels.add(shotsModel);
 
