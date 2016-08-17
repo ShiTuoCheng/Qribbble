@@ -195,6 +195,8 @@ public class ShotsDetailActivity extends AppCompatActivity {
 
         viewPager.setAdapter(detailViewPagerAdapter);
 
+        detailViewPagerAdapter.notifyDataSetChanged();
+
         viewPager.setOffscreenPageLimit(0);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -266,7 +268,7 @@ public class ShotsDetailActivity extends AppCompatActivity {
         DownloadManager mgr = (DownloadManager)this.getSystemService(Context.DOWNLOAD_SERVICE);
 
         Uri downloadUri = Uri.parse(Url);
-        if (downloadUri.equals("")){
+        if (Url.equals("")){
 
             Toast.makeText(this, "Please wait, is Loading", Toast.LENGTH_SHORT).show();
         }else {

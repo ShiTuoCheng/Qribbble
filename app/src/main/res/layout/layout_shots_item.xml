@@ -43,6 +43,28 @@
                 android:textColor="@color/colorAccent"/>
 
             <TextView
+                android:padding="6dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/shots_author_textView"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:text="author_name"
+                android:gravity="end"
+                android:layout_alignBottom="@+id/by"
+                android:layout_alignParentEnd="true" />
+
+            <stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/shots_author_avatar"
+                android:padding="6dp"
+                android:layout_alignBottom="@+id/shots_favorite_times"
+                android:layout_toStartOf="@+id/shots_author_textView"
+                android:layout_marginBottom="17dp" />
+
+            <TextView
                 android:id="@+id/by"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,26 +140,6 @@
                 android:layout_alignParentEnd="true"
                 android:layout_below="@id/shots_author_textView"/>
 
-            <TextView
-                android:padding="6dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/shots_author_textView"
-                android:textColor="@color/colorAccent"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:text="author_name"
-                android:gravity="end"
-                android:layout_alignBottom="@+id/by"
-                android:layout_alignParentEnd="true" />
-
-            <stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:id="@+id/shots_author_avatar"
-                android:layout_alignBottom="@+id/shots_favorite_times"
-                android:layout_toStartOf="@+id/shots_author_textView"
-                android:layout_marginBottom="14dp" />
 
         </RelativeLayout>
 
