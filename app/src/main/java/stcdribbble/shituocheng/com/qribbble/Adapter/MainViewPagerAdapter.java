@@ -1,8 +1,11 @@
 package stcdribbble.shituocheng.com.qribbble.Adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import java.util.ArrayList;
 
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.RecentShotsFragment;
 
@@ -12,32 +15,27 @@ import stcdribbble.shituocheng.com.qribbble.UI.Fragments.RecentShotsFragment;
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private int number;
+    private ArrayList<String> title;
+    private Context context;
 
-    public MainViewPagerAdapter(FragmentManager fm, int number) {
+    public MainViewPagerAdapter(FragmentManager fm, ArrayList<String> title, Context context) {
         super(fm);
-        this.number = number;
+        this.title = title;
+        this.context = context;
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position){
-            case 0:
-                RecentShotsFragment recentShotsFragment = new RecentShotsFragment();
-                return recentShotsFragment;
-            case 1:
-                RecentShotsFragment mainFollowFragment = new RecentShotsFragment();
-                return mainFollowFragment;
-            case 2:
-                RecentShotsFragment mainTimeLineFragment = new RecentShotsFragment();
-                return mainTimeLineFragment;
-            default:
-                return null;
-        }
+        return RecentShotsFragment.newInstance(position+1);
     }
 
     @Override
     public int getCount() {
-        return number;
+        return title.size();
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return title.get(position);
     }
 }

@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -44,14 +45,34 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
  */
 public class RecentShotsFragment extends BaseFragment {
 
+    private int pages;
+    private ArrayList<String> title = new ArrayList<>();
     private ProgressDialog loadingMoreProgressDialog;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
+    public static final String ARGS_PAGE = "args_page";
 
     private List<ShotsModel> shotsModels = new ArrayList<>();
     private Handler handler = new Handler();
     private int current_page = 1;
 
+
+    public static RecentShotsFragment newInstance(int page) {
+        Bundle args = new Bundle();
+        args.putInt(ARGS_PAGE,page);
+        RecentShotsFragment recentShotsFragment = new RecentShotsFragment();
+        recentShotsFragment.setArguments(args);
+        return recentShotsFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        pages = getArguments().getInt(ARGS_PAGE);
+        title.add("list=debuts");
+        title.add("sort=recent");
+        title.add("sort=views");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,11 +147,12 @@ public class RecentShotsFragment extends BaseFragment {
             new Thread(new Runnable() {
                 HttpURLConnection connection;
                 InputStream inputStream;
+                String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
                 @Override
                 public void run() {
                     shotsModels.clear();
                     try {
-                        connection = (HttpURLConnection)new URL(API.getRecentShotsAPI()).openConnection();
+                        connection = (HttpURLConnection)new URL(api).openConnection();
                         connection.setRequestMethod("GET");
                         connection.connect();
 
@@ -167,44 +189,50 @@ public class RecentShotsFragment extends BaseFragment {
 
                         }
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity().getApplicationContext());
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                                shotsRecyclerViewAdapter.notifyDataSetChanged();
-                                swipeRefreshLayout.setRefreshing(false);
-                                mRecyclerView.setAdapter(shotsRecyclerViewAdapter);
-                                mRecyclerView.setLayoutManager(linearLayoutManager);
-                                mRecyclerView.setVisibility(View.VISIBLE);
-                                shotsRecyclerViewAdapter.setOnClickListener(new ShotsRecyclerViewAdapter.ClickListener() {
-                                    @Override
-                                    public void onItemClick(int position, View v) {
-                                        Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
-                                        ShotsModel shotsModel = shotsModels.get(position);
-                                        String imageUrl = shotsModel.getShots_thumbnail_url();
-                                        String fullImageUrl = shotsModel.getShots_full_imageUrl();
-                                        String imageName = shotsModel.getTitle();
-                                        int id = shotsModel.getShots_id();
-                                        boolean isGif = shotsModel.isAnimated();
-                                        intent.putExtra("imageName",imageName);
-                                        intent.putExtra("imageURL",imageUrl);
-                                        intent.putExtra("isGif",isGif);
-                                        intent.putExtra("fullImageUrl",fullImageUrl);
-                                        intent.putExtra("id",id);
+                        if (getActivity() == null){
+                            return;
+                        }else {
 
-                                        AnimationUtils.show(v);
-                                        startActivity(intent);
-                                    }
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity().getApplicationContext());
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                                    shotsRecyclerViewAdapter.notifyDataSetChanged();
+                                    swipeRefreshLayout.setRefreshing(false);
+                                    mRecyclerView.setAdapter(shotsRecyclerViewAdapter);
+                                    mRecyclerView.setLayoutManager(linearLayoutManager);
+                                    mRecyclerView.setVisibility(View.VISIBLE);
+                                    shotsRecyclerViewAdapter.setOnClickListener(new ShotsRecyclerViewAdapter.ClickListener() {
+                                        @Override
+                                        public void onItemClick(int position, View v) {
+                                            Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
+                                            ShotsModel shotsModel = shotsModels.get(position);
+                                            String imageUrl = shotsModel.getShots_thumbnail_url();
+                                            String fullImageUrl = shotsModel.getShots_full_imageUrl();
+                                            String imageName = shotsModel.getTitle();
+                                            int id = shotsModel.getShots_id();
+                                            boolean isGif = shotsModel.isAnimated();
+                                            intent.putExtra("imageName",imageName);
+                                            intent.putExtra("imageURL",imageUrl);
+                                            intent.putExtra("isGif",isGif);
+                                            intent.putExtra("fullImageUrl",fullImageUrl);
+                                            intent.putExtra("id",id);
 
-                                    @Override
-                                    public void onLongItemClick(int position, View v) {
+                                            AnimationUtils.show(v);
+                                            startActivity(intent);
+                                        }
 
-                                    }
-                                });
-                            }
-                        });
+                                        @Override
+                                        public void onLongItemClick(int position, View v) {
+
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -220,11 +248,12 @@ public class RecentShotsFragment extends BaseFragment {
             new Thread(new Runnable() {
                 HttpURLConnection connection;
                 InputStream inputStream;
+                String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
                 @Override
                 public void run() {
                     current_page +=1;
                     try {
-                        connection = (HttpURLConnection)new URL(API.getRecentShotsAPI()+"&page="+String.valueOf(current_page)).openConnection();
+                        connection = (HttpURLConnection)new URL(api+"&page="+String.valueOf(current_page)).openConnection();
                         connection.setRequestMethod("GET");
                         connection.connect();
 
@@ -260,14 +289,19 @@ public class RecentShotsFragment extends BaseFragment {
                             shotsModels.add(shotsModel);
 
                         }
+                        if (getActivity() == null){
+                            return;
+                        }else {
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity().getApplicationContext());
-                                shotsRecyclerViewAdapter.notifyDataSetChanged();
-                            }
-                        });
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity().getApplicationContext());
+                                    shotsRecyclerViewAdapter.notifyDataSetChanged();
+                                }
+                            });
+
+                        }
 
                     } catch (IOException e) {
                         e.printStackTrace();

@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import stcdribbble.shituocheng.com.qribbble.Adapter.MainViewPagerAdapter;
 import stcdribbble.shituocheng.com.qribbble.R;
 
@@ -20,40 +22,21 @@ public class MainTabFragment extends Fragment {
 
     private ViewPager mainViewPager;
     private TabLayout mainTabLayout;
+    private ArrayList<String> title = new ArrayList<String>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_tab, container, false);
-
         setUpView(view);
-        mainTabLayout.addTab(mainTabLayout.newTab().setText("TimeLine"));
-        mainTabLayout.addTab(mainTabLayout.newTab().setText("Popular"));
-        mainTabLayout.addTab(mainTabLayout.newTab().setText("FOLLOW UP"));
+        title.add("debuts");
+        title.add("timeline");
+        title.add("popular");
+        MainViewPagerAdapter mainViewPagerAdapter = new MainViewPagerAdapter(getFragmentManager(),title,getActivity());
 
-        MainViewPagerAdapter mainViewPagerAdapter = new MainViewPagerAdapter(getFragmentManager(),mainTabLayout.getTabCount());
         mainViewPager.setAdapter(mainViewPagerAdapter);
-
-        mainViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mainTabLayout));
-
-        mainTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                mainViewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
+        mainTabLayout.setupWithViewPager(mainViewPager);
         return view;
     }
 
