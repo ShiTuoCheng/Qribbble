@@ -39,6 +39,7 @@ import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -204,9 +205,9 @@ public class RecentShotsFragment extends BaseFragment {
                                     mRecyclerView.setAdapter(shotsRecyclerViewAdapter);
                                     mRecyclerView.setLayoutManager(linearLayoutManager);
                                     mRecyclerView.setVisibility(View.VISIBLE);
-                                    shotsRecyclerViewAdapter.setOnClickListener(new ShotsRecyclerViewAdapter.ClickListener() {
+                                    shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
                                         @Override
-                                        public void onItemClick(int position, View v) {
+                                        public void OnItemClick(View v, int position) {
                                             Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
                                             ShotsModel shotsModel = shotsModels.get(position);
                                             String imageUrl = shotsModel.getShots_thumbnail_url();
@@ -222,11 +223,6 @@ public class RecentShotsFragment extends BaseFragment {
 
                                             AnimationUtils.show(v);
                                             startActivity(intent);
-                                        }
-
-                                        @Override
-                                        public void onLongItemClick(int position, View v) {
-
                                         }
                                     });
                                 }
@@ -296,7 +292,7 @@ public class RecentShotsFragment extends BaseFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity().getApplicationContext());
+                                    ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
                                     shotsRecyclerViewAdapter.notifyDataSetChanged();
                                 }
                             });

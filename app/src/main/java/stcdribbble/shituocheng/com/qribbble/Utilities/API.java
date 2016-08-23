@@ -17,7 +17,7 @@ public class API {
 
         String access_token = Access_Token.access_token;
 
-        return generic_api+"shots"+"?"+"sort="+sort+"&"+"access_token="+access_token;
+        return generic_api+"shots"+"?"+"list="+sort+"&"+"access_token="+access_token;
     }
 
 }

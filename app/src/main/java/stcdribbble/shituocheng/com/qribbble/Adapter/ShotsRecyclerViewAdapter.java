@@ -20,6 +20,7 @@ import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.RecentShotsFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 /**
@@ -29,21 +30,17 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
 
     private List<ShotsModel> mShotsModels = new ArrayList<>();
     private Context context;
+    private final LayoutInflater inflater;
 
     private ImageLoader mImageLoader = AppController.getInstance().getImageLoader();
 
     private RecentShotsFragment recentShotsFragment = new RecentShotsFragment();
     private boolean animateItems = false;
     private int lastAnimatedPosition = -1;
+    private OnRecyclerViewOnClickListener mListener;
 
-    public static ClickListener sClickListener;
 
-    public interface ClickListener {
-        void onItemClick(int position, View v);
-        void onLongItemClick(int position, View v);
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private NetworkImageView each_shots_imageView;
         private TextView each_shots_textView;
@@ -53,12 +50,11 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
         private TextView each_shots_view_times_textView;
         private CircularNetworkImageView each_shots_author_avatar;
         private ImageView isGifImageView;
+        private OnRecyclerViewOnClickListener listener;
 
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, OnRecyclerViewOnClickListener listener) {
             super(itemView);
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
             each_shots_imageView = (NetworkImageView)itemView.findViewById(R.id.shots_imageView);
             each_shots_textView = (TextView)itemView.findViewById(R.id.shots_title);
             each_shots_author_textView = (TextView)itemView.findViewById(R.id.shots_author_textView);
@@ -67,23 +63,23 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
             each_shots_view_times_textView = (TextView)itemView.findViewById(R.id.shots_view_times);
             each_shots_author_avatar = (CircularNetworkImageView)itemView.findViewById(R.id.shots_author_avatar);
             isGifImageView = (ImageView)itemView.findViewById(R.id.isGif);
+            this.listener = listener;
+            itemView.setOnClickListener(this);
         }
 
         @Override
-        public void onClick(View view) {
-            sClickListener.onItemClick(getAdapterPosition(),view);
+        public void onClick(View v) {
+            if (listener != null){
+                listener.OnItemClick(v,getLayoutPosition());
+            }
         }
 
-        @Override
-        public boolean onLongClick(View view) {
-            sClickListener.onLongItemClick(getAdapterPosition(),view);
-            return false;
-        }
     }
 
     public ShotsRecyclerViewAdapter(List<ShotsModel> shotsModels, Context context) {
         mShotsModels = shotsModels;
         this.context = context;
+        this.inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -91,7 +87,7 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_shots_item,null);
 
-        ViewHolder viewHolder = new ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view, mListener);
 
         return viewHolder;
     }
@@ -131,8 +127,8 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
         return mShotsModels.size();
     }
 
-    public void setOnClickListener(ClickListener clickListener){
-        ShotsRecyclerViewAdapter.sClickListener = clickListener;
+    public void setItemClickListener(OnRecyclerViewOnClickListener listener){
+        this.mListener = listener;
     }
 
     private void runEnterAnimation(View view, int position) {
