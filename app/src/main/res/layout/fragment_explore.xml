@@ -20,27 +20,43 @@
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="1"
+                android:textSize="10sp"
                 android:id="@+id/list_spinner"
                 android:backgroundTint="@color/colorAccent"
                 android:entries="@array/list_array"/>
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="1"
+                android:textSize="10sp"
                 android:id="@+id/sort_spinner"
                 android:backgroundTint="@color/colorAccent"
                 android:entries="@array/sort_array"/>
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/timeframe_spinner"
+                android:backgroundTint="@color/colorAccent"
+                android:entries="@array/timeframe_array"/>
 
         </LinearLayout>
 
     </android.support.v7.widget.Toolbar>
+
+    <ProgressBar
+        android:id="@+id/explore_progressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_below="@id/explore_toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/explore_recyclerView"
+        android:visibility="invisible"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </RelativeLayout>

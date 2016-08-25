@@ -12,10 +12,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/shots_detail_favorite_avatar"
         android:padding="16dp"
         android:id="@+id/shots_detail_favorite_name"
         android:textColor="@color/colorAccent"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/shots_detail_favorite_avatar"
+        android:layout_toEndOf="@+id/shots_detail_favorite_avatar"
+        android:layout_marginBottom="9dp" />
 
 </RelativeLayout>

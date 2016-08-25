@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,12 +57,15 @@ public class ExploreFragment extends BaseFragment {
 
     private Spinner list_spinner;
     private Spinner sort_spinner;
+    private Spinner timeframe_spinner;
     private RecyclerView explore_recyclerView;
+    private ProgressBar progressBar;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
 
     private String sort_string;
     private String list_string;
+    private String timeframe_string;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,7 +86,9 @@ public class ExploreFragment extends BaseFragment {
                 String[] list = getResources().getStringArray(R.array.list_array);
                 Toast.makeText(getActivity(), "你点击的是:"+list[i], Toast.LENGTH_SHORT).show();
                 list_string = list[i];
-                fetchData(sort_string, list_string);
+                progressBar.setVisibility(View.VISIBLE);
+                explore_recyclerView.setVisibility(View.GONE);
+                fetchData(sort_string, list_string, timeframe_string);
                 //execute(list[i]);
             }
 
@@ -103,7 +109,9 @@ public class ExploreFragment extends BaseFragment {
                 String[] sort = getResources().getStringArray(R.array.sort_array);
                 Toast.makeText(getActivity(), "你点击的是:"+sort[i], Toast.LENGTH_SHORT).show();
                 sort_string = sort[i];
-                fetchData(list_string, sort_string);
+                progressBar.setVisibility(View.VISIBLE);
+                explore_recyclerView.setVisibility(View.GONE);
+                fetchData(list_string, sort_string, timeframe_string);
             }
 
             @Override
@@ -111,6 +119,30 @@ public class ExploreFragment extends BaseFragment {
 
             }
         });
+
+        //timeframe_spinner_setup
+        String[] timeframes = getResources().getStringArray(R.array.timeframe_array);
+        ArrayAdapter<String> timeframe_spinner_adapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_array_list,timeframes);
+        timeframe_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
+        timeframe_spinner.setAdapter(timeframe_spinner_adapter);
+        timeframe_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String[] timeframe = getResources().getStringArray(R.array.timeframe_array);
+                timeframe_string = timeframe[i];
+                progressBar.setVisibility(View.VISIBLE);
+                explore_recyclerView.setVisibility(View.GONE);
+                fetchData(list_string, sort_string, timeframe_string);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        //setUp explore_recyclerView
+
         return v;
     }
 
@@ -118,15 +150,17 @@ public class ExploreFragment extends BaseFragment {
     public void setUpView(View view) {
         list_spinner = (Spinner)view.findViewById(R.id.list_spinner);
         sort_spinner = (Spinner)view.findViewById(R.id.sort_spinner);
+        timeframe_spinner = (Spinner)view.findViewById(R.id.timeframe_spinner);
+        progressBar = (ProgressBar)view.findViewById(R.id.explore_progressBar);
         explore_recyclerView = (RecyclerView)view.findViewById(R.id.explore_recyclerView);
     }
 
-    public void fetchData(final String shots_list, final String shots_sort){
+    public void fetchData(final String shots_list, final String shots_sort, final String shots_timeframe){
 
         new Thread(new Runnable() {
             HttpURLConnection connection = null;
             InputStream inputStream;
-            String shots_api = API.getSortsShotsApi(shots_list, shots_sort);
+            String shots_api = API.getSortsShotsApi(shots_list, shots_sort, shots_timeframe);
 
             @Override
             public void run() {
@@ -205,12 +239,14 @@ public class ExploreFragment extends BaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            progressBar.setVisibility(View.GONE);
                             ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
                             shotsRecyclerViewAdapter.notifyDataSetChanged();
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
                             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                             explore_recyclerView.setAdapter(shotsRecyclerViewAdapter);
                             explore_recyclerView.setLayoutManager(linearLayoutManager);
+                            explore_recyclerView.setVisibility(View.VISIBLE);
                             shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
                                 @Override
                                 public void OnItemClick(View v, int position) {
@@ -242,79 +278,5 @@ public class ExploreFragment extends BaseFragment {
         }).start();
     }
 
-    public class ExploreRecyclerViewAdapter extends RecyclerView.Adapter<ExploreRecyclerViewAdapter.ViewHolder>{
 
-        private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
-
-        private ImageLoader mImageLoader = AppController.getInstance().getImageLoader();
-
-        public class ViewHolder extends RecyclerView.ViewHolder{
-            private NetworkImageView each_shots_imageView;
-            private TextView each_shots_textView;
-            private TextView each_shots_author_textView;
-            private TextView each_shots_review_times_textView;
-            private TextView each_shots_favorite_times_textView;
-            private TextView each_shots_view_times_textView;
-            private CircularNetworkImageView each_shots_author_avatar;
-            private ImageView isGifImageView;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                each_shots_imageView = (NetworkImageView)itemView.findViewById(R.id.shots_imageView);
-                each_shots_textView = (TextView)itemView.findViewById(R.id.shots_title);
-                each_shots_author_textView = (TextView)itemView.findViewById(R.id.shots_author_textView);
-                each_shots_favorite_times_textView = (TextView)itemView.findViewById(R.id.shots_favorite_times);
-                each_shots_review_times_textView = (TextView)itemView.findViewById(R.id.shots_review_times);
-                each_shots_view_times_textView = (TextView)itemView.findViewById(R.id.shots_view_times);
-                each_shots_author_avatar = (CircularNetworkImageView)itemView.findViewById(R.id.shots_author_avatar);
-                isGifImageView = (ImageView)itemView.findViewById(R.id.isGif);
-            }
-
-        }
-
-        public ExploreRecyclerViewAdapter(ArrayList<ShotsModel> shotsModels) {
-            this.shotsModels = shotsModels;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_shots_item,null);
-
-            ViewHolder viewHolder = new ViewHolder(view);
-
-            return viewHolder;
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-
-            ShotsModel shotsModel = shotsModels.get(position);
-
-            holder.each_shots_textView.setText(shotsModel.getTitle());
-
-            holder.each_shots_imageView.setImageUrl(shotsModel.getShots_thumbnail_url(),mImageLoader);
-
-            holder.each_shots_view_times_textView.setText(String.valueOf(shotsModel.getShots_view_count()));
-
-            holder.each_shots_favorite_times_textView.setText(String.valueOf(shotsModel.getShots_like_count()));
-
-            holder.each_shots_author_textView.setText(shotsModel.getShots_author_name());
-
-            holder.each_shots_review_times_textView.setText(String.valueOf(shotsModel.getShots_review_count()));
-
-            holder.each_shots_author_avatar.setImageUrl(shotsModel.getShots_author_avatar(),mImageLoader);
-
-            if (shotsModel.isAnimated()){
-                holder.isGifImageView.setImageResource(R.drawable.ic_gif_black_24dp);
-            }else {
-
-
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return shotsModels.size();
-        }
-    }
 }
