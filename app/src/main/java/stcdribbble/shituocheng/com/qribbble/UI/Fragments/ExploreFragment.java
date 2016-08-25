@@ -55,9 +55,13 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListe
 public class ExploreFragment extends BaseFragment {
 
     private Spinner list_spinner;
+    private Spinner sort_spinner;
     private RecyclerView explore_recyclerView;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
+
+    private String sort_string;
+    private String list_string;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,6 +69,8 @@ public class ExploreFragment extends BaseFragment {
 
         View v = inflater.inflate(R.layout.fragment_explore, container, false);
         setUpView(v);
+
+        //list_spinner_setup
         String[] lists = getResources().getStringArray(R.array.list_array);
         ArrayAdapter<String> list_spinner_adapter = new ArrayAdapter<>(getActivity(),R.layout.custom_array_list, lists);
         list_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
@@ -75,8 +81,29 @@ public class ExploreFragment extends BaseFragment {
 
                 String[] list = getResources().getStringArray(R.array.list_array);
                 Toast.makeText(getActivity(), "你点击的是:"+list[i], Toast.LENGTH_SHORT).show();
-                fetchData(list[i]);
+                list_string = list[i];
+                fetchData(sort_string, list_string);
                 //execute(list[i]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        //sort_spinner_setup
+        String[] sorts = getResources().getStringArray(R.array.sort_array);
+        ArrayAdapter<String> sort_spinner_adapter = new ArrayAdapter<>(getActivity(),R.layout.custom_array_list, sorts);
+        sort_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
+        sort_spinner.setAdapter(sort_spinner_adapter);
+        sort_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String[] sort = getResources().getStringArray(R.array.sort_array);
+                Toast.makeText(getActivity(), "你点击的是:"+sort[i], Toast.LENGTH_SHORT).show();
+                sort_string = sort[i];
+                fetchData(list_string, sort_string);
             }
 
             @Override
@@ -90,15 +117,16 @@ public class ExploreFragment extends BaseFragment {
     @Override
     public void setUpView(View view) {
         list_spinner = (Spinner)view.findViewById(R.id.list_spinner);
+        sort_spinner = (Spinner)view.findViewById(R.id.sort_spinner);
         explore_recyclerView = (RecyclerView)view.findViewById(R.id.explore_recyclerView);
     }
 
-    public void fetchData(final String shots_list){
+    public void fetchData(final String shots_list, final String shots_sort){
 
         new Thread(new Runnable() {
             HttpURLConnection connection = null;
             InputStream inputStream;
-            String shots_api = API.getSortsShotsApi(shots_list);
+            String shots_api = API.getSortsShotsApi(shots_list, shots_sort);
 
             @Override
             public void run() {

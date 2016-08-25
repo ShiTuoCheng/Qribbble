@@ -20,16 +20,17 @@
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:id="@+id/list_spinner"
                 android:backgroundTint="@color/colorAccent"
                 android:entries="@array/list_array"/>
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:id="@+id/sort_spinner"
-                android:layout_weight="1"
-                android:background="@color/colorAccent"/>
+                android:backgroundTint="@color/colorAccent"
+                android:entries="@array/sort_array"/>
 
         </LinearLayout>
 

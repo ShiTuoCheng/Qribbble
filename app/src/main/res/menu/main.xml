@@ -6,4 +6,10 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/action_search"
+            android:title="Search"
+            app:showAsAction="ifRoom"
+            app:actionViewClass="android.support.v7.widget.SearchView"/>
+    </group>
 </menu>
