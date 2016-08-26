@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_search_result"
@@ -9,4 +10,16 @@
     tools:context="stcdribbble.shituocheng.com.qribbble.UI.Activities.SearchResultActivity"
     tools:showIn="@layout/activity_search_result">
 
-</android.support.constraint.ConstraintLayout>
+    <ProgressBar
+        android:layout_width="49dp"
+        android:layout_height="49dp"
+        android:id="@+id/search_progressBar"
+        android:visibility="visible"
+        android:layout_centerInParent="true"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/search_recyclerView"/>
+
+</RelativeLayout>

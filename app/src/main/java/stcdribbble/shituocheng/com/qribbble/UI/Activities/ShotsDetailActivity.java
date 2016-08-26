@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -53,8 +54,9 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 
 public class ShotsDetailActivity extends AppCompatActivity {
     private boolean state = true;
-    private String imageString = null;
-    private String imageName = null;
+    private String imageString;
+    private String imageName;
+    private int id;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,9 +67,10 @@ public class ShotsDetailActivity extends AppCompatActivity {
         imageString = intent.getStringExtra("fullImageUrl");
         imageName = intent.getStringExtra("imageName");
         final boolean isGif = intent.getBooleanExtra("isGif",false);
-        final int id = intent.getIntExtra("id",0);
+        id = intent.getIntExtra("id",0);
 
         Log.d("isGif",String.valueOf(isGif));
+        Log.d("imageString", String.valueOf(imageString));
 
         final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -259,19 +262,21 @@ public class ShotsDetailActivity extends AppCompatActivity {
                 downloadFile(imageString);
             }
 
+        }else if (id == android.R.id.home){
+            this.finish();
         }
         return true;
     }
 
     public void downloadFile(String Url) {
 
-        DownloadManager mgr = (DownloadManager)this.getSystemService(Context.DOWNLOAD_SERVICE);
-
         Uri downloadUri = Uri.parse(Url);
-        if (Url.equals("")){
 
+        if (Url.equals(null)){
             Toast.makeText(this, "Please wait, is Loading", Toast.LENGTH_SHORT).show();
-        }else {
+        }else{
+            DownloadManager mgr = (DownloadManager)this.getSystemService(Context.DOWNLOAD_SERVICE);
+
 
             DownloadManager.Request request = new DownloadManager.Request(
                     downloadUri);
@@ -284,9 +289,7 @@ public class ShotsDetailActivity extends AppCompatActivity {
                     .setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES,  imageName+".jpg");
 
             mgr.enqueue(request);
-
         }
-
     }
 
     @Override
@@ -303,5 +306,18 @@ public class ShotsDetailActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    private class CheckIsLike extends AsyncTask<Void,Void,Void>{
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+    }
+
+    private void CheckLike(){
+
     }
 }

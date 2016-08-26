@@ -185,6 +185,7 @@ public class ExploreFragment extends BaseFragment {
                     connection.disconnect();
 
                     JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+
                     if (shotsModels.size() == 0){
                         for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -254,6 +255,8 @@ public class ExploreFragment extends BaseFragment {
                                     ShotsModel shotsModel = shotsModels.get(position);
                                     String imageUrl = shotsModel.getShots_thumbnail_url();
                                     String fullImageUrl = shotsModel.getShots_full_imageUrl();
+
+                                    Log.d("fullIamgeUrl", fullImageUrl);
                                     String imageName = shotsModel.getTitle();
                                     int id = shotsModel.getShots_id();
                                     boolean isGif = shotsModel.isAnimated();

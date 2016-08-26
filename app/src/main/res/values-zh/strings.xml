@@ -7,4 +7,6 @@
     <string name="my_profile">个人中心</string>
     <string name="title_activity_login"></string>
     <string name="explore">发现</string>
+    <string name="query_hint">搜点啥</string>
+    <string name="success_login">登录成功！正在写入用户数据...</string>
 </resources>

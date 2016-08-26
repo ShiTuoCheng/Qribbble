@@ -3,6 +3,7 @@ package stcdribbble.shituocheng.com.qribbble.UI.Activities;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                String url = "https://dribbble.com/oauth/authorize?client_id=18163f14877c483e440804ad5e0ce54c53b09f41ff87bdce332b3c734f312583&scope=public+write";
+                String url = "https://dribbble.com/oauth/authorize?client_id=18163f14877c483e440804ad5e0ce54c53b09f41ff87bdce332b3c734f312583&scope=public+write+comment+upload";
                 Intent intent = new Intent(MainActivity.this, LoginInActivity.class);
                 intent.putExtra("url",url);
                 startActivityForResult(intent,0);
@@ -100,7 +101,27 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        SearchManager searchManager = (SearchManager)getSystemService(new ComponentName(this, ))
+        SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this, SearchResultActivity.class)));
+        searchView.setQueryHint(getResources().getString(R.string.query_hint));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
+            }
+        });
 
         return true;
     }
@@ -118,6 +139,14 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())){
+            String query = intent.getStringExtra(SearchManager.QUERY);
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -181,7 +210,7 @@ public class MainActivity extends AppCompatActivity
         if (!data.getBundleExtra("bundle").getString("code").isEmpty()){
 
             progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setMessage("Login successful! Loading User Data");
+            progressDialog.setMessage("c");
             progressDialog.setCancelable(false);
             progressDialog.show();
             String result = data.getBundleExtra("bundle").getString("code");

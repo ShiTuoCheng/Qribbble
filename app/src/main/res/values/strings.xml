@@ -9,10 +9,12 @@
     <string name="login_in">Login Your Dribble account</string>
     <string name="title_activity_login" translatable="false">Sign in</string>
     <string name="title_activity_shots_detail" translatable="false">ShotsDetailActivity</string>
+    <string name="success_login">Login successful! Loading User Data...</string>
 
     <string name="main_home">Main Home</string>
-    <string name="explore">explore</string>
+    <string name="explore">Explore</string>
     <string name="my_profile">my_profile</string>
+    <string name="query_hint">Search something</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
