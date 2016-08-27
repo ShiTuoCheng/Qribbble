@@ -32,6 +32,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.Adapter.ShotsRecyclerViewAdapter;
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
@@ -80,6 +82,7 @@ public class RecentShotsFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_shots, container, false);
+        final ExecutorService pool = Executors.newCachedThreadPool();
         setUpView(view);
         swipeRefreshLayout.post(new Runnable() {
             @Override
@@ -93,7 +96,8 @@ public class RecentShotsFragment extends BaseFragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        fetchData(true);
+                        //fetchData(true);
+                        pool.execute(fechData(true));
                     }
                 }, 2000);
             }
@@ -117,7 +121,8 @@ public class RecentShotsFragment extends BaseFragment {
                     int totalItemCount = manager.getItemCount();
                     if (lastItemPosition == (totalItemCount - 1) && isSlidingToLast) {
 
-                        fetchData(false);
+                        //fetchData(false);
+                        pool.execute(fechData(false));
                     }
                 }
             }
@@ -139,6 +144,167 @@ public class RecentShotsFragment extends BaseFragment {
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeColors(R.color.colorAccent);
 
+    }
+
+    public Runnable fechData(final boolean isFirstLoading){
+        final HttpURLConnection[] connection = new HttpURLConnection[1];
+        final InputStream[] inputStream = new InputStream[1];
+        final String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isFirstLoading){
+                    shotsModels.clear();
+                    try {
+                        connection[0] = (HttpURLConnection)new URL(api).openConnection();
+                        connection[0].setRequestMethod("GET");
+                        connection[0].connect();
+
+                        inputStream[0] = connection[0].getInputStream();
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream[0]));
+                        String line;
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        while ((line = bufferedReader.readLine()) != null){
+                            stringBuilder.append(line);
+                        }
+
+                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+
+                        for (int i = 0; i < jsonArray.length(); i++){
+                            ShotsModel shotsModel = new ShotsModel();
+
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            shotsModel.setTitle(jsonObject.getString("title"));
+                            JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                            shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                            shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                            shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                            shotsModel.setShots_id(jsonObject.getInt("id"));
+                            shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+
+                            JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                            shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                            shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                            shotsModels.add(shotsModel);
+
+                        }
+
+                        if (getActivity() == null){
+                            return;
+                        }else {
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity().getApplicationContext());
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                                    shotsRecyclerViewAdapter.notifyDataSetChanged();
+                                    swipeRefreshLayout.setRefreshing(false);
+                                    mRecyclerView.setAdapter(shotsRecyclerViewAdapter);
+                                    mRecyclerView.setLayoutManager(linearLayoutManager);
+                                    mRecyclerView.setVisibility(View.VISIBLE);
+                                    shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
+                                        @Override
+                                        public void OnItemClick(View v, int position) {
+                                            Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
+                                            ShotsModel shotsModel = shotsModels.get(position);
+                                            String imageUrl = shotsModel.getShots_thumbnail_url();
+                                            String fullImageUrl = shotsModel.getShots_full_imageUrl();
+                                            String imageName = shotsModel.getTitle();
+                                            int id = shotsModel.getShots_id();
+                                            boolean isGif = shotsModel.isAnimated();
+                                            intent.putExtra("imageName",imageName);
+                                            intent.putExtra("imageURL",imageUrl);
+                                            intent.putExtra("isGif",isGif);
+                                            intent.putExtra("fullImageUrl",fullImageUrl);
+                                            intent.putExtra("id",id);
+
+                                            AnimationUtils.show(v);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+
+                        e.printStackTrace();
+                    }
+                }else {
+                    current_page +=1;
+                    HttpURLConnection connection;
+                    InputStream inputStream;
+                    String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
+
+                    try {
+                        connection = (HttpURLConnection)new URL(api+"&page="+String.valueOf(current_page)).openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.connect();
+
+                        inputStream = connection.getInputStream();
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                        String line;
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        while ((line = bufferedReader.readLine()) != null){
+                            stringBuilder.append(line);
+                        }
+
+                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+
+                        for (int i = 0; i < jsonArray.length(); i++){
+                            ShotsModel shotsModel = new ShotsModel();
+
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            shotsModel.setTitle(jsonObject.getString("title"));
+                            JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                            shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                            shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                            shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                            shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                            shotsModel.setShots_id(jsonObject.getInt("id"));
+
+                            JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                            shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                            shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                            shotsModels.add(shotsModel);
+
+                        }
+                        if (getActivity() == null){
+                            return;
+                        }else {
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
+                                    shotsRecyclerViewAdapter.notifyDataSetChanged();
+                                }
+                            });
+
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                }
+            };
+        return runnable;
     }
 
     @Override

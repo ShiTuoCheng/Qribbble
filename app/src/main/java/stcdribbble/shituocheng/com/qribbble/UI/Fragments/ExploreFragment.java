@@ -60,7 +60,7 @@ public class ExploreFragment extends BaseFragment {
     private Spinner timeframe_spinner;
     private RecyclerView explore_recyclerView;
     private ProgressBar progressBar;
-    private ExecutorService executorService = Executors.newCachedThreadPool();
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
     private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
 
     private String sort_string;
@@ -88,7 +88,7 @@ public class ExploreFragment extends BaseFragment {
                 list_string = list[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                fetchData(sort_string, list_string, timeframe_string);
+                threadPool.execute(fetchData(sort_string, list_string, timeframe_string));
                 //execute(list[i]);
             }
 
@@ -111,7 +111,7 @@ public class ExploreFragment extends BaseFragment {
                 sort_string = sort[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                fetchData(list_string, sort_string, timeframe_string);
+                threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
             }
 
             @Override
@@ -132,7 +132,7 @@ public class ExploreFragment extends BaseFragment {
                 timeframe_string = timeframe[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                fetchData(list_string, sort_string, timeframe_string);
+                threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
             }
 
             @Override
@@ -155,13 +155,12 @@ public class ExploreFragment extends BaseFragment {
         explore_recyclerView = (RecyclerView)view.findViewById(R.id.explore_recyclerView);
     }
 
-    public void fetchData(final String shots_list, final String shots_sort, final String shots_timeframe){
+    public Runnable fetchData(final String shots_list, final String shots_sort, final String shots_timeframe){
 
-        new Thread(new Runnable() {
+        Runnable runnable = new Runnable() {
             HttpURLConnection connection = null;
             InputStream inputStream;
             String shots_api = API.getSortsShotsApi(shots_list, shots_sort, shots_timeframe);
-
             @Override
             public void run() {
                 try {
@@ -278,7 +277,8 @@ public class ExploreFragment extends BaseFragment {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        };
+        return runnable;
     }
 
 

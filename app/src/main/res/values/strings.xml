@@ -13,7 +13,8 @@
 
     <string name="main_home">Main Home</string>
     <string name="explore">Explore</string>
-    <string name="my_profile">my_profile</string>
+    <string name="my_profile">My Profile</string>
+    <string name="setting">Setting</string>
     <string name="query_hint">Search something</string>
 
     <!-- TODO: Remove or change this placeholder text -->
