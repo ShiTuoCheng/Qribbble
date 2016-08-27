@@ -36,6 +36,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.Model.LoginUser;
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity
     private TextView login_in_textView;
     private TextView user_name_textView;
     public static boolean isLogin;
+
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
 
     private ProgressDialog progressDialog;
 
@@ -214,14 +218,96 @@ public class MainActivity extends AppCompatActivity
             progressDialog.setCancelable(false);
             progressDialog.show();
             String result = data.getBundleExtra("bundle").getString("code");
-            fetchUserData(result);
+            threadPool.execute(fetchUserData(result));
             Log.d("result",result);
         }else {
             Toast.makeText(getApplicationContext(), "failed to login", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void fetchUserData(final String code){
+    private Runnable fetchUserData(final String code) {
+
+        Runnable runnable = new Runnable() {
+            HttpURLConnection connection;
+            BufferedReader bufferedReader;
+            InputStream inputStream;
+
+            @Override
+            public void run() {
+                String url = "https://dribbble.com/oauth/token" + "?" + "client_id=18163f14877c483e440804ad5e0ce54c53b09f41ff87bdce332b3c734f312583" + "&" + "client_secret=f7efc3be1a475673a5377116ac9f100454a9bcc4cb805ac29ddf303ac0ac2301" + "&" + "code=" + code;
+                try {
+                    connection = (HttpURLConnection) new URL(url).openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.connect();
+
+                    inputStream = connection.getInputStream();
+                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+
+                    inputStream.close();
+                    connection.disconnect();
+
+                    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+                    String access_token = jsonObject.getString("access_token");
+
+                    LoginUser loginUser = new LoginUser();
+                    loginUser.setAcess_token(access_token);
+
+                    connection = (HttpURLConnection) new URL("https://api.dribbble.com/v1/user?access_token=" + access_token).openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.connect();
+
+                    inputStream = connection.getInputStream();
+                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String user_line;
+                    StringBuilder user_stringBuilder = new StringBuilder();
+
+                    while ((user_line = bufferedReader.readLine()) != null) {
+                        user_stringBuilder.append(user_line);
+                    }
+
+                    JSONObject user_jsonObj = new JSONObject(user_stringBuilder.toString());
+                    final String avatar_img_url = user_jsonObj.getString("avatar_url");
+                    final String login_user_name = user_jsonObj.getString("username");
+                    final String user_name = user_jsonObj.getString("name");
+
+                    SharedPreferences.Editor editor = getSharedPreferences("user_login_data", MODE_PRIVATE).edit();
+                    editor.putString("access_token", access_token);
+                    editor.putString("user_name", login_user_name);
+                    editor.putString("name", user_name);
+                    editor.putString("user_avatar", avatar_img_url);
+                    editor.commit();
+
+                    Log.d("json", stringBuilder.toString());
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+                            circularNetworkImageView.setImageUrl(avatar_img_url, imageLoader);
+                            login_in_textView.setText(login_user_name);
+                            user_name_textView.setText(user_name);
+                            login_in_textView.setClickable(false);
+                            progressDialog.dismiss();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        return runnable;
+    }
+    /*
         new Thread(new Runnable() {
             HttpURLConnection connection;
             BufferedReader bufferedReader;
@@ -303,4 +389,5 @@ public class MainActivity extends AppCompatActivity
             }
         }).start();
     }
+    */
 }

@@ -57,7 +57,7 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
         View v = inflater.inflate(R.layout.fragment_shots_detail_favorite, container, false);
         setUpView(v);
         int shots_id = getActivity().getIntent().getIntExtra("id",0);
-        fetchData(true, shots_id);
+        //fetchData(true, shots_id);
         return v;
     }
 
@@ -67,7 +67,7 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
         favorite_title_textView = (TextView)view.findViewById(R.id.shots_favorite_title);
     }
 
-
+    /*
     public void fetchData(boolean isFirstLoading, final int shots_id) {
         if (isFirstLoading){
             new Thread(new Runnable() {
@@ -136,7 +136,9 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
             }).start();
         }
     }
+    */
 
+    
     public static class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder>{
 
         public ArrayList<UserModel> userModels = new ArrayList<>();

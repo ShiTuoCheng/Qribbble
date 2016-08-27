@@ -114,14 +114,15 @@ public class ShotsDetailActivity extends AppCompatActivity {
                     if (state) {
                         state = false;
                         fab.setImageResource(R.drawable.ic_favorite_white_36dp);
-                        postShotsLike(access_token,String.valueOf(id),state);
-                        shotsDetailFavoriteFragment.fetchData(true,id);
+                       // postShotsLike(access_token,String.valueOf(id),state);
+                        pool.execute(postShotsLike((access_token),String.valueOf(id),state));
+                        //shotsDetailFavoriteFragment.fetchData(true,id);
                         Snackbar.make(view,"You Like the shot!", Snackbar.LENGTH_SHORT).show();
                     } else {
                         state = true;
                         fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
-                        postShotsLike(access_token,String.valueOf(id),state);
-                        shotsDetailFavoriteFragment.fetchData(true,id);
+                        pool.execute(postShotsLike(access_token,String.valueOf(id),state));
+                        //shotsDetailFavoriteFragment.fetchData(true,id);
                         Snackbar.make(view,"You dislike the shot!", Snackbar.LENGTH_SHORT).show();
                     }
                 }
@@ -165,8 +166,40 @@ public class ShotsDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void postShotsLike(final String access_token, final String shots_id, final boolean isLiked){
+        private Runnable postShotsLike(final String access_token, final String shots_id, final boolean isLiked){
 
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection;
+                InputStream inputStream;
+                String api = API.generic_api + "shots/" + String.valueOf(shots_id) + "/like" + "?access_token=" + access_token;
+                try {
+                    connection = (HttpURLConnection) new URL(api).openConnection();
+                    if (!isLiked) {
+                        connection.setRequestMethod("POST");
+                    } else {
+                        connection.setRequestMethod("DELETE");
+                    }
+                    connection.connect();
+
+                    inputStream = connection.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+
+                    inputStream.close();
+                    connection.disconnect();
+                    Log.d("like", stringBuilder.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        /*
         new Thread(new Runnable() {
             HttpURLConnection connection;
             InputStream inputStream;
@@ -201,6 +234,8 @@ public class ShotsDetailActivity extends AppCompatActivity {
 
             }
         }).start();
+        */
+            return runnable;
     }
 
     private void setUpView(){

@@ -9,7 +9,7 @@
     <string name="login_in">Login Your Dribble account</string>
     <string name="title_activity_login" translatable="false">Sign in</string>
     <string name="title_activity_shots_detail" translatable="false">ShotsDetailActivity</string>
-    <string name="success_login">Login successful! Loading User Data...</string>
+    <string name="success_login">Login successful! Loading User Data</string>
 
     <string name="main_home">Main Home</string>
     <string name="explore">Explore</string>
