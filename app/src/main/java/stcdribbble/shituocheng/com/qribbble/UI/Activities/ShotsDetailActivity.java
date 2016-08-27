@@ -33,6 +33,9 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -40,12 +43,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.Buffer;
 import java.security.acl.Permission;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import stcdribbble.shituocheng.com.qribbble.Adapter.DetailViewPagerAdapter;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFavoriteFragment;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 
 /**
@@ -54,9 +62,12 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 
 public class ShotsDetailActivity extends AppCompatActivity {
     private boolean state = true;
+    private FloatingActionButton fab;
     private String imageString;
     private String imageName;
     private int id;
+
+    private String isLike;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,13 +93,19 @@ public class ShotsDetailActivity extends AppCompatActivity {
 
         final ShotsDetailFavoriteFragment shotsDetailFavoriteFragment = new ShotsDetailFavoriteFragment();
 
-        final FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
+        final String access_token = sharedPreferences.getString("access_token","");
+
+        if (access_token.isEmpty()){
+
+        }else {
+            pool.execute(checkLikeRun);
+        }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
-                String access_token = sharedPreferences.getString("access_token","");
 
                 if (access_token.isEmpty()){
                     //Toast.makeText(ShotsDetailActivity.this,"Please login your Dribble account",Toast.LENGTH_SHORT).show();
@@ -308,16 +325,75 @@ public class ShotsDetailActivity extends AppCompatActivity {
         }
     }
 
-    private class CheckIsLike extends AsyncTask<Void,Void,Void>{
+    /*
+    private class CheckIsLike extends AsyncTask<String,Void,Void>{
 
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(String... strings) {
             return null;
         }
     }
+    */
 
-    private void CheckLike(){
+    ExecutorService pool = Executors.newCachedThreadPool();
+
+    Runnable checkLikeRun = new Runnable(){
+
+        @Override
+        public void run() {
+            CheckLike(String.valueOf(id));
+        }
+    };
+
+
+    private void CheckLike(String shot_id){
+
+        HttpURLConnection connection;
+        InputStream inputStream;
+        String api = API.generic_api + "shots/"+shot_id+"/like"+"?access_token="+ Access_Token.access_token;
+
+        try {
+            connection = (HttpURLConnection)new URL(api).openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+
+            inputStream = connection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+
+            while ((line = bufferedReader.readLine())!=null){
+                stringBuilder.append(line);
+            }
+
+            JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+
+            int id = jsonObject.getInt("id");
+
+            Log.d("id",String.valueOf(id));
+
+            state = false;
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    fab.setImageResource(R.drawable.ic_favorite_white_36dp);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            state = true;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                }
+            });
+        }
+
 
     }
 }
