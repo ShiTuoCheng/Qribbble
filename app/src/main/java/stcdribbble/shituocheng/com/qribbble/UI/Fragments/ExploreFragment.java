@@ -1,6 +1,7 @@
 package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
 
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -266,7 +267,7 @@ public class ExploreFragment extends BaseFragment {
                                     intent.putExtra("id",id);
 
                                     AnimationUtils.show(v);
-                                    startActivity(intent);
+                                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                                 }
                             });
                         }

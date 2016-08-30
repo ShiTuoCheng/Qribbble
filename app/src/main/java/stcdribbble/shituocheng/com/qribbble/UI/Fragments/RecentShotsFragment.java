@@ -4,6 +4,7 @@ package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -231,7 +233,7 @@ public class RecentShotsFragment extends BaseFragment {
                                             intent.putExtra("id",id);
 
                                             AnimationUtils.show(v);
-                                            startActivity(intent);
+                                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                                         }
                                     });
                                 }
