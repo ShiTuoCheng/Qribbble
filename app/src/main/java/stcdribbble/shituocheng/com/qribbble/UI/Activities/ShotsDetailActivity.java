@@ -84,12 +84,12 @@ public class ShotsDetailActivity extends AppCompatActivity {
         Log.d("imageString", String.valueOf(imageString));
 
         final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbar.setTitle(" ");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final ShotsDetailFavoriteFragment shotsDetailFavoriteFragment = new ShotsDetailFavoriteFragment();
 
@@ -117,12 +117,14 @@ public class ShotsDetailActivity extends AppCompatActivity {
                        // postShotsLike(access_token,String.valueOf(id),state);
                         pool.execute(postShotsLike((access_token),String.valueOf(id),state));
                         //shotsDetailFavoriteFragment.fetchData(true,id);
+                        //shotsDetailFavoriteFragment.update(id);
                         Snackbar.make(view,"You Like the shot!", Snackbar.LENGTH_SHORT).show();
                     } else {
                         state = true;
                         fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
                         pool.execute(postShotsLike(access_token,String.valueOf(id),state));
                         //shotsDetailFavoriteFragment.fetchData(true,id);
+                        //shotsDetailFavoriteFragment.update(id);
                         Snackbar.make(view,"You dislike the shot!", Snackbar.LENGTH_SHORT).show();
                     }
                 }

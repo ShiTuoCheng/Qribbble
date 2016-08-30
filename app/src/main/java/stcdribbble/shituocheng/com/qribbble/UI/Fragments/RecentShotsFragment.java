@@ -8,6 +8,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -105,10 +108,13 @@ public class RecentShotsFragment extends BaseFragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchData(true);
+               // fetchData(true);
+                pool.execute(fechData(true));
             }
         });
-        fetchData(true);
+
+        pool.execute(fechData(true));
+        //fetchData(true);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             boolean isSlidingToLast = false;
@@ -307,6 +313,7 @@ public class RecentShotsFragment extends BaseFragment {
         return runnable;
     }
 
+    /*
     @Override
     public void fetchData(boolean isFirstLoading){
 
@@ -476,5 +483,6 @@ public class RecentShotsFragment extends BaseFragment {
         }
     }
 
+*/
 
 }

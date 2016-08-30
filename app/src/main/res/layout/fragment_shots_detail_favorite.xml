@@ -5,33 +5,9 @@
     android:background="#000"
     tools:context="stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFavoriteFragment">
 
-
-    <android.support.v4.widget.NestedScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/shots_detail_favorite_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/shots_favorite_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorAccent"
-                android:textSize="20sp"
-                android:padding="16dp"
-                android:textStyle="bold"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/shots_detail_favorite_recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/shots_favorite_title"/>
-
-        </RelativeLayout>
-
-    </android.support.v4.widget.NestedScrollView>
-
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

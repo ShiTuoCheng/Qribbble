@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="User"
+        >
+        <Preference
+            android:key="@string/login_in"
+            android:title="Tap to Login"
+            android:summary="Login your Dribbble Account"/>
+    </PreferenceCategory>
+</PreferenceScreen>

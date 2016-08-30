@@ -1,0 +1,239 @@
+package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
+
+
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import stcdribbble.shituocheng.com.qribbble.Model.LoginUser;
+import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Activities.LoginInActivity;
+import stcdribbble.shituocheng.com.qribbble.UI.Activities.MainActivity;
+
+import static android.content.Context.MODE_PRIVATE;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class SettingFragment extends PreferenceFragment {
+
+    private Preference preference;
+    private boolean isLogin;
+    private ProgressDialog progressDialog;
+
+    private static final int MESSAGE_WHAT_NAME=0;
+    private static final int MESSAGE_WHAT_USER_NAME=1;
+
+
+    HandlerThread handlerThread;
+    Handler threadHandler;
+    Handler uiHandler;
+
+    public SettingFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.setting);
+
+        initPreference();
+        final SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_login_data",MODE_PRIVATE);
+        String user_name = sharedPreferences.getString("user_name","");
+        String name = sharedPreferences.getString("name","");
+
+        Log.d("sved_data",name);
+        isLogin = initData();
+        if (!isLogin){
+            preference.setTitle(getString(R.string.tap_to_login));
+            preference.setSummary(getString(R.string.login_your_account));
+        }else {
+
+            //String user_avatar = sharedPreferences.getString("user_avatar","");
+            preference.setTitle(user_name);
+            preference.setSummary(name);
+        }
+        preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(final Preference preference) {
+                if (isLogin){
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                    dialog.setTitle("Do you confirm to quit your account?");
+                    dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            sharedPreferences.edit().remove("user_name").apply();
+                            sharedPreferences.edit().remove("name").apply();
+                            sharedPreferences.edit().remove("access_token").apply();
+                            sharedPreferences.edit().remove("user_avatar").apply();
+                            preference.setTitle(getString(R.string.tap_to_login));
+                            preference.setSummary(getString(R.string.login_your_account));
+
+                            isLogin = false;
+                        }
+                    });
+                    dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+
+                }else {
+                    String url = "https://dribbble.com/oauth/authorize?client_id=18163f14877c483e440804ad5e0ce54c53b09f41ff87bdce332b3c734f312583&scope=public+write+comment+upload";
+                    Intent intent = new Intent(getActivity(), LoginInActivity.class);
+                    intent.putExtra("url",url);
+                    startActivityForResult(intent,0);
+
+                }
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (!data.getBundleExtra("bundle").getString("code").isEmpty()){
+
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage(getString(R.string.success_login));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            String result = data.getBundleExtra("bundle").getString("code");
+            //threadPool.execute(fetchUserData(result));
+            handlerThread = new HandlerThread("fetchUserData",Thread.NORM_PRIORITY);
+            threadHandler = new Handler(handlerThread.getLooper()){
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+
+                }
+            };
+
+            Log.d("result",result);
+        }else {
+            Toast.makeText(getActivity(), "failed to login", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initPreference(){
+         preference = (Preference)findPreference(getResources().getString(R.string.login_in));
+    }
+
+    private boolean initData(){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_login_data",MODE_PRIVATE);
+        String access_token = sharedPreferences.getString("access_token","");
+        Log.d("data",access_token);
+        /*
+        String user_name = sharedPreferences.getString("user_name","");
+        String name = sharedPreferences.getString("name","");
+        String user_avatar = sharedPreferences.getString("user_avatar","");
+        */
+        if (access_token.isEmpty()){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    private Bundle fetchUserData(final String code){
+        HttpURLConnection connection;
+        BufferedReader bufferedReader;
+        InputStream inputStream;
+
+        String url = "https://dribbble.com/oauth/token" + "?" + "client_id=18163f14877c483e440804ad5e0ce54c53b09f41ff87bdce332b3c734f312583" + "&" + "client_secret=f7efc3be1a475673a5377116ac9f100454a9bcc4cb805ac29ddf303ac0ac2301" + "&" + "code=" + code;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("POST");
+            connection.connect();
+
+            inputStream = connection.getInputStream();
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line;
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+
+            inputStream.close();
+            connection.disconnect();
+
+            JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+            String access_token = jsonObject.getString("access_token");
+
+            LoginUser loginUser = new LoginUser();
+            loginUser.setAcess_token(access_token);
+
+            connection = (HttpURLConnection) new URL("https://api.dribbble.com/v1/user?access_token=" + access_token).openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+
+            inputStream = connection.getInputStream();
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String user_line;
+            StringBuilder user_stringBuilder = new StringBuilder();
+
+            while ((user_line = bufferedReader.readLine()) != null) {
+                user_stringBuilder.append(user_line);
+            }
+
+            JSONObject user_jsonObj = new JSONObject(user_stringBuilder.toString());
+            final String avatar_img_url = user_jsonObj.getString("avatar_url");
+            final String login_user_name = user_jsonObj.getString("username");
+            final String user_name = user_jsonObj.getString("name");
+
+            SharedPreferences.Editor editor = getActivity().getSharedPreferences("user_login_data", MODE_PRIVATE).edit();
+            editor.putString("access_token", access_token);
+            editor.putString("user_name", login_user_name);
+            editor.putString("name", user_name);
+            editor.putString("user_avatar", avatar_img_url);
+            editor.apply();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("user_name",user_name);
+            bundle.putString("name",login_user_name);
+
+            Log.d("json", stringBuilder.toString());
+
+            return bundle;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}

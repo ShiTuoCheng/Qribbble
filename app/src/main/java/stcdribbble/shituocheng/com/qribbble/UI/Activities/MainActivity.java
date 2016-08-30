@@ -86,7 +86,25 @@ public class MainActivity extends AppCompatActivity
             login_in_textView.setText(user_name);
             user_name_textView.setText(name);
             circularNetworkImageView.setImageUrl(user_avatar,imageLoader);
-            login_in_textView.setClickable(false);
+            login_in_textView.setClickable(!isLogin);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+        SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
+        String access_token = sharedPreferences.getString("access_token","");
+        String user_name = sharedPreferences.getString("user_name","");
+        String name = sharedPreferences.getString("name","");
+        String user_avatar = sharedPreferences.getString("user_avatar","");
+        if (access_token.isEmpty() && user_avatar.isEmpty() && user_name.isEmpty() && name.isEmpty()){
+            isLogin = false;
+            login_in_textView.setText(R.string.login_in);
+            user_name_textView.setText("");
+            circularNetworkImageView.setImageUrl(null,imageLoader);
+            login_in_textView.setClickable(!isLogin);
         }
     }
 
@@ -170,6 +188,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.setting) {
 
+            Intent intent = new Intent(this, SettingActivity.class);
+            startActivity(intent);
+
         } else if (id == R.id.nav_share) {
 
         }
@@ -186,7 +207,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -212,7 +233,7 @@ public class MainActivity extends AppCompatActivity
         if (!data.getBundleExtra("bundle").getString("code").isEmpty()){
 
             progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setMessage("c");
+            progressDialog.setMessage(getString(R.string.success_login));
             progressDialog.setCancelable(false);
             progressDialog.show();
             String result = data.getBundleExtra("bundle").getString("code");
@@ -225,7 +246,7 @@ public class MainActivity extends AppCompatActivity
 
     private Runnable fetchUserData(final String code) {
 
-        Runnable runnable = new Runnable() {
+      return new Runnable() {
             HttpURLConnection connection;
             BufferedReader bufferedReader;
             InputStream inputStream;
@@ -281,7 +302,7 @@ public class MainActivity extends AppCompatActivity
                     editor.putString("user_name", login_user_name);
                     editor.putString("name", user_name);
                     editor.putString("user_avatar", avatar_img_url);
-                    editor.commit();
+                    editor.apply();
 
                     Log.d("json", stringBuilder.toString());
 
@@ -303,7 +324,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-        return runnable;
     }
     /*
         new Thread(new Runnable() {
