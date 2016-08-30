@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,6 +21,7 @@ public class LoginInActivity extends AppCompatActivity {
 
     public static final int requestCode = 1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +31,12 @@ public class LoginInActivity extends AppCompatActivity {
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setAppCacheMaxSize(1);
         webView.getSettings().setJavaScriptEnabled(true);
+        /*
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(false);
+        WebSettings ws = webView.getSettings();
+        ws.setSaveFormData(false);
+        */
         Map<String, String> noCacheHeaders = new HashMap<String, String>(2);
         noCacheHeaders.put("Pragma", "no-cache");
         noCacheHeaders.put("Cache-Control", "no-cache");
@@ -68,6 +77,15 @@ public class LoginInActivity extends AppCompatActivity {
                 view.clearCache(true);
             }
         });
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeAllCookie();
+        cookieManager.setAcceptCookie(false);
     }
 
     private String getCodeFromUrl(String url) {
