@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (!data.getBundleExtra("bundle").getString("code").isEmpty()){
+        if(resultCode==RESULT_OK && requestCode==0){
 
             progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setMessage(getString(R.string.success_login));

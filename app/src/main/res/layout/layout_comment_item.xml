@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:padding="6dp"
+        android:id="@+id/shots_detail_comment_avatar"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:id="@+id/shots_detail_comment_name"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/shots_detail_comment_avatar"
+        android:layout_toEndOf="@+id/shots_detail_comment_avatar"
+        android:layout_marginBottom="9dp" />
+
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/shots_detail_comment_webView"
+        android:layout_below="@id/shots_detail_comment_name"
+        android:padding="16dp"/>
+
+
+</RelativeLayout>

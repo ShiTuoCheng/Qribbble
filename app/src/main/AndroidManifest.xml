@@ -32,7 +32,8 @@
             android:name=".UI.Activities.ShotsDetailActivity"
             android:label="@string/title_activity_shots_detail"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".UI.Activities.SearchResultActivity"
             android:label="@string/title_activity_search_result"
@@ -40,19 +41,22 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".UI.Activities.MainActivity"/>
+                android:value=".UI.Activities.MainActivity" />
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
+
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
         </activity>
-
         <activity
             android:name=".UI.Activities.SettingActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name=".Services.UpdateService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

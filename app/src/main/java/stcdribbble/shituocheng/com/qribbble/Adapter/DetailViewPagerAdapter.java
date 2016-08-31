@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailCommentFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFavoriteFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailInfoFragment;
 
@@ -30,8 +31,8 @@ public class DetailViewPagerAdapter extends FragmentStatePagerAdapter {
                 ShotsDetailFavoriteFragment shotsDetailFavoriteFragment = new ShotsDetailFavoriteFragment();
                 return shotsDetailFavoriteFragment;
             case 2:
-                ShotsDetailInfoFragment shotsDetailInfoFragment2 = new ShotsDetailInfoFragment();
-                return shotsDetailInfoFragment2;
+                ShotsDetailCommentFragment shotsDetailCommentFragment = new ShotsDetailCommentFragment();
+                return shotsDetailCommentFragment;
             default:
                 return null;
         }

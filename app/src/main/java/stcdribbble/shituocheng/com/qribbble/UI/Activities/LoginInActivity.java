@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -16,8 +20,13 @@ import java.util.Map;
 
 import stcdribbble.shituocheng.com.qribbble.R;
 
+import static stcdribbble.shituocheng.com.qribbble.R.id.view;
+
 public class LoginInActivity extends AppCompatActivity {
+
     private WebView webView;
+
+    private ProgressBar progressBar;
 
     public static final int requestCode = 1;
 
@@ -27,10 +36,13 @@ public class LoginInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_in);
         webView = (WebView)findViewById(R.id.webView);
+        progressBar = (ProgressBar)findViewById(R.id.login_progress);
         webView.getSettings().setAppCacheEnabled(false);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setAppCacheMaxSize(1);
         webView.getSettings().setJavaScriptEnabled(true);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         /*
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(false);
@@ -42,7 +54,9 @@ public class LoginInActivity extends AppCompatActivity {
         noCacheHeaders.put("Cache-Control", "no-cache");
 
         webView.loadUrl(getIntent().getStringExtra("url"),noCacheHeaders);
+
         webView.setWebViewClient(new WebViewClient(){
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
@@ -79,6 +93,19 @@ public class LoginInActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home){
+            this.finish();
+        }
+        return true;
+    }
 
     @Override
     protected void onDestroy() {

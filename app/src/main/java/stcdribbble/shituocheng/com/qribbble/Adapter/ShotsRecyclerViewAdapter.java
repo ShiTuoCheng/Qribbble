@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -31,6 +32,9 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
     private List<ShotsModel> mShotsModels = new ArrayList<>();
     private Context context;
     private final LayoutInflater inflater;
+    private final int VIEW_TYPE_ITEM = 1;
+    private final int VIEW_TYPE_PROGRESSBAR = 0;
+    private boolean isFooterEnabled = true;
 
     private ImageLoader mImageLoader = AppController.getInstance().getImageLoader();
 
@@ -74,6 +78,16 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
             }
         }
 
+    }
+
+    public static class ProgressViewHolder extends RecyclerView.ViewHolder{
+
+        public ProgressBar progressBar;
+
+        public ProgressViewHolder(View itemView) {
+            super(itemView);
+            progressBar = (ProgressBar)itemView.findViewById(R.id.progress_bar);
+        }
     }
 
     public ShotsRecyclerViewAdapter(List<ShotsModel> shotsModels, Context context) {

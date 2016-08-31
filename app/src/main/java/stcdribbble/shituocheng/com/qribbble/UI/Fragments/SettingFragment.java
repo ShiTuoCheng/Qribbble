@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -35,6 +36,7 @@ import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.LoginInActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.MainActivity;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -122,20 +124,46 @@ public class SettingFragment extends PreferenceFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (!data.getBundleExtra("bundle").getString("code").isEmpty()){
+        if (resultCode==RESULT_OK && requestCode==0){
 
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage(getString(R.string.success_login));
             progressDialog.setCancelable(false);
             progressDialog.show();
-            String result = data.getBundleExtra("bundle").getString("code");
+            final String result = data.getBundleExtra("bundle").getString("code");
             //threadPool.execute(fetchUserData(result));
             handlerThread = new HandlerThread("fetchUserData",Thread.NORM_PRIORITY);
-            threadHandler = new Handler(handlerThread.getLooper()){
+            handlerThread.start();
+            threadHandler = new Handler(handlerThread.getLooper());
+
+
+            threadHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Bundle bundle = fetchUserData(result);
+
+                    Message message = uiHandler.obtainMessage();
+                    message.what = MESSAGE_WHAT_NAME;
+                    message.obj = bundle;
+                    message.sendToTarget();
+                }
+            });
+
+            uiHandler = new Handler(Looper.getMainLooper()){
                 @Override
                 public void handleMessage(Message msg) {
                     super.handleMessage(msg);
+                    switch (msg.what){
+                        case MESSAGE_WHAT_NAME:
+                            Bundle bundle = (Bundle)msg.obj;
 
+                            String name = bundle.getString("user_name");
+                            String user_name = bundle.getString("name");
+
+                            preference.setTitle(name);
+                            preference.setSummary(user_name);
+                            progressDialog.dismiss();
+                    }
                 }
             };
 
