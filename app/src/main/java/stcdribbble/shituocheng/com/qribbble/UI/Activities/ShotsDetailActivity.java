@@ -434,7 +434,5 @@ public class ShotsDetailActivity extends AppCompatActivity {
                 }
             });
         }
-
-
     }
 }

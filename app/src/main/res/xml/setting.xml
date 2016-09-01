@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="User"
-        >
+        android:title="User">
         <Preference
             android:key="@string/login_in"
             android:title="Tap to Login"
             android:summary="Login your Dribbble Account"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="General Setting">
+        <SwitchPreference
+            android:id="@+id/notification_setting"
+            android:text="Enable Notification(beta)"
+            android:textColor="@color/colorPrimary"/>
     </PreferenceCategory>
 </PreferenceScreen>
