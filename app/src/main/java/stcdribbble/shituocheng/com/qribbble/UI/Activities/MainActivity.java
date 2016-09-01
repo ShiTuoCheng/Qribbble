@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -40,8 +38,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.Model.LoginUser;
-import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.Services.UpdateService;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ExploreFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.TabFragments.MainTabFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
@@ -88,6 +86,12 @@ public class MainActivity extends AppCompatActivity
             circularNetworkImageView.setImageUrl(user_avatar,imageLoader);
             login_in_textView.setClickable(!isLogin);
         }
+        /**
+         * service setUp
+          */
+        boolean shouldStartAlarm = !UpdateService.isServiceAlarmOn(this);
+        UpdateService.setServiceAlarm(this, shouldStartAlarm);
+
     }
 
     @Override

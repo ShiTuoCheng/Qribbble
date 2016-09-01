@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,23 +13,30 @@
         android:id="@+id/shots_detail_comment_recyclerView"/>
 
     <android.support.v7.widget.Toolbar
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/toolbar2">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <android.support.design.widget.FloatingActionButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:id="@+id/comment_send_fab"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignParentEnd="true"
+                android:padding="6dp"
+                android:src="@drawable/ic_menu_send"
+                android:clickable="true"
+                app:elevation="0dp"
+                app:fabSize="mini" />
 
             <android.support.design.widget.TextInputEditText
-                android:padding="6dp"
+                android:textColorLink="@color/colorAccent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/comment_input_editText"
