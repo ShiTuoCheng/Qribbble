@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +53,7 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        getWindow().setEnterTransition(new Explode());
+        getWindow().setEnterTransition(new Slide());
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingFragment()).commit();
         getSupportActionBar().setTitle(getString(R.string.setting));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -67,8 +68,8 @@ public class SettingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home){
+            getWindow().setExitTransition(new Slide());
             this.finish();
-            getWindow().setExitTransition(new Explode());
         }
         return true;
     }
@@ -76,12 +77,12 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        this.getWindow().setExitTransition(new Explode());
+        this.getWindow().setExitTransition(new Slide());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getWindow().setExitTransition(new Explode());
+        getWindow().setExitTransition(new Slide());
     }
 }
