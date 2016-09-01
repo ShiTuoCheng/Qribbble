@@ -14,5 +14,9 @@
             android:key="@string/notification_setting"
             android:title="Enable Notification (beta)"
             />
+        <Preference
+            android:key="@string/notification_setting_time"
+            android:title="Setting Notification Time (beta)"
+            android:summary="Choose a time period to push notifications"/>
     </PreferenceCategory>
 </PreferenceScreen>
