@@ -11,8 +11,8 @@
     <PreferenceCategory
         android:title="General Setting">
         <SwitchPreference
-            android:id="@+id/notification_setting"
-            android:text="Enable Notification(beta)"
-            android:textColor="@color/colorPrimary"/>
+            android:key="@string/notification_setting"
+            android:title="Enable Notification (beta)"
+            />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -44,9 +45,15 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class SettingFragment extends PreferenceFragment {
 
+    /**
+     * setUp preference
+     */
     private Preference preference;
+    private SwitchPreference switchPreference;
     private boolean isLogin;
     private ProgressDialog progressDialog;
+
+    private boolean isNotificationCheck = false;
 
     private static final int MESSAGE_WHAT_NAME=0;
     private static final int MESSAGE_WHAT_USER_NAME=1;
@@ -72,6 +79,10 @@ public class SettingFragment extends PreferenceFragment {
         String name = sharedPreferences.getString("name","");
 
         Log.d("sved_data",name);
+
+        /**
+         * Preference setUp
+         */
         isLogin = initData();
         if (!isLogin){
             preference.setTitle(getString(R.string.tap_to_login));
@@ -119,6 +130,32 @@ public class SettingFragment extends PreferenceFragment {
                 return true;
             }
         });
+        /**
+         * Switch Preference setUp
+         */
+
+        final SharedPreferences.Editor settingEditor = getActivity().getSharedPreferences("setting", MODE_PRIVATE).edit();
+
+        SharedPreferences getSetting = getActivity().getSharedPreferences("setting", MODE_PRIVATE);
+        switchPreference.setChecked(getSetting.getBoolean("notification_setting", false));
+        switchPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                boolean isCheck = ((SwitchPreference)preference).isChecked();
+                if (isCheck){
+                    isNotificationCheck = true;
+                    settingEditor.putBoolean("notification_setting",true);
+                    settingEditor.apply();
+                }else {
+                    isNotificationCheck = false;
+                    settingEditor.putBoolean("notification_setting",false);
+                    settingEditor.apply();
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -174,7 +211,8 @@ public class SettingFragment extends PreferenceFragment {
     }
 
     private void initPreference(){
-         preference = (Preference)findPreference(getResources().getString(R.string.login_in));
+        preference = (Preference)findPreference(getResources().getString(R.string.login_in));
+        switchPreference = (SwitchPreference)findPreference(getString(R.string.notification_setting));
     }
 
     private boolean initData(){
@@ -191,6 +229,9 @@ public class SettingFragment extends PreferenceFragment {
         }else {
             return true;
         }
+    }
+
+    private void initSetting(){
     }
 
     private Bundle fetchUserData(final String code){

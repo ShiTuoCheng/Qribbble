@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,6 +52,7 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        getWindow().setEnterTransition(new Explode());
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingFragment()).commit();
         getSupportActionBar().setTitle(getString(R.string.setting));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,8 +68,20 @@ public class SettingActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home){
             this.finish();
+            getWindow().setExitTransition(new Explode());
         }
         return true;
     }
 
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        this.getWindow().setExitTransition(new Explode());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getWindow().setExitTransition(new Explode());
+    }
 }

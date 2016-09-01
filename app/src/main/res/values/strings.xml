@@ -18,6 +18,7 @@
     <string name="query_hint">Search something</string>
     <string name="tap_to_login">Tap to Login</string>
     <string name="login_your_account">Login your Dribbble Account</string>
+    <string name="notification_setting">notification_setting</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>

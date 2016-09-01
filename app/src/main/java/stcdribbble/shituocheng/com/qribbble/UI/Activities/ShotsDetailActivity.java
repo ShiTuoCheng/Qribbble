@@ -22,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.transition.Slide;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -322,8 +323,21 @@ public class ShotsDetailActivity extends AppCompatActivity {
 
         }else if (id == android.R.id.home){
             this.finish();
+            getWindow().setExitTransition(new Explode());
         }
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getWindow().setExitTransition(new Explode());
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        this.getWindow().setExitTransition(new Explode());
     }
 
     public void downloadFile(String Url) {

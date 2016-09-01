@@ -1,5 +1,6 @@
 package stcdribbble.shituocheng.com.qribbble.UI.Activities;
 
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.setting) {
 
             Intent intent = new Intent(this, SettingActivity.class);
-            startActivity(intent);
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
 
         } else if (id == R.id.nav_share) {
 
