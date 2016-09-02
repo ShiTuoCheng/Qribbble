@@ -49,6 +49,16 @@ public class UpdateService extends IntentService {
         boolean isNetworkAvailable = connectivityManager.getBackgroundDataSetting() && connectivityManager.getActiveNetworkInfo() != null;
         if (!isNetworkAvailable)return;
 
+        /**
+         * init Setting
+         */
+        SharedPreferences settingSharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+
+        boolean notificationIsOpen = settingSharedPreferences.getBoolean("notification_setting", false);
+        Log.w("notificationIsOpen", String.valueOf(notificationIsOpen));
+
+        if (!notificationIsOpen)return;
+
         Log.w("Service","Service has started");
         user = updateShots();
 
@@ -61,17 +71,18 @@ public class UpdateService extends IntentService {
             return;
         }
 
-        if (!
-                query.equals(user)){
+        if (!query.equals(user)){
 
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class),0);
 
             Notification notification = new NotificationCompat.Builder(this)
-                    .setContentTitle(user+"and other authors publish new shots")
+                    .setContentTitle(user+" and other authors post new shots")
                     .setContentIntent(pendingIntent)
                     .setSmallIcon(R.mipmap.icon)
                     .build();
 
+            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            notification.defaults=Notification.DEFAULT_SOUND;
             NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(0, notification);
         }else{

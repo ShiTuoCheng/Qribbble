@@ -17,6 +17,6 @@
         <Preference
             android:key="@string/notification_setting_time"
             android:title="Setting Notification Time (beta)"
-            android:summary="Choose a time period to push notifications"/>
+            android:summary="set the time in terval to automatically send notifications"/>
     </PreferenceCategory>
 </PreferenceScreen>

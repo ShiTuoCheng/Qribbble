@@ -95,15 +95,10 @@ public class MainActivity extends AppCompatActivity
         /**
          * service setUp
           */
-        SharedPreferences setting = getSharedPreferences("setting", MODE_PRIVATE);
-        boolean notificationOpened = setting.getBoolean("notification_setting",false);
-        if (notificationOpened){
-            threadPool.execute(updateShots());
-            boolean shouldStartAlarm = !UpdateService.isServiceAlarmOn(this);
-            UpdateService.setServiceAlarm(this, shouldStartAlarm);
-        }else {
-            UpdateService.setServiceAlarm(this, false);
-        }
+
+        threadPool.execute(updateShots());
+        boolean shouldStartAlarm = !UpdateService.isServiceAlarmOn(this);
+        UpdateService.setServiceAlarm(this, shouldStartAlarm);
 
     }
 

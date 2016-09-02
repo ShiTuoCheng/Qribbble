@@ -50,6 +50,7 @@ public class SettingFragment extends PreferenceFragment {
      */
     private Preference preference;
     private SwitchPreference switchPreference;
+    private Preference timePreference;
     private boolean isLogin;
     private ProgressDialog progressDialog;
 
@@ -137,7 +138,10 @@ public class SettingFragment extends PreferenceFragment {
         final SharedPreferences.Editor settingEditor = getActivity().getSharedPreferences("setting", MODE_PRIVATE).edit();
 
         SharedPreferences getSetting = getActivity().getSharedPreferences("setting", MODE_PRIVATE);
-        switchPreference.setChecked(getSetting.getBoolean("notification_setting", false));
+        boolean isChecked = getSetting.getBoolean("notification_setting", false);
+        switchPreference.setChecked(isChecked);
+        timePreference.setEnabled(isChecked);
+        timePreference.setSelectable(isChecked);
         switchPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -147,10 +151,14 @@ public class SettingFragment extends PreferenceFragment {
                     isNotificationCheck = true;
                     settingEditor.putBoolean("notification_setting",true);
                     settingEditor.apply();
+                    timePreference.setEnabled(true);
+                    timePreference.setSelectable(true);
                 }else {
                     isNotificationCheck = false;
                     settingEditor.putBoolean("notification_setting",false);
                     settingEditor.apply();
+                    timePreference.setEnabled(false);
+                    timePreference.setSelectable(false);
                 }
                 return true;
             }
@@ -210,9 +218,16 @@ public class SettingFragment extends PreferenceFragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handlerThread.quitSafely();
+    }
+
     private void initPreference(){
         preference = (Preference)findPreference(getResources().getString(R.string.login_in));
         switchPreference = (SwitchPreference)findPreference(getString(R.string.notification_setting));
+        timePreference = (Preference)findPreference(getString(R.string.notification_setting_time));
     }
 
     private boolean initData(){
@@ -229,9 +244,6 @@ public class SettingFragment extends PreferenceFragment {
         }else {
             return true;
         }
-    }
-
-    private void initSetting(){
     }
 
     private Bundle fetchUserData(final String code){
