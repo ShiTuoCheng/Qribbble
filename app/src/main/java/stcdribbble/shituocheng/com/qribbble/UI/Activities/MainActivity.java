@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
                 String url = "https://dribbble.com/oauth/authorize?client_id=18163f14877c483e440804ad5e0ce54c53b09f41ff87bdce332b3c734f312583&scope=public+write+comment+upload";
                 Intent intent = new Intent(MainActivity.this, LoginInActivity.class);
                 intent.putExtra("url",url);
-                startActivityForResult(intent,0);
+                startActivityForResult(intent,1);
             }
         });
 
@@ -117,6 +117,11 @@ public class MainActivity extends AppCompatActivity
             user_name_textView.setText("");
             circularNetworkImageView.setImageUrl(null,imageLoader);
             login_in_textView.setClickable(!isLogin);
+        }else {
+            circularNetworkImageView.setImageUrl(user_avatar, imageLoader);
+            login_in_textView.setText(user_name);
+            user_name_textView.setText(name);
+            login_in_textView.setClickable(false);
         }
     }
 
@@ -242,7 +247,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK && requestCode==0){
+        if(resultCode==RESULT_OK && requestCode==1){
 
             progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setMessage(getString(R.string.success_login));

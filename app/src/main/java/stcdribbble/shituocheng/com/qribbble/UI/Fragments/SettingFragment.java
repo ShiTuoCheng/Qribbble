@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
@@ -50,7 +51,7 @@ public class SettingFragment extends PreferenceFragment {
      */
     private Preference preference;
     private SwitchPreference switchPreference;
-    private Preference timePreference;
+    private ListPreference timePreference;
     private boolean isLogin;
     private ProgressDialog progressDialog;
 
@@ -125,7 +126,7 @@ public class SettingFragment extends PreferenceFragment {
                     String url = "https://dribbble.com/oauth/authorize?client_id=18163f14877c483e440804ad5e0ce54c53b09f41ff87bdce332b3c734f312583&scope=public+write+comment+upload";
                     Intent intent = new Intent(getActivity(), LoginInActivity.class);
                     intent.putExtra("url",url);
-                    startActivityForResult(intent,0);
+                    startActivityForResult(intent,1);
 
                 }
                 return true;
@@ -169,7 +170,7 @@ public class SettingFragment extends PreferenceFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode==RESULT_OK && requestCode==0){
+        if (resultCode==RESULT_OK && requestCode==1){
 
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage(getString(R.string.success_login));
@@ -221,13 +222,12 @@ public class SettingFragment extends PreferenceFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        handlerThread.quitSafely();
     }
 
     private void initPreference(){
-        preference = (Preference)findPreference(getResources().getString(R.string.login_in));
+        preference = findPreference(getResources().getString(R.string.login_in));
         switchPreference = (SwitchPreference)findPreference(getString(R.string.notification_setting));
-        timePreference = (Preference)findPreference(getString(R.string.notification_setting_time));
+        timePreference = (ListPreference) findPreference(getString(R.string.notification_setting_time));
     }
 
     private boolean initData(){
@@ -301,6 +301,8 @@ public class SettingFragment extends PreferenceFragment {
             editor.putString("name", user_name);
             editor.putString("user_avatar", avatar_img_url);
             editor.apply();
+
+            isLogin = true;
 
             Bundle bundle = new Bundle();
             bundle.putString("user_name",user_name);

@@ -169,7 +169,7 @@ public class ExploreFragment extends BaseFragment {
                     connection.setRequestMethod("GET");
                     connection.connect();
 
-                    Log.d("fetchDataApi", shots_api);
+                    Log.e("fetchDataApi", shots_api);
 
                     inputStream = connection.getInputStream();
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -193,8 +193,12 @@ public class ExploreFragment extends BaseFragment {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             shotsModel.setTitle(jsonObject.getString("title"));
                             JSONObject imageJsonObj = jsonObject.getJSONObject("images");
-                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+
+                            if (imageJsonObj.getString("hidpi").equals("null")){
+                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                            }else {
+                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                            }
                             shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
                             shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
                             shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
@@ -218,8 +222,11 @@ public class ExploreFragment extends BaseFragment {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             shotsModel.setTitle(jsonObject.getString("title"));
                             JSONObject imageJsonObj = jsonObject.getJSONObject("images");
-                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                            if (imageJsonObj.getString("hidpi").equals("null")){
+                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                            }else {
+                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                            }
                             shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
                             shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
                             shotsModel.setShots_view_count(jsonObject.getInt("views_count"));

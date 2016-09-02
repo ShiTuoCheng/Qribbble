@@ -34,7 +34,10 @@ public class UpdateService extends IntentService {
 
     private static final String TAG="UPDATE_SERVICE";
 
-    private static final int POLL_INTERVAL=1000 * 15 * 60;
+    private static final int FIVE_MINUTES_POLL_INTERVAL=1000 * 5 * 60; //5 minutes
+    private static final int FIFTEEN_MINUTES_POLL_INTERVAL=1000 * 15 * 60; //15 minutes
+    private static final int ONE_HOUR_POLL_INTERVAL=1000 * 60 * 60; // 1 hour
+    private static final int FIVE_HOUR_POLL_INTERVAL=1000 * 5 * 60 * 60; //5 hours
 
     private String user;
 
@@ -132,7 +135,7 @@ public class UpdateService extends IntentService {
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         if (isOn){
-            alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), POLL_INTERVAL, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), FIVE_MINUTES_POLL_INTERVAL, pendingIntent);
         }else{
             alarmManager.cancel(pendingIntent);
             pendingIntent.cancel();

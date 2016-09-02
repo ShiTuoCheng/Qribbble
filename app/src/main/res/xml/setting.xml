@@ -14,9 +14,18 @@
             android:key="@string/notification_setting"
             android:title="Enable Notification (beta)"
             />
-        <Preference
+        <ListPreference
             android:key="@string/notification_setting_time"
             android:title="Setting Notification Time (beta)"
-            android:summary="set the time in terval to automatically send notifications"/>
+            android:summary="set the time in terval to automatically send notifications"
+            android:entries="@array/notification_time_array"
+            android:entryValues="@array/notification_time_array"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Storage">
+        <Preference
+            android:key="@string/clear_cache"
+            android:title="Clear Cache"/>
     </PreferenceCategory>
 </PreferenceScreen>

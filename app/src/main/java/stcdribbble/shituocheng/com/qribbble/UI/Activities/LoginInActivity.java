@@ -41,6 +41,7 @@ public class LoginInActivity extends AppCompatActivity {
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setAppCacheMaxSize(1);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setSavePassword(false);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         /*
@@ -112,7 +113,6 @@ public class LoginInActivity extends AppCompatActivity {
         super.onDestroy();
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.removeAllCookie();
-        cookieManager.setAcceptCookie(false);
     }
 
     private String getCodeFromUrl(String url) {
