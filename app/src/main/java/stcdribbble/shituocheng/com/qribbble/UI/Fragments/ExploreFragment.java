@@ -200,6 +200,7 @@ public class ExploreFragment extends BaseFragment {
                                 shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
                             }
                             shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
                             shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
                             shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
                             shotsModel.setAnimated(jsonObject.getBoolean("animated"));
@@ -227,6 +228,7 @@ public class ExploreFragment extends BaseFragment {
                             }else {
                                 shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
                             }
+                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
                             shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
                             shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
                             shotsModel.setShots_view_count(jsonObject.getInt("views_count"));

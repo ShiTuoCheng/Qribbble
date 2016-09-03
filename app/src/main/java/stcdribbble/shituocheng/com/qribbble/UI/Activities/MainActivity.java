@@ -5,12 +5,15 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
@@ -57,6 +60,8 @@ public class MainActivity extends AppCompatActivity
     private TextView user_name_textView;
     public static boolean isLogin;
 
+    private String user_name_string;
+
     public static final String CHECK_SERVICE = "checkUpdate";
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
@@ -85,12 +90,15 @@ public class MainActivity extends AppCompatActivity
         String user_name = sharedPreferences.getString("user_name","");
         String name = sharedPreferences.getString("name","");
         String user_avatar = sharedPreferences.getString("user_avatar","");
+        user_name_string = sharedPreferences.getString("user_name","");
         if (!access_token.isEmpty()){
             isLogin = true;
             login_in_textView.setText(user_name);
             user_name_textView.setText(name);
             circularNetworkImageView.setImageUrl(user_avatar,imageLoader);
             login_in_textView.setClickable(!isLogin);
+        }else {
+            isLogin = false;
         }
         /**
          * service setUp
@@ -203,10 +211,27 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.profile) {
 
+            item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+
+                    if (!isLogin){
+                        Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
+                    }else {
+                        Intent intent = new Intent(MainActivity.this, UserDetailActivity.class);
+                        intent.putExtra("user_name",user_name_string);
+                        startActivity(intent);
+                    }
+                    return true;
+                }
+            });
+
         } else if (id == R.id.setting) {
+
 
             Intent intent = new Intent(this, SettingActivity.class);
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+
 
         } else if (id == R.id.nav_share) {
 
@@ -312,9 +337,10 @@ public class MainActivity extends AppCompatActivity
                     JSONObject user_jsonObj = new JSONObject(user_stringBuilder.toString());
                     final String avatar_img_url = user_jsonObj.getString("avatar_url");
                     final String login_user_name = user_jsonObj.getString("username");
+                    user_name_string = user_jsonObj.getString("username");
                     final String user_name = user_jsonObj.getString("name");
 
-                    SharedPreferences.Editor editor = getSharedPreferences("user_login_data", MODE_PRIVATE).edit();
+                    SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("user_login_data", MODE_PRIVATE).edit();
                     editor.putString("access_token", access_token);
                     editor.putString("user_name", login_user_name);
                     editor.putString("name", user_name);
