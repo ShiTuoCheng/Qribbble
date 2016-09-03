@@ -28,7 +28,9 @@ public class SearchResultActivity extends AppCompatActivity {
         }
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle(search_string);
+    }
 
+    private Runnable query(String search_string){
 
     }
 
