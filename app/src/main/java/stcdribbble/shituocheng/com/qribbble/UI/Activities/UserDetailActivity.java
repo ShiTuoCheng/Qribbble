@@ -66,6 +66,9 @@ public class UserDetailActivity extends AppCompatActivity {
                 if (name.equals(user_name)){
                     follow_button.setText("My Profile");
                     follow_button.setEnabled(false);
+                }else {
+                    follow_button.setText("Follow");
+                    follow_button.setEnabled(true);
                 }
             }else {
                 follow_button.setText("Follow");
