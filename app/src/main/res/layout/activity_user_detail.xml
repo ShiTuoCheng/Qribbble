@@ -17,20 +17,53 @@
             android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="350dp"
-            app:contentScrim="?attr/colorPrimary"
+            android:background="#ffffff"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <com.android.volley.toolbox.NetworkImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/user_detail_backdrop"
+                    />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/rectangle"
+                    android:scaleType="fitXY"/>
+
                 <stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:id="@+id/user_detail_avatar"
-                    android:layout_margin="6dp"
-                    android:layout_alignStart="@+id/user_name_textView"
-                    android:layout_alignParentTop="true" />
+                    android:layout_marginTop="16dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/user_name_textView"
+                    android:layout_below="@id/user_detail_avatar"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/name_textView"
+                    android:layout_below="@id/user_name_textView"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:textSize="20sp"
+                    android:textColor="#ffffff"/>
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/follow_button"
@@ -39,25 +72,9 @@
                     android:background="@color/colorAccent"
                     android:textColor="#ffffff"
                     android:textStyle="bold"
-                    android:layout_above="@+id/user_name_textView"
-                    android:layout_alignEnd="@+id/user_name_textView" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/user_name_textView"
-                    android:layout_below="@id/user_detail_avatar"
-                    android:layout_margin="6dp"
-                    android:textColor="#ffffff"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/name_textView"
-                    android:layout_below="@id/user_name_textView"
-                    android:layout_margin="6dp"
-                    android:textColor="#ffffff"/>
+                    android:layout_marginEnd="16dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
 

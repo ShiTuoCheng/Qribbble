@@ -31,7 +31,13 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     private Runnable query(String search_string){
+        return new Runnable(){
 
+            @Override
+            public void run() {
+
+            }
+        };
     }
 
 }

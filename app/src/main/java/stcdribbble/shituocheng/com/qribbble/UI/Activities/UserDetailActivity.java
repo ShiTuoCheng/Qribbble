@@ -102,9 +102,13 @@ public class UserDetailActivity extends AppCompatActivity {
                         stringBuilder.append(line);
                     }
                     JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-                    final String user_name = jsonObject.getString("user_name");
+                    final String user_name = jsonObject.getString("username");
                     final String name = jsonObject.getString("name");
                     final String user_avatar = jsonObject.getString("avatar_url");
+
+                    Log.d("user_name", user_name);
+                    Log.d("name",name);
+                    Log.d("user_avatar",user_avatar);
 
                     runOnUiThread(new Runnable() {
                         @Override

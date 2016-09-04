@@ -215,7 +215,10 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
 
-                    if (!isLogin){
+                    SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
+                    String access_token = sharedPreferences.getString("access_token","");
+
+                    if (access_token.isEmpty()){
                         Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
                     }else {
                         Intent intent = new Intent(MainActivity.this, UserDetailActivity.class);
