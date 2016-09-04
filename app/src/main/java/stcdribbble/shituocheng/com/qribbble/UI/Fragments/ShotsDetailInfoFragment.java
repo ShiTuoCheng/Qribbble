@@ -1,6 +1,7 @@
 package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
+import stcdribbble.shituocheng.com.qribbble.UI.Activities.UserDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
@@ -101,7 +104,7 @@ public class ShotsDetailInfoFragment extends BaseFragment {
                     final String shots_description = jsonObject.getString("description");
                     JSONObject userJsonObj = jsonObject.getJSONObject("user");
                     final String shots_author_name = userJsonObj.getString("name");
-                    String shots_author_username = userJsonObj.getString("username");
+                    final String shots_author_username = userJsonObj.getString("username");
                     boolean isPro = userJsonObj.getBoolean("pro");
                     final JSONArray tagsArray = jsonObject.getJSONArray("tags");
                     for (int i=0; i<tagsArray.length(); i++){
@@ -146,6 +149,15 @@ public class ShotsDetailInfoFragment extends BaseFragment {
                             tagsRecyclerView.setLayoutManager(linearLayoutManager);
                             tagsRecyclerView.setAdapter(tagAdapter);
                             tagsRecyclerView.setNestedScrollingEnabled(false);
+                            shots_author_avatar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(getActivity(), UserDetailActivity.class);
+                                    Log.w("test",shots_author_name);
+                                    intent.putExtra("user_name",shots_author_username);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                     });
                 } catch (IOException e) {

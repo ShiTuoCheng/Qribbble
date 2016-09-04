@@ -16,7 +16,7 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="400dp"
             android:background="#ffffff"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -28,6 +28,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/user_detail_backdrop"
+                    android:scaleType="fitXY"
                     />
 
                 <ImageView
@@ -51,6 +52,8 @@
                     android:layout_below="@id/user_detail_avatar"
                     android:layout_marginTop="20dp"
                     android:layout_marginStart="16dp"
+                    android:translationZ="16dp"
+                    android:clickable="true"
                     android:textColor="#ffffff"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -72,14 +75,37 @@
                     android:background="@color/colorAccent"
                     android:textColor="#ffffff"
                     android:textStyle="bold"
-                    android:layout_marginEnd="16dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignBottom="@+id/name_textView"
+                    android:layout_alignEnd="@+id/user_detail_bio" />
+
+                <WebView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/user_detail_bio"
+                    android:layout_below="@id/follow_button"
+                    android:layout_margin="16dp"/>
+
+                <android.support.design.widget.TabLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tabs"
+                    android:background="@android:color/transparent"
+                    app:tabSelectedTextColor="#ffffff"
+                    android:minHeight="?attr/actionBarSize"
+                    android:layout_alignParentBottom="true"/>
+
 
             </RelativeLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/shots_detail_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 
 </android.support.design.widget.CoordinatorLayout>
