@@ -1,13 +1,13 @@
 package stcdribbble.shituocheng.com.qribbble.Adapter;
 
 import android.content.Context;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -80,6 +80,7 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
 
     }
 
+    /*
     public static class ProgressViewHolder extends RecyclerView.ViewHolder{
 
         public ProgressBar progressBar;
@@ -89,6 +90,7 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
             progressBar = (ProgressBar)itemView.findViewById(R.id.progress_bar);
         }
     }
+    */
 
     public ShotsRecyclerViewAdapter(List<ShotsModel> shotsModels, Context context) {
         mShotsModels = shotsModels;

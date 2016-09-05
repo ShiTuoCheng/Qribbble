@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
@@ -45,6 +47,8 @@ public class UserDetailActivity extends AppCompatActivity {
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
+    private boolean isFollow = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,26 +58,46 @@ public class UserDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         setUpView();
-        String user_name = initData();
+        final String user_name = initData();
         Intent intent = getIntent();
         if (intent != null){
-            String name = intent.getStringExtra("user_name");
+            final String name = intent.getStringExtra("user_name");
             Log.d("name", name);
             //Log.d("user_name", user_name);
-            threadPool.execute(fetchData(name));
 
             if (user_name != null){
                 if (name.equals(user_name)){
                     follow_button.setText("My Profile");
                     follow_button.setEnabled(false);
                 }else {
-                    follow_button.setText("Follow");
-                    follow_button.setEnabled(true);
+                    threadPool.execute(isFollowUser(name));
+                    follow_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isFollow){
+                                isFollow = false;
+                                follow_button.setText("Follow");
+                                threadPool.execute(followUser(name, isFollow));
+
+                            }else {
+                                isFollow = true;
+                                follow_button.setText("UnFollow");
+                                threadPool.execute(followUser(name, isFollow));
+                            }
+                        }
+                    });
                 }
             }else {
-                follow_button.setText("Follow");
-                follow_button.setEnabled(true);
+                threadPool.execute(isFollowUser(user_name));
+                follow_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Snackbar.make(v,"Please login your Dribble account",Snackbar.LENGTH_SHORT).show();
+                    }
+                });
             }
+
+            threadPool.execute(fetchData(name));
         }
     }
 
@@ -148,10 +172,81 @@ public class UserDetailActivity extends AppCompatActivity {
                             }
                         }
                     });
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    private Runnable isFollowUser(final String user_name){
+
+        return new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection;
+                SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
+                String access_token = sharedPreferences.getString("access_token",null);
+                String api = API.generic_api + "user/following/" + user_name + "?access_token=" + access_token;
+
+                try {
+                    connection = (HttpURLConnection)new URL(api).openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.connect();
+
+                    final int code = connection.getResponseCode();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (code == 204){
+                                follow_button.setEnabled(true);
+                                follow_button.setText("Unfollow");
+                                isFollow = true;
+                            }else if (code == 404){
+                                follow_button.setEnabled(true);
+                                follow_button.setText("follow");
+                                isFollow = false;
+                            }
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        };
+    }
+
+    private Runnable followUser(final String user_name, final boolean isFollow){
+        return new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection;
+                SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
+                String access_token = sharedPreferences.getString("access_token",null);
+                Log.d("access",access_token);
+                String api = API.generic_api + "users/"+user_name+"/follow?access_token="+access_token;
+                Log.d("api",api);
+
+                try {
+                    connection = (HttpURLConnection)new URL(api).openConnection();
+
+                    if (!isFollow){
+                        connection.setRequestMethod("PUT");
+                    }else {
+                        connection.setRequestMethod("DELETE");
+                    }
+                    connection.connect();
+
+                    int code = connection.getResponseCode();
+                    Log.d("code", String.valueOf(code));
+
+                    connection.disconnect();
+
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

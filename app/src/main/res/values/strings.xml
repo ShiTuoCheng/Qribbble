@@ -26,6 +26,8 @@
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="title_activity_search_result">SearchResultActivity</string>
     <string name="title_activity_user_detail">UserDetailActivity</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 
 
 </resources>
