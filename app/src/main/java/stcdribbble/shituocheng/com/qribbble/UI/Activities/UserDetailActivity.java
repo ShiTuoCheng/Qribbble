@@ -88,7 +88,9 @@ public class UserDetailActivity extends AppCompatActivity {
                     });
                 }
             }else {
-                threadPool.execute(isFollowUser(user_name));
+                threadPool.execute(isFollowUser(name));
+                follow_button.setText("Follow");
+                follow_button.setEnabled(true);
                 follow_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -203,11 +205,11 @@ public class UserDetailActivity extends AppCompatActivity {
                             if (code == 204){
                                 follow_button.setEnabled(true);
                                 follow_button.setText("Unfollow");
-                                isFollow = true;
+                                isFollow = false;
                             }else if (code == 404){
                                 follow_button.setEnabled(true);
                                 follow_button.setText("follow");
-                                isFollow = false;
+                                isFollow = true;
                             }
                         }
                     });
