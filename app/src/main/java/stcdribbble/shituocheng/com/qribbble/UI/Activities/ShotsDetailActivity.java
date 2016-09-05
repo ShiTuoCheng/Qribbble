@@ -71,8 +71,6 @@ public class ShotsDetailActivity extends AppCompatActivity {
     private String imageName;
     private int id;
 
-    private String isLike;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -206,42 +204,6 @@ public class ShotsDetailActivity extends AppCompatActivity {
                 }
             }
         };
-        /*
-        new Thread(new Runnable() {
-            HttpURLConnection connection;
-            InputStream inputStream;
-            String api = API.generic_api+"shots/"+String.valueOf(shots_id)+"/like"+ "?access_token="+access_token;
-            @Override
-            public void run() {
-
-                try {
-                    connection = (HttpURLConnection)new URL(api).openConnection();
-                    if (!isLiked){
-                        connection.setRequestMethod("POST");
-                    }else {
-                        connection.setRequestMethod("DELETE");
-                    }
-                    connection.connect();
-
-                    inputStream = connection.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    while ((line = bufferedReader.readLine())!=null){
-                        stringBuilder.append(line);
-                    }
-
-                    inputStream.close();
-                    connection.disconnect();
-                    Log.d("like",stringBuilder.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        }).start();
-        */
             return runnable;
     }
 
@@ -379,17 +341,6 @@ public class ShotsDetailActivity extends AppCompatActivity {
                 break;
         }
     }
-
-    /*
-    private class CheckIsLike extends AsyncTask<String,Void,Void>{
-
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            return null;
-        }
-    }
-    */
 
     ExecutorService pool = Executors.newCachedThreadPool();
 
