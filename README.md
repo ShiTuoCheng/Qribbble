@@ -7,3 +7,5 @@ This is a third-party client for Dribbble website
 上传模块， 发送评论模块
 
 ![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot1.jpg)
+![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot2.jpg)
+![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot3.jpg)
