@@ -76,13 +76,15 @@ public class UserDetailActivity extends AppCompatActivity {
                         public void onClick(View v) {
                             if (isFollow){
                                 isFollow = false;
-                                follow_button.setText("Follow");
+                                follow_button.setText("UnFollow");
                                 threadPool.execute(followUser(name, isFollow));
+                                Snackbar.make(v,"Follow successfully!!",Snackbar.LENGTH_SHORT).show();
 
                             }else {
                                 isFollow = true;
-                                follow_button.setText("UnFollow");
+                                follow_button.setText("Follow");
                                 threadPool.execute(followUser(name, isFollow));
+                                Snackbar.make(v,"UnFollow successfully!!",Snackbar.LENGTH_SHORT).show();
                             }
                         }
                     });
