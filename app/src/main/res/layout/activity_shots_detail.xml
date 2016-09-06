@@ -39,7 +39,7 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="90dp"
+                android:layout_height="150dp"
                 android:gravity="top"
                 android:minHeight="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="right|bottom"
+        app:layout_anchorGravity="bottom|right"
         android:src="@drawable/ic_favorite_border_white_24dp"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"/>

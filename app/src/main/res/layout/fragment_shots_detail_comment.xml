@@ -7,10 +7,7 @@
     tools:context="stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailCommentFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/shots_detail_comment_recyclerView"/>
+
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -18,7 +15,7 @@
         android:background="@color/colorPrimary"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/toolbar2">
+        android:id="@+id/comment_toolBar">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -50,6 +47,13 @@
 
 
     </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_above="@id/shots_detail_comment_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/shots_detail_comment_recyclerView"/>
 
 
 </RelativeLayout>
