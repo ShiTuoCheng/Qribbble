@@ -49,9 +49,9 @@
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
-        android:layout_above="@id/shots_detail_comment_recyclerView"
+        android:layout_above="@id/comment_toolBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
 
         android:id="@+id/shots_detail_comment_recyclerView"/>
 
