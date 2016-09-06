@@ -47,6 +47,7 @@ import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
@@ -68,6 +69,8 @@ public class ExploreFragment extends BaseFragment {
     private String list_string;
     private String timeframe_string;
 
+    private int current_page = 1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,11 +88,10 @@ public class ExploreFragment extends BaseFragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                 String[] list = getResources().getStringArray(R.array.list_array);
-                Toast.makeText(getActivity(), "你点击的是:"+list[i], Toast.LENGTH_SHORT).show();
                 list_string = list[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(sort_string, list_string, timeframe_string));
+                threadPool.execute(fetchData(sort_string, list_string, timeframe_string, true));
                 //execute(list[i]);
             }
 
@@ -108,11 +110,10 @@ public class ExploreFragment extends BaseFragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String[] sort = getResources().getStringArray(R.array.sort_array);
-                Toast.makeText(getActivity(), "你点击的是:"+sort[i], Toast.LENGTH_SHORT).show();
                 sort_string = sort[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
+                threadPool.execute(fetchData(list_string, sort_string, timeframe_string, true));
             }
 
             @Override
@@ -133,7 +134,7 @@ public class ExploreFragment extends BaseFragment {
                 timeframe_string = timeframe[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
+                threadPool.execute(fetchData(list_string, sort_string, timeframe_string, true));
             }
 
             @Override
@@ -143,6 +144,28 @@ public class ExploreFragment extends BaseFragment {
         });
 
         //setUp explore_recyclerView
+
+        explore_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            boolean isSlidingtoLast = false;
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
+                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                    int lastItemPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+                    int totalItemCount = linearLayoutManager.getItemCount();
+                    if (lastItemPosition == (totalItemCount - 1) && isSlidingtoLast){
+                        threadPool.execute(fetchData(list_string, sort_string, timeframe_string, false));
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                isSlidingtoLast = dy > 0;
+            }
+        });
 
         return v;
     }
@@ -156,7 +179,7 @@ public class ExploreFragment extends BaseFragment {
         explore_recyclerView = (RecyclerView)view.findViewById(R.id.explore_recyclerView);
     }
 
-    public Runnable fetchData(final String shots_list, final String shots_sort, final String shots_timeframe){
+    public Runnable fetchData(final String shots_list, final String shots_sort, final String shots_timeframe, final boolean isFirstLoading){
 
         Runnable runnable = new Runnable() {
             HttpURLConnection connection = null;
@@ -164,127 +187,194 @@ public class ExploreFragment extends BaseFragment {
             String shots_api = API.getSortsShotsApi(shots_list, shots_sort, shots_timeframe);
             @Override
             public void run() {
-                try {
-                    connection = (HttpURLConnection) new URL(shots_api).openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.connect();
+                if (isFirstLoading){
+                    try {
+                        connection = (HttpURLConnection) new URL(shots_api).openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.connect();
 
-                    Log.e("fetchDataApi", shots_api);
+                        Log.e("fetchDataApi", shots_api);
 
-                    inputStream = connection.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                        inputStream = connection.getInputStream();
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
-                    String line;
-                    StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        StringBuilder stringBuilder = new StringBuilder();
 
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line);
-                    }
-
-                    inputStream.close();
-                    connection.disconnect();
-
-                    JSONArray jsonArray = new JSONArray(stringBuilder.toString());
-
-                    if (shotsModels.size() == 0){
-                        for (int i = 0; i < jsonArray.length(); i++) {
-
-                            ShotsModel shotsModel = new ShotsModel();
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            shotsModel.setTitle(jsonObject.getString("title"));
-                            JSONObject imageJsonObj = jsonObject.getJSONObject("images");
-
-                            if (imageJsonObj.getString("hidpi").equals("null")){
-                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
-                            }else {
-                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
-                            }
-                            shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
-                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                            shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
-                            shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
-                            shotsModel.setAnimated(jsonObject.getBoolean("animated"));
-                            shotsModel.setShots_id(jsonObject.getInt("id"));
-
-                            JSONObject userJsonObj = jsonObject.getJSONObject("user");
-                            shotsModel.setShots_author_name(userJsonObj.getString("username"));
-                            shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
-
-                            shotsModels.add(shotsModel);
-
-                            Log.d("fragment", String.valueOf(shotsModels.size()));
-
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(line);
                         }
-                    }else {
-                        shotsModels.clear();
-                        for (int i = 0; i < jsonArray.length(); i++) {
 
-                            ShotsModel shotsModel = new ShotsModel();
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            shotsModel.setTitle(jsonObject.getString("title"));
-                            JSONObject imageJsonObj = jsonObject.getJSONObject("images");
-                            if (imageJsonObj.getString("hidpi").equals("null")){
-                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
-                            }else {
-                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
-                            }
-                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                            shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
-                            shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
-                            shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
-                            shotsModel.setAnimated(jsonObject.getBoolean("animated"));
-                            shotsModel.setShots_id(jsonObject.getInt("id"));
+                        inputStream.close();
+                        connection.disconnect();
 
-                            JSONObject userJsonObj = jsonObject.getJSONObject("user");
-                            shotsModel.setShots_author_name(userJsonObj.getString("username"));
-                            shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
 
-                            shotsModels.add(shotsModel);
+                        if (shotsModels.size() == 0){
+                            for (int i = 0; i < jsonArray.length(); i++) {
 
-                            Log.d("fragment", String.valueOf(shotsModels.size()));
+                                ShotsModel shotsModel = new ShotsModel();
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                shotsModel.setTitle(jsonObject.getString("title"));
+                                JSONObject imageJsonObj = jsonObject.getJSONObject("images");
 
-                        }
-                    }
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBar.setVisibility(View.GONE);
-                            ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
-                            shotsRecyclerViewAdapter.notifyDataSetChanged();
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                            explore_recyclerView.setAdapter(shotsRecyclerViewAdapter);
-                            explore_recyclerView.setLayoutManager(linearLayoutManager);
-                            explore_recyclerView.setVisibility(View.VISIBLE);
-                            shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
-                                @Override
-                                public void OnItemClick(View v, int position) {
-                                    Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
-                                    ShotsModel shotsModel = shotsModels.get(position);
-                                    String imageUrl = shotsModel.getShots_thumbnail_url();
-                                    String fullImageUrl = shotsModel.getShots_full_imageUrl();
-
-                                    Log.d("fullIamgeUrl", fullImageUrl);
-                                    String imageName = shotsModel.getTitle();
-                                    int id = shotsModel.getShots_id();
-                                    boolean isGif = shotsModel.isAnimated();
-                                    intent.putExtra("imageName",imageName);
-                                    intent.putExtra("imageURL",imageUrl);
-                                    intent.putExtra("isGif",isGif);
-                                    intent.putExtra("fullImageUrl",fullImageUrl);
-                                    intent.putExtra("id",id);
-
-                                    AnimationUtils.show(v);
-                                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                                if (imageJsonObj.getString("hidpi").equals("null")){
+                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                                }else {
+                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
                                 }
-                            });
+                                shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                                shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                                shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                                shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                                shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                                shotsModel.setShots_id(jsonObject.getInt("id"));
+
+                                JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                                shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                                shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                                shotsModels.add(shotsModel);
+
+                                Log.d("fragment", String.valueOf(shotsModels.size()));
+
+                            }
+                        }else {
+                            shotsModels.clear();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+
+                                ShotsModel shotsModel = new ShotsModel();
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                shotsModel.setTitle(jsonObject.getString("title"));
+                                JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+                                if (imageJsonObj.getString("hidpi").equals("null")){
+                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                                }else {
+                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                }
+                                shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                                shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                                shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                                shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                                shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                                shotsModel.setShots_id(jsonObject.getInt("id"));
+
+                                JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                                shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                                shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                                shotsModels.add(shotsModel);
+
+                                Log.d("fragment", String.valueOf(shotsModels.size()));
+
+                            }
                         }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setVisibility(View.GONE);
+                                ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
+                                shotsRecyclerViewAdapter.notifyDataSetChanged();
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                                explore_recyclerView.setAdapter(shotsRecyclerViewAdapter);
+                                explore_recyclerView.setLayoutManager(linearLayoutManager);
+                                explore_recyclerView.setVisibility(View.VISIBLE);
+                                shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
+                                    @Override
+                                    public void OnItemClick(View v, int position) {
+                                        Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
+                                        ShotsModel shotsModel = shotsModels.get(position);
+                                        String imageUrl = shotsModel.getShots_thumbnail_url();
+                                        String fullImageUrl = shotsModel.getShots_full_imageUrl();
+
+                                        Log.d("fullIamgeUrl", fullImageUrl);
+                                        String imageName = shotsModel.getTitle();
+                                        int id = shotsModel.getShots_id();
+                                        boolean isGif = shotsModel.isAnimated();
+                                        intent.putExtra("imageName",imageName);
+                                        intent.putExtra("imageURL",imageUrl);
+                                        intent.putExtra("isGif",isGif);
+                                        intent.putExtra("fullImageUrl",fullImageUrl);
+                                        intent.putExtra("id",id);
+
+                                        AnimationUtils.show(v);
+                                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                                    }
+                                });
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    current_page +=1;
+                    String loadMore = API.generic_api+"shots"+"?"+"list="+shots_list+"&"+"sort="+shots_sort+"&"+"timeframe="+shots_timeframe+"&page="+current_page+"&access_token="+ Access_Token.access_token;
+                    try {
+                        connection = (HttpURLConnection) new URL(loadMore).openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.connect();
+
+                        Log.e("loadMore", loadMore);
+
+                        inputStream = connection.getInputStream();
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                        String line;
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(line);
+                        }
+
+                        inputStream.close();
+                        connection.disconnect();
+
+                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+
+                                ShotsModel shotsModel = new ShotsModel();
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                shotsModel.setTitle(jsonObject.getString("title"));
+                                JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+
+                                if (imageJsonObj.getString("hidpi").equals("null")){
+                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                                }else {
+                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                }
+                                shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                                shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                                shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                                shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                                shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                                shotsModel.setShots_id(jsonObject.getInt("id"));
+
+                                JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                                shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                                shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                                shotsModels.add(shotsModel);
+
+                                Log.d("fragment", String.valueOf(shotsModels.size()));
+
+                            }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
+                                shotsRecyclerViewAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
