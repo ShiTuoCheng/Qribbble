@@ -97,6 +97,7 @@ public class ShotsDetailActivity extends AppCompatActivity {
         final ShotsDetailFavoriteFragment shotsDetailFavoriteFragment = new ShotsDetailFavoriteFragment();
 
         fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab.animate();
         SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
         final String access_token = sharedPreferences.getString("access_token","");
 
@@ -221,7 +222,7 @@ public class ShotsDetailActivity extends AppCompatActivity {
 
         detailViewPagerAdapter.notifyDataSetChanged();
 
-        viewPager.setOffscreenPageLimit(0);
+        viewPager.setOffscreenPageLimit(tabLayout.getTabCount() * 10);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

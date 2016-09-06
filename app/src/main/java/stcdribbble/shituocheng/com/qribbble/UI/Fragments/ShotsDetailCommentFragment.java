@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -103,7 +104,24 @@ public class ShotsDetailCommentFragment extends Fragment {
                             CommentModel commentModel = new CommentModel();
                             JSONObject eachCommentObj = comments_jsonArray.getJSONObject(i);
                             commentModel.setComment_cotent(eachCommentObj.getString("body"));
+                            JSONObject userJsonObj = eachCommentObj.getJSONObject("user");
+                            commentModel.setComment_user_avatar(userJsonObj.getString("avatar_url"));
+                            commentModel.setComment_user_name(userJsonObj.getString("name"));
+                            commentModels.add(commentModel);
+                        }
 
+                        if (getActivity() != null){
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    CommentAdapter commentAdapter = new CommentAdapter(commentModels);
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                                    shots_detail_comment_recyclerView.setAdapter(commentAdapter);
+                                    shots_detail_comment_recyclerView.setLayoutManager(linearLayoutManager);
+                                    commentAdapter.notifyDataSetChanged();
+                                }
+                            });
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
