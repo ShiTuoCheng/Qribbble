@@ -2,6 +2,7 @@ package stcdribbble.shituocheng.com.qribbble.Adapter;
 
 import android.content.Context;
 import android.os.Message;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +54,7 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
         private TextView each_shots_favorite_times_textView;
         private TextView each_shots_view_times_textView;
         private CircularNetworkImageView each_shots_author_avatar;
+        private CardView cardView;
         private ImageView isGifImageView;
         private OnRecyclerViewOnClickListener listener;
 
@@ -66,6 +68,7 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
             each_shots_review_times_textView = (TextView)itemView.findViewById(R.id.shots_review_times);
             each_shots_view_times_textView = (TextView)itemView.findViewById(R.id.shots_view_times);
             each_shots_author_avatar = (CircularNetworkImageView)itemView.findViewById(R.id.shots_author_avatar);
+            cardView = (CardView)itemView.findViewById(R.id.card_view);
             isGifImageView = (ImageView)itemView.findViewById(R.id.isGif);
             this.listener = listener;
             itemView.setOnClickListener(this);
