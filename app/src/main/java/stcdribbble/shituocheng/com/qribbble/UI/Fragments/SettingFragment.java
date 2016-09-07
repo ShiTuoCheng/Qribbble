@@ -23,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +34,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.Model.LoginUser;
 import stcdribbble.shituocheng.com.qribbble.R;
@@ -54,12 +58,14 @@ public class SettingFragment extends PreferenceFragment {
     private ListPreference timePreference;
     private boolean isLogin;
     private ProgressDialog progressDialog;
+    private Preference cacheClearPreference;
 
     private boolean isNotificationCheck = false;
 
     private static final int MESSAGE_WHAT_NAME=0;
     private static final int MESSAGE_WHAT_USER_NAME=1;
 
+    private ExecutorService threadPool = Executors.newSingleThreadExecutor();
 
     HandlerThread handlerThread;
     Handler threadHandler;
@@ -165,6 +171,20 @@ public class SettingFragment extends PreferenceFragment {
             }
         });
 
+        /**
+         * Clear Cache Preference setUp
+         */
+
+        cacheClearPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                threadPool.execute(clearDiskCache());
+                uiHandler = new Handler(Looper.getMainLooper());
+                uiHandler.post(clearMemory());
+                return true;
+            }
+        });
     }
 
     @Override
@@ -227,7 +247,8 @@ public class SettingFragment extends PreferenceFragment {
     private void initPreference(){
         preference = findPreference(getResources().getString(R.string.login_in));
         switchPreference = (SwitchPreference)findPreference(getString(R.string.notification_setting));
-        timePreference = (ListPreference) findPreference(getString(R.string.notification_setting_time));
+        timePreference = (ListPreference)findPreference(getString(R.string.notification_setting_time));
+        cacheClearPreference = findPreference(getString(R.string.clear_cache));
     }
 
     private boolean initData(){
@@ -318,5 +339,30 @@ public class SettingFragment extends PreferenceFragment {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    /**
+     * Glide Clear Cache
+     * @return
+     */
+    private Runnable clearDiskCache(){
+
+        return new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(getActivity()).clearDiskCache();
+            }
+        };
+    }
+
+    private Runnable clearMemory(){
+
+        return new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(getActivity()).clearMemory();
+            }
+        };
     }
 }

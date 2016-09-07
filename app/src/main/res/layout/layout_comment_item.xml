@@ -20,10 +20,10 @@
         android:layout_toEndOf="@+id/shots_detail_comment_avatar"
         android:layout_marginBottom="9dp" />
 
-    <WebView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/shots_detail_comment_webView"
+        android:id="@+id/shots_detail_comment_textView"
         android:layout_below="@id/shots_detail_comment_name"
         android:padding="16dp"/>
 

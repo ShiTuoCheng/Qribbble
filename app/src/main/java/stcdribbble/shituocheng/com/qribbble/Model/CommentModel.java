@@ -9,6 +9,7 @@ public class CommentModel {
     private String comment_cotent;
     private String comment_user_avatar;
     private String comment_user_name;
+    private String comment_name;
 
 
     public String getComment_cotent() {
@@ -33,5 +34,13 @@ public class CommentModel {
 
     public void setComment_user_name(String comment_user_name) {
         this.comment_user_name = comment_user_name;
+    }
+
+    public String getComment_name() {
+        return comment_name;
+    }
+
+    public void setComment_name(String comment_name) {
+        this.comment_name = comment_name;
     }
 }

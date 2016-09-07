@@ -1,11 +1,15 @@
 package stcdribbble.shituocheng.com.qribbble.Utilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
+
+import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
+import stcdribbble.shituocheng.com.qribbble.UI.Activities.UserDetailActivity;
 
 /**
  * Created by shituocheng on 22/07/2016.
@@ -45,5 +49,21 @@ public class Utils {
 
     public static boolean isAndroid5() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    public static void openProfile(Context context, String author_name) {
+        Intent intent = new Intent(context, UserDetailActivity.class);
+        intent.putExtra("user_name", author_name);
+        context.startActivity(intent);
+    }
+
+    public static void openShotsDetail(Context context, String imageName, String imageUrl, String fullImageUrl, boolean isGif, int id){
+        Intent intent = new Intent(context, ShotsDetailActivity.class);
+        intent.putExtra("imageName",imageName);
+        intent.putExtra("imageURL",imageUrl);
+        intent.putExtra("isGif",isGif);
+        intent.putExtra("fullImageUrl",fullImageUrl);
+        intent.putExtra("id",id);
+        context.startActivity(intent);
     }
 }
