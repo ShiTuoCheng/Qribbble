@@ -16,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -272,6 +273,7 @@ public class ShotsDetailCommentFragment extends Fragment {
             String pish = "<html><head><style type=\"text/css\">@font-face {font-family: MyFont;src: url(\"file:///android_asset/BMitra.ttf\")}body {font-family: MyFont;font-size: medium;text-align: justify;color: #fff; background-color: #000;}a{color:#ff4091; text-decoration:none}</style></head><body>";
             String pas = "</body></html>";
             holder.comment_textView.setText(Html.fromHtml(commentModel.getComment_cotent()));
+            holder.comment_textView.setMovementMethod(LinkMovementMethod.getInstance());
             holder.comment_textView.setTextColor(getResources().getColor(R.color.whiteColor));
             holder.comment_user_name.setText(commentModel.getComment_user_name());
         }
