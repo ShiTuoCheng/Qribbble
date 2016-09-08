@@ -28,4 +28,11 @@
             android:key="@string/clear_cache"
             android:title="Clear Cache"/>
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="About Me">
+        <Preference
+            android:title="stc3033"
+            android:summary="Follow me on Sina Weibo"/>
+    </PreferenceCategory>
 </PreferenceScreen>

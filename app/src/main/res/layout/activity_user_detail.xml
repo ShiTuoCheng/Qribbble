@@ -88,7 +88,7 @@
                     android:layout_alignBottom="@+id/name_textView"
                     android:layout_alignEnd="@+id/user_detail_bio" />
 
-                <WebView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/user_detail_bio"

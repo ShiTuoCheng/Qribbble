@@ -3,7 +3,9 @@ package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -281,6 +283,32 @@ public class ShotsDetailCommentFragment extends Fragment {
         @Override
         public int getItemCount() {
             return commentModels.size();
+        }
+    }
+
+    private class ItemDecoration extends RecyclerView.ItemDecoration{
+
+        int space;
+
+        public ItemDecoration(int space) {
+            this.space = space;
+        }
+
+        @Override
+        public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+            super.onDraw(c, parent, state);
+            c.clipRect(parent.getLeft(), 0, parent.getRight(), 0);
+            c.drawARGB(255, 255, 64, 145);
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            outRect.left = space;
+            outRect.right = space;
+            outRect.bottom = space;
+            if (parent.getChildPosition(view) == 0){
+                outRect.top = space;
+            }
         }
     }
 

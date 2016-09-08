@@ -8,6 +8,8 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -42,7 +44,7 @@ public class UserDetailActivity extends AppCompatActivity {
     private TextView user_name_textView;
     private CircularNetworkImageView name_avatar_imageView;
     private NetworkImageView networkImageView;
-    private WebView user_bio_webView;
+    private TextView user_bio_textView;
 
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
@@ -117,7 +119,7 @@ public class UserDetailActivity extends AppCompatActivity {
         user_name_textView = (TextView)findViewById(R.id.user_name_textView);
         name_avatar_imageView = (CircularNetworkImageView)findViewById(R.id.user_detail_avatar);
         networkImageView = (NetworkImageView)findViewById(R.id.user_detail_backdrop);
-        user_bio_webView = (WebView)findViewById(R.id.user_detail_bio);
+        user_bio_textView = (TextView)findViewById(R.id.user_detail_bio);
     }
 
     private String initData(){
@@ -168,17 +170,18 @@ public class UserDetailActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            user_name_textView.setText(user_name);
-                            name_textView.setText(name);
+                            user_name_textView.setText(name);
+                            name_textView.setText(user_name);
                             name_avatar_imageView.setImageUrl(user_avatar, imageLoader);
                             ImageLoader imageLoader = AppController.getInstance().getImageLoader();
                             networkImageView.setImageUrl(user_avatar, imageLoader);
-                            user_bio_webView.setBackgroundColor(Color.TRANSPARENT);
-                            user_bio_webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+                            user_bio_textView.setBackgroundColor(Color.TRANSPARENT);
+                            user_bio_textView.setTextColor(getResources().getColor(R.color.whiteColor));
                             if (!user_bio.isEmpty()){
-                                user_bio_webView.loadData(WebView_Data, "text/html;charset=UTF-8",null);
+                                user_bio_textView.setText(Html.fromHtml(user_bio));
+                                user_bio_textView.setMovementMethod(LinkMovementMethod.getInstance());
                             }else {
-                                user_bio_webView.loadData(no_introduce, "text/html;charset=UTF-8",null);
+                                user_bio_textView.setText("(No introducing)");
                             }
                         }
                     });
@@ -262,4 +265,6 @@ public class UserDetailActivity extends AppCompatActivity {
             }
         };
     }
+
+
 }

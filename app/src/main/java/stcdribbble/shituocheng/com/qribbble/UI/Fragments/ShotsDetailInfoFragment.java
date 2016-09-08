@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +44,7 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
 public class ShotsDetailInfoFragment extends BaseFragment {
 
     private TextView shots_detail_title;
-    private WebView shots_detail_description;
+    private TextView shots_detail_description;
     private CircularNetworkImageView shots_author_avatar;
     private TextView shots_author_textView;
     private RecyclerView tagsRecyclerView;
@@ -66,7 +68,7 @@ public class ShotsDetailInfoFragment extends BaseFragment {
     public void setUpView(View view){
 
         shots_detail_title = (TextView)view.findViewById(R.id.shots_detail_title);
-        shots_detail_description = (WebView)view.findViewById(R.id.shots_detail_description);
+        shots_detail_description = (TextView) view.findViewById(R.id.shots_detail_description);
         shots_author_avatar = (CircularNetworkImageView)view.findViewById(R.id.shots_detail_avatar);
         shots_author_textView = (TextView)view.findViewById(R.id.shots_author_name);
         tagsRecyclerView = (RecyclerView)view.findViewById(R.id.shots_tag_recyclerView);
@@ -137,9 +139,11 @@ public class ShotsDetailInfoFragment extends BaseFragment {
                             String data = pish + shots_description + pas;
                             String no_descriptions = pish + "(No Descriptions)" + pas;
                             if (shots_description.equals("null")){
-                                shots_detail_description.loadData(no_descriptions ,"text/html;charset=UTF-8",null);
+                                shots_detail_description.setText("no_descriptions");
                             }else {
-                                shots_detail_description.loadData(data,"text/html;charset=UTF-8",null);
+                                shots_detail_description.setText(Html.fromHtml(shots_description));
+                                shots_detail_description.setMovementMethod(LinkMovementMethod.getInstance());
+                                shots_detail_description.setTextColor(getResources().getColor(R.color.whiteColor));
                             }
                             shots_author_avatar.setImageUrl(shots_author_avatar_img, imageLoader);
                             shots_author_textView.setText(shots_author_name);
