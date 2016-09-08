@@ -59,6 +59,8 @@ public class ShotsDetailInfoFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_shots_detail_info, container, false);
 
+
+
         setUpView(view);
         fetchData();
         return view;
@@ -139,7 +141,8 @@ public class ShotsDetailInfoFragment extends BaseFragment {
                             String data = pish + shots_description + pas;
                             String no_descriptions = pish + "(No Descriptions)" + pas;
                             if (shots_description.equals("null")){
-                                shots_detail_description.setText("no_descriptions");
+                                shots_detail_description.setText("No descriptions");
+                                shots_detail_description.setTextColor(getResources().getColor(R.color.whiteColor));
                             }else {
                                 shots_detail_description.setText(Html.fromHtml(shots_description));
                                 shots_detail_description.setMovementMethod(LinkMovementMethod.getInstance());

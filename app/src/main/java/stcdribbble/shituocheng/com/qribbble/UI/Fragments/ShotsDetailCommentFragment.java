@@ -71,6 +71,8 @@ public class ShotsDetailCommentFragment extends Fragment {
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private static final int MESSAGE_WHAT = 0;
 
+    private int current_page = 1;
+
     Handler handler;
 
     public ShotsDetailCommentFragment() {
@@ -86,6 +88,28 @@ public class ShotsDetailCommentFragment extends Fragment {
         final int shots_id = getActivity().getIntent().getIntExtra("id",0);
         setUpView(v);
         threadPool.execute(initComment(String.valueOf(shots_id), true));
+
+        shots_detail_comment_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            boolean isSlidingToLast = false;
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                isSlidingToLast = dy > 0;
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
+                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                    int lastItemPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+                    int totalItemCount = linearLayoutManager.getItemCount();
+                    if (lastItemPosition == (totalItemCount - 1) && isSlidingToLast) {
+                        threadPool.execute(initComment(String.valueOf(shots_id), false));
+                    }
+                }
+            }
+        });
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_login_data",MODE_PRIVATE);
         final String access_token = sharedPreferences.getString("access_token","");
 
@@ -187,7 +211,49 @@ public class ShotsDetailCommentFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }else {
+                    current_page += 1;
+                    String load_more_api = API.generic_api + "shots/"+shots_id+"/comments?page="+ current_page +"&access_token=" + Access_Token.access_token;
+                    try {
+                        connection = (HttpURLConnection)new URL(load_more_api).openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.connect();
 
+                        inputStream = connection.getInputStream();
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                        String line;
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        while ((line = bufferedReader.readLine())!=null){
+                            stringBuilder.append(line);
+                        }
+
+                        JSONArray comments_jsonArray = new JSONArray(stringBuilder.toString());
+                        for (int i = 0; i<comments_jsonArray.length(); i++){
+                            CommentModel commentModel = new CommentModel();
+                            JSONObject eachCommentObj = comments_jsonArray.getJSONObject(i);
+                            commentModel.setComment_cotent(eachCommentObj.getString("body"));
+                            JSONObject userJsonObj = eachCommentObj.getJSONObject("user");
+                            commentModel.setComment_user_avatar(userJsonObj.getString("avatar_url"));
+                            commentModel.setComment_user_name(userJsonObj.getString("name"));
+                            commentModel.setComment_name(userJsonObj.getString("username"));
+                            commentModels.add(commentModel);
+                        }
+
+                        if (getActivity() != null){
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    CommentAdapter commentAdapter = new CommentAdapter(commentModels);
+                                    commentAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+
+                    }
                 }
             }
         };
