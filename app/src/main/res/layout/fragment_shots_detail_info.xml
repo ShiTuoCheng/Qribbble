@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000"
-    tools:context="stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailInfoFragment">
+    tools:context="stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment.ShotsDetailInfoFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <android.support.v4.widget.NestedScrollView
@@ -36,9 +36,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/shots_create_time"
                 android:layout_below="@id/shots_detail_description"
-                android:textSize="20sp"
-                android:textColor="@color/colorAccent"
-                android:padding="6dp"/>
+                android:textSize="25sp"
+                android:textColor="@color/colorAccent"/>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
+package stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment;
 
 
 import android.content.Intent;
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.UserDetailActivity;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.BaseFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;

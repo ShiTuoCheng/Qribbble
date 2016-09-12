@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailCommentFragment;
-import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFavoriteFragment;
-import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailInfoFragment;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment.ShotsDetailCommentFragment;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment.ShotsDetailFavoriteFragment;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment.ShotsDetailInfoFragment;
 
 /**
  * Created by shituocheng on 31/07/2016.

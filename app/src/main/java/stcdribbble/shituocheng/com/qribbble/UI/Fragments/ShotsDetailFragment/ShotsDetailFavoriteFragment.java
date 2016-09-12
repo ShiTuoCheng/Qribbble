@@ -1,10 +1,9 @@
-package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
+package stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment;
 
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,18 +22,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
 import stcdribbble.shituocheng.com.qribbble.Model.UserModel;
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.BaseFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
-import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 /**
  * A simple {@link Fragment} subclass.

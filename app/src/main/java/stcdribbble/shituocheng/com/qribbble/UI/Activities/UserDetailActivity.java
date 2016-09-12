@@ -6,6 +6,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -32,6 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment.UserDetailworksFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
@@ -45,6 +51,8 @@ public class UserDetailActivity extends AppCompatActivity {
     private CircularNetworkImageView name_avatar_imageView;
     private NetworkImageView networkImageView;
     private TextView user_bio_textView;
+    private TabLayout user_detail_tabLayout;
+    private ViewPager user_detail_viewPager;
 
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
@@ -66,6 +74,10 @@ public class UserDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setUpView();
+
+        /**
+         * follow or unfollow functions logic
+         */
         final String user_name = initData();
         Intent intent = getIntent();
         if (intent != null){
@@ -108,7 +120,6 @@ public class UserDetailActivity extends AppCompatActivity {
                     }
                 });
             }
-
             threadPool.execute(fetchData(name));
         }
     }
@@ -120,6 +131,53 @@ public class UserDetailActivity extends AppCompatActivity {
         name_avatar_imageView = (CircularNetworkImageView)findViewById(R.id.user_detail_avatar);
         networkImageView = (NetworkImageView)findViewById(R.id.user_detail_backdrop);
         user_bio_textView = (TextView)findViewById(R.id.user_detail_bio);
+        user_detail_tabLayout = (TabLayout)findViewById(R.id.tabs);
+        user_detail_viewPager = (ViewPager)findViewById(R.id.user_detail_viewpager);
+
+        UserDetailPageAdapter userDetailPageAdapter = new UserDetailPageAdapter(getSupportFragmentManager(), user_detail_tabLayout.getTabCount());
+
+        user_detail_viewPager.setAdapter(userDetailPageAdapter);
+        userDetailPageAdapter.notifyDataSetChanged();
+
+        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("shots"));
+        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("followers"));
+        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("following"));
+
+        user_detail_viewPager.setOffscreenPageLimit(user_detail_tabLayout.getTabCount() * 10);
+        user_detail_viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        user_detail_viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(user_detail_tabLayout));
+
+        user_detail_tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                user_detail_viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private String initData(){
@@ -266,5 +324,36 @@ public class UserDetailActivity extends AppCompatActivity {
         };
     }
 
+    private class UserDetailPageAdapter extends FragmentStatePagerAdapter{
 
+        int number;
+
+        public UserDetailPageAdapter(FragmentManager fm, int number) {
+            super(fm);
+            this.number = number;
+        }
+
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position){
+                case 0:
+                    UserDetailworksFragment userDetailworksFragment = new UserDetailworksFragment();
+                    return userDetailworksFragment;
+                case 1:
+                    UserDetailworksFragment userDetailworksFragment1 = new UserDetailworksFragment();
+                    return userDetailworksFragment1;
+                case 2:
+                    UserDetailworksFragment userDetailworksFragment2 = new UserDetailworksFragment();
+                    return userDetailworksFragment2;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return number;
+        }
+    }
 }

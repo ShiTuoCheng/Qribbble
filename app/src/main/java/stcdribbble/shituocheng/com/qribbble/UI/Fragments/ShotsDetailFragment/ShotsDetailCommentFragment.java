@@ -1,4 +1,4 @@
-package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
+package stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment;
 
 
 import android.content.Intent;
@@ -70,10 +70,11 @@ public class ShotsDetailCommentFragment extends Fragment {
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private static final int MESSAGE_WHAT = 0;
+    private static final int MESSAGE_WHAT_SCROLL_DOWN=1;
 
     private int current_page = 1;
 
-    Handler handler;
+    private Handler handler;
 
     public ShotsDetailCommentFragment() {
         // Required empty public constructor
@@ -98,7 +99,7 @@ public class ShotsDetailCommentFragment extends Fragment {
             }
 
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(final RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
                 if (newState == RecyclerView.SCROLL_STATE_IDLE){
@@ -252,7 +253,12 @@ public class ShotsDetailCommentFragment extends Fragment {
                         e.printStackTrace();
                     } catch (JSONException e) {
                         e.printStackTrace();
-
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Snackbar.make(getView(), "there is nothing else!!", Snackbar.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }
             }
