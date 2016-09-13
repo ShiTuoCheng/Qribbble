@@ -130,6 +130,12 @@ public class ShotsDetailActivity extends AppCompatActivity {
         setUpView();
     }
 
+    /**
+     * 加载资源模块
+     * @param imageString
+     * @param isGif
+     */
+
     private void loadBackdrop(String imageString, boolean isGif) {
 
         final ProgressBar progressBar = (ProgressBar)findViewById(R.id.progress_bar);
@@ -294,6 +300,11 @@ public class ShotsDetailActivity extends AppCompatActivity {
         this.getWindow().setExitTransition(new Explode());
     }
 
+    /**
+     *  下载模块
+     * @param Url
+     */
+
     public void downloadFile(String Url) {
 
         Uri downloadUri = Uri.parse(Url);
@@ -344,6 +355,11 @@ public class ShotsDetailActivity extends AppCompatActivity {
         }
     };
 
+
+    /**
+     * 载入项目是否check
+     * @param shot_id
+     */
 
     private void CheckLike(String shot_id){
 

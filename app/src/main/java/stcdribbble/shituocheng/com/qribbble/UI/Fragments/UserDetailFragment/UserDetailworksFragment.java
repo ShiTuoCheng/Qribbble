@@ -34,8 +34,10 @@ public class UserDetailworksFragment extends Fragment {
 
 
     private void setUpView(View view){
+
         user_detail_works_recyclerView = (RecyclerView)view.findViewById(R.id.user_detail_works_recyclerView);
 
     }
+
 
 }
