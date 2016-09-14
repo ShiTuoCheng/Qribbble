@@ -32,15 +32,20 @@
                 app:elevation="0dp"
                 app:fabSize="mini" />
 
-            <android.support.design.widget.TextInputEditText
-                android:textColorLink="@color/colorAccent"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/comment_input_editText"
-                android:hint="Please Comment something"
-                android:layout_toStartOf="@id/comment_send_fab"
-                android:textColorHint="@color/colorAccent"
-                android:textColor="@color/colorAccent"/>
+                android:layout_toStartOf="@id/comment_send_fab">
+
+                <EditText
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:id="@+id/comment_input_editText"
+                    android:hint="Please Comment something"
+                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@color/colorAccent"
+                    />
+            </android.support.design.widget.TextInputLayout>
 
 
         </RelativeLayout>
