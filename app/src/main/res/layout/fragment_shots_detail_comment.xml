@@ -8,14 +8,13 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:id="@+id/comment_toolBar"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/comment_toolBar">
+        android:layout_alignParentStart="true">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -25,12 +24,13 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:id="@+id/comment_send_fab"
-                android:layout_alignParentEnd="true"
                 android:padding="6dp"
                 android:src="@drawable/ic_menu_send"
                 android:clickable="true"
                 app:elevation="0dp"
-                app:fabSize="mini" />
+                app:fabSize="mini"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -48,10 +48,13 @@
             </android.support.design.widget.TextInputLayout>
 
 
+
+
         </RelativeLayout>
 
 
     </android.support.v7.widget.Toolbar>
+
 
     <android.support.v7.widget.RecyclerView
         android:layout_above="@id/comment_toolBar"
