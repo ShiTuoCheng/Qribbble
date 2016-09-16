@@ -14,11 +14,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -282,8 +285,11 @@ public class ShotsDetailActivity extends AppCompatActivity {
             }
 
         }else if (id == android.R.id.home){
+
+            TransitionInflater transitionInflater = TransitionInflater.from(this);
+            Transition transition = transitionInflater.inflateTransition(R.transition.slide_out);
+            getWindow().setExitTransition(transition);
             this.finish();
-            getWindow().setExitTransition(new Explode());
         }
         return true;
     }
@@ -291,7 +297,6 @@ public class ShotsDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getWindow().setExitTransition(new Explode());
     }
 
     @Override

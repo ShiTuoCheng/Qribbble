@@ -94,6 +94,10 @@ public class UpdateService extends IntentService {
 
     }
 
+    /**
+     * update new shots in the backdround.
+     * @return
+     */
     public String updateShots(){
 
         HttpURLConnection connection;
