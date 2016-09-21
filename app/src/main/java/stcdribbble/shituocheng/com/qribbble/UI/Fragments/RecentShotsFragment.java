@@ -299,6 +299,7 @@ public class RecentShotsFragment extends BaseFragment {
                                 public void run() {
                                     ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
                                     shotsRecyclerViewAdapter.notifyDataSetChanged();
+
                                 }
                             });
 
