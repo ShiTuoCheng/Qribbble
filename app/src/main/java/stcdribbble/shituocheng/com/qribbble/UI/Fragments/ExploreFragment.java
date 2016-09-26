@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -285,6 +287,11 @@ public class ExploreFragment extends BaseFragment {
                                 explore_recyclerView.setAdapter(shotsRecyclerViewAdapter);
                                 explore_recyclerView.setLayoutManager(linearLayoutManager);
                                 explore_recyclerView.setVisibility(View.VISIBLE);
+                                Animation animation = android.view.animation.AnimationUtils.loadAnimation(getActivity(), R.anim.anim_item);
+                                LayoutAnimationController controller = new LayoutAnimationController(animation);
+                                controller.setDelay(0.5f);
+                                controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
+                                explore_recyclerView.setLayoutAnimation(controller);
                                 shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
                                     @Override
                                     public void OnItemClick(View v, int position) {

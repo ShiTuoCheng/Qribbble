@@ -1,5 +1,6 @@
 package stcdribbble.shituocheng.com.qribbble.UI.Activities;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -98,12 +100,16 @@ public class UserDetailActivity extends AppCompatActivity {
                                 isFollow = false;
                                 follow_button.setText("UnFollow");
                                 threadPool.execute(followUser(name, isFollow));
+                                ObjectAnimator animator = ObjectAnimator.ofFloat(v, "translationX", 0.0f, 300.0f, 0.0f);
+                                animator.setDuration(1000).start();
                                 Snackbar.make(v,"Follow successfully!!",Snackbar.LENGTH_SHORT).show();
 
                             }else {
                                 isFollow = true;
                                 follow_button.setText("Follow");
                                 threadPool.execute(followUser(name, isFollow));
+                                ObjectAnimator animator = ObjectAnimator.ofFloat(v, "rotationX", 0.0f, 90.0f, 0.0f);
+                                animator.setDuration(1000).start();
                                 Snackbar.make(v,"UnFollow successfully!!",Snackbar.LENGTH_SHORT).show();
                             }
                         }
@@ -122,6 +128,15 @@ public class UserDetailActivity extends AppCompatActivity {
             }
             threadPool.execute(fetchData(name));
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home){
+            this.finish();
+        }
+        return true;
     }
 
     private void setUpView(){

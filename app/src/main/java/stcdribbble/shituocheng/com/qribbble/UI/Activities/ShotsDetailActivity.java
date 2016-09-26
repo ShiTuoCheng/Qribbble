@@ -1,6 +1,7 @@
 package stcdribbble.shituocheng.com.qribbble.UI.Activities;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
@@ -112,6 +113,8 @@ public class ShotsDetailActivity extends AppCompatActivity {
                     if (state) {
                         state = false;
                         fab.setImageResource(R.drawable.ic_favorite_white_36dp);
+                        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", 0.0f, 300.0f, 0.0f);
+                        animator.setDuration(1000).start();
                        // postShotsLike(access_token,String.valueOf(id),state);
                         pool.execute(postShotsLike((access_token),String.valueOf(id),state));
                         //shotsDetailFavoriteFragment.fetchData(true,id);
@@ -120,6 +123,8 @@ public class ShotsDetailActivity extends AppCompatActivity {
                     } else {
                         state = true;
                         fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "rotationX", 0.0f, 90.0f, 0.0f);
+                        animator.setDuration(1000).start();
                         pool.execute(postShotsLike(access_token,String.valueOf(id),state));
                         //shotsDetailFavoriteFragment.fetchData(true,id);
                         //shotsDetailFavoriteFragment.update(id);
