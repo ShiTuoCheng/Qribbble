@@ -23,8 +23,8 @@
 
             <com.android.volley.toolbox.NetworkImageView
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:scaleType="centerCrop"
+                android:layout_height="260dp"
+                android:scaleType="fitCenter"
                 android:id="@+id/shots_imageView"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true" >

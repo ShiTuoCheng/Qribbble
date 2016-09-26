@@ -2,19 +2,12 @@ package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
 
 
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,7 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
+import android.view.animation.AnimationUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,8 +40,6 @@ import stcdribbble.shituocheng.com.qribbble.Adapter.ShotsRecyclerViewAdapter;
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
-import stcdribbble.shituocheng.com.qribbble.Utilities.API;
-import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
 
 /**
@@ -216,6 +210,10 @@ public class RecentShotsFragment extends BaseFragment {
                                     mRecyclerView.setAdapter(shotsRecyclerViewAdapter);
                                     mRecyclerView.setLayoutManager(linearLayoutManager);
                                     mRecyclerView.setVisibility(View.VISIBLE);
+                                    /**
+                                     * RecyclerView Animation Set Up
+                                     */
+
                                     shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
                                         @Override
                                         public void OnItemClick(View v, int position) {
@@ -232,7 +230,6 @@ public class RecentShotsFragment extends BaseFragment {
                                             intent.putExtra("fullImageUrl",fullImageUrl);
                                             intent.putExtra("id",id);
 
-                                            AnimationUtils.show(v);
                                             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                                         }
                                     });
