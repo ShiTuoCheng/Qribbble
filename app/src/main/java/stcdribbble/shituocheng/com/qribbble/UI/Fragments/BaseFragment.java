@@ -21,12 +21,13 @@ public class BaseFragment extends Fragment {
     }
 
 
-    public void fetchData(boolean isFirstLoading){
+    public Runnable fetchData(boolean isFirstLoading){
         if (isFirstLoading){
 
         }else {
 
         }
+        return null;
     }
 
     public void fetchData(){

@@ -1,13 +1,18 @@
 package stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment;
 
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LayoutAnimationController;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -33,12 +38,13 @@ import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.BaseFragment;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
+import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserDetailworksFragment extends BaseFragment {
+public class UserDetailworksFragment extends Fragment {
 
     private RecyclerView user_detail_works_recyclerView;
     private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
@@ -55,28 +61,36 @@ public class UserDetailworksFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_user_detailworks, container, false);
+        Log.d("test", "test");
         setUpView(v);
-        Intent intent = getActivity().getIntent();
+        /*
         if (intent !=null){
             String name = intent.getStringExtra("user_name");
+            Log.d("name_", name);
 
             pool.execute(fetchData(name, false));
         }
+        */
 
+        pool.execute(fetchData(true));
         return v;
     }
 
-    @Override
     public void setUpView(View view){
 
         user_detail_works_recyclerView = (RecyclerView)view.findViewById(R.id.user_detail_works_recyclerView);
 
     }
 
-    public Runnable fetchData(String user_name, final boolean isFirstLoading){
+    public Runnable fetchData(final boolean isFirstLoading){
         final HttpURLConnection[] connection = new HttpURLConnection[1];
         final InputStream[] inputStream = new InputStream[1];
-        final String api= API.generic_api+"/users/"+user_name+"/shots"+ Access_Token.access_token;
+        Intent intent = getActivity().getIntent();
+        final String name = intent.getStringExtra("user_name");
+        Log.d("name", name);
+        Log.w("user_detail_name", name);
+        final String api= API.generic_api+"/users/"+name+"/shots?access_token="+ Access_Token.access_token;
+        Log.w("user_detail_artworks", api);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -107,16 +121,18 @@ public class UserDetailworksFragment extends BaseFragment {
 
                             shotsModels.add(shotsModel);
 
-                        }
+                            Log.w("size_shots_model", String.valueOf(shotsModels.size()));
 
-                        if (getActivity() != null){
-                            return;
                         }
-
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
 
+                                UserDetailArtworkAdapter userDetailArtworkAdapter = new UserDetailArtworkAdapter(shotsModels);
+                                userDetailArtworkAdapter.notifyDataSetChanged();
+                                user_detail_works_recyclerView.setAdapter(userDetailArtworkAdapter);
+                                GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
+                                user_detail_works_recyclerView.setLayoutManager(gridLayoutManager);
                             }
                         });
 
@@ -138,7 +154,7 @@ public class UserDetailworksFragment extends BaseFragment {
 
     private class UserDetailArtworkAdapter extends RecyclerView.Adapter<UserDetailArtworkAdapter.ViewHolder>{
 
-        ArrayList<ShotsModel> shotsModels = new ArrayList<>();
+        private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
 
         public class ViewHolder extends RecyclerView.ViewHolder{
 
@@ -150,6 +166,9 @@ public class UserDetailworksFragment extends BaseFragment {
             }
         }
 
+        public UserDetailArtworkAdapter(ArrayList<ShotsModel> shotsModels) {
+            this.shotsModels = shotsModels;
+        }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

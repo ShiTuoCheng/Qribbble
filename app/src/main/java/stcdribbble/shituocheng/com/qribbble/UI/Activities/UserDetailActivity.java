@@ -149,14 +149,16 @@ public class UserDetailActivity extends AppCompatActivity {
         user_detail_tabLayout = (TabLayout)findViewById(R.id.tabs);
         user_detail_viewPager = (ViewPager)findViewById(R.id.user_detail_viewpager);
 
+
+        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("shots"));
+        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("followers"));
+        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("following"));
+
         UserDetailPageAdapter userDetailPageAdapter = new UserDetailPageAdapter(getSupportFragmentManager(), user_detail_tabLayout.getTabCount());
 
         user_detail_viewPager.setAdapter(userDetailPageAdapter);
         userDetailPageAdapter.notifyDataSetChanged();
 
-        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("shots"));
-        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("followers"));
-        user_detail_tabLayout.addTab(user_detail_tabLayout.newTab().setText("following"));
 
         user_detail_viewPager.setOffscreenPageLimit(user_detail_tabLayout.getTabCount() * 10);
         user_detail_viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -364,6 +366,11 @@ public class UserDetailActivity extends AppCompatActivity {
                 default:
                     return null;
             }
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
 
         @Override

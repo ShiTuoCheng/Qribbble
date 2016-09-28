@@ -11,29 +11,34 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="350dp"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="350dp"
-            android:background="#ffffff"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            android:background="#ffffff">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="top"
-                android:minHeight="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:theme="@style/ToolbarTheme"
-                app:titleMarginTop="15dp" />
+                android:layout_height="match_parent"
+                android:src="@drawable/rectangle"
+                android:scaleType="fitXY"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="top"
+                    android:minHeight="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:theme="@style/ToolbarTheme"
+                    app:titleMarginTop="15dp" />
 
                 <com.android.volley.toolbox.NetworkImageView
                     android:layout_width="match_parent"
@@ -41,12 +46,6 @@
                     android:id="@+id/user_detail_backdrop"
                     android:scaleType="fitCenter"
                     />
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/rectangle"
-                    android:scaleType="fitXY"/>
 
                 <stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView
                     android:layout_width="100dp"
@@ -94,6 +93,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/user_detail_bio"
                     android:layout_below="@id/follow_button"
+                    android:textColor="#cacaca"
                     android:layout_margin="16dp"/>
 
                 <android.support.design.widget.TabLayout
@@ -102,6 +102,7 @@
                     android:id="@+id/tabs"
                     app:tabSelectedTextColor="@color/colorAccent"
                     android:minHeight="?attr/actionBarSize"
+                    android:translationZ="16dp"
                     android:layout_alignParentBottom="true"/>
 
             </RelativeLayout>
