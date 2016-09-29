@@ -131,7 +131,7 @@ public class UserDetailworksFragment extends Fragment {
                                 UserDetailArtworkAdapter userDetailArtworkAdapter = new UserDetailArtworkAdapter(shotsModels);
                                 userDetailArtworkAdapter.notifyDataSetChanged();
                                 user_detail_works_recyclerView.setAdapter(userDetailArtworkAdapter);
-                                GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
+                                GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
                                 user_detail_works_recyclerView.setLayoutManager(gridLayoutManager);
                             }
                         });

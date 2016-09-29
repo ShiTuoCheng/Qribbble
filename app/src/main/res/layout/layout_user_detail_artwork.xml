@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/user_detail_artwork"
-        android:layout_width="match_parent"
-        android:layout_height="400dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardElevation="6dp"
+        app:cardCornerRadius="6dp"
+        app:cardBackgroundColor="#e9e9e9"
+        android:layout_margin="6dp"
+        >
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/user_detail_artwork"
+            android:layout_width="260dp"
+            android:layout_height="260dp" />
+
+    </android.support.v7.widget.CardView>
+
 
 </RelativeLayout>
