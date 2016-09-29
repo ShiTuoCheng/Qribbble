@@ -20,5 +20,5 @@ This is a third-party client for Dribbble website<br>
 ![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot4.png)
 ![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot5.png)
 ![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot6.png)
-![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot7.png)
+![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot9.png)
 ![image](https://github.com/ShiTuoCheng/Qribbble/blob/master/app/src/main/res/drawable/screenshot8.png)
