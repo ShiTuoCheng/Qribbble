@@ -356,7 +356,7 @@ public class UserDetailActivity extends AppCompatActivity {
             switch (position){
                 case 0:
                     UserDetailworksFragment userDetailworksFragment = new UserDetailworksFragment();
-                    return userDetailworksFragment;
+                    return userDetailworksFragment
                 case 1:
                     UserDetailworksFragment userDetailworksFragment1 = new UserDetailworksFragment();
                     return userDetailworksFragment1;
