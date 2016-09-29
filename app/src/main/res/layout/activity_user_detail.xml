@@ -27,15 +27,16 @@
             android:layout_height="350dp"
             android:background="#ffffff">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/rectangle"
-                android:scaleType="fitXY"/>
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <com.android.volley.toolbox.NetworkImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:id="@+id/user_detail_backdrop"
+                    android:scaleType="centerCrop"
+                    />
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
@@ -47,18 +48,12 @@
                     app:theme="@style/ToolbarTheme"
                     app:titleMarginTop="15dp" />
 
-                <com.android.volley.toolbox.NetworkImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/user_detail_backdrop"
-                    android:scaleType="fitCenter"
-                    />
 
                 <stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:id="@+id/user_detail_avatar"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="50dp"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true" />
 
@@ -67,11 +62,10 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/user_name_textView"
                     android:layout_below="@id/user_detail_avatar"
-                    android:layout_marginTop="20dp"
                     android:layout_marginStart="16dp"
                     android:translationZ="16dp"
                     android:clickable="true"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -81,16 +75,17 @@
                     android:id="@+id/name_textView"
                     android:layout_below="@id/user_name_textView"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="3dp"
                     android:textSize="20sp"
-                    android:textColor="#ffffff"/>
+                    android:textColor="@color/colorAccent"/>
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/follow_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:translationZ="16dp"
                     android:background="@color/colorAccent"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/whiteColor"
                     android:textStyle="bold"
                     android:layout_alignBottom="@+id/name_textView"
                     android:layout_alignEnd="@+id/user_detail_bio" />
@@ -101,7 +96,7 @@
                     android:id="@+id/user_detail_bio"
                     android:layout_below="@id/follow_button"
                     android:textColor="#cacaca"
-                    android:layout_margin="16dp"/>
+                    android:layout_margin="10dp"/>
 
                 <android.support.design.widget.TabLayout
                     android:layout_width="match_parent"

@@ -114,6 +114,7 @@ public class UserDetailworksFragment extends Fragment {
                         for (int i = 0; i < jsonArray.length(); i++){
                             ShotsModel shotsModel = new ShotsModel();
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            shotsModel.setShots_id(jsonObject.getInt("id"));
 
                             JSONObject imageJsonObj = jsonObject.getJSONObject("images");
                             shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
@@ -124,6 +125,7 @@ public class UserDetailworksFragment extends Fragment {
                             Log.w("size_shots_model", String.valueOf(shotsModels.size()));
 
                         }
+
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -133,6 +135,11 @@ public class UserDetailworksFragment extends Fragment {
                                 user_detail_works_recyclerView.setAdapter(userDetailArtworkAdapter);
                                 GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
                                 user_detail_works_recyclerView.setLayoutManager(gridLayoutManager);
+                                Animation animation = android.view.animation.AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.anim_item);
+                                LayoutAnimationController controller = new LayoutAnimationController(animation);
+                                controller.setDelay(0.5f);
+                                controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
+                                user_detail_works_recyclerView.setLayoutAnimation(controller);
                             }
                         });
 

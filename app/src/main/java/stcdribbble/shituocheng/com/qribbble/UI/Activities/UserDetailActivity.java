@@ -74,6 +74,7 @@ public class UserDetailActivity extends AppCompatActivity {
         collapsingToolbar.setTitle(" ");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         setUpView();
 
@@ -246,14 +247,15 @@ public class UserDetailActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             user_name_textView.setText(name);
-                            name_textView.setText(user_name);
+                            name_textView.setText("@"+user_name);
                             name_avatar_imageView.setImageUrl(user_avatar, imageLoader);
                             ImageLoader imageLoader = AppController.getInstance().getImageLoader();
                             networkImageView.setImageUrl(user_avatar, imageLoader);
                             user_bio_textView.setBackgroundColor(Color.TRANSPARENT);
-                            user_bio_textView.setTextColor(getResources().getColor(R.color.whiteColor));
+                            user_bio_textView.setTextColor(getResources().getColor(R.color.user_bio_text_color));
                             if (!user_bio.isEmpty()){
                                 user_bio_textView.setText(Html.fromHtml(user_bio));
+                                user_bio_textView.setTextColor(R.color.user_bio_text_color);
                                 user_bio_textView.setMovementMethod(LinkMovementMethod.getInstance());
                             }else {
                                 user_bio_textView.setText("(No introducing)");
