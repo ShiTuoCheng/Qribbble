@@ -5,8 +5,17 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorListener;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.util.AttributeSet;
 import android.view.Display;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Interpolator;
 
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.UserDetailActivity;
@@ -66,4 +75,6 @@ public class Utils {
         intent.putExtra("id",id);
         context.startActivity(intent);
     }
+
+
 }

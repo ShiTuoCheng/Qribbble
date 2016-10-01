@@ -33,6 +33,7 @@ import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -171,10 +172,17 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
 
-            UserModel userModel = userModels.get(position);
+            final UserModel userModel = userModels.get(position);
 
             holder.name_textView.setText(userModel.getName());
             holder.avatar_imageView.setImageUrl(userModel.getAvatar(),imageLoader);
+
+            holder.avatar_imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.openProfile(getActivity(), userModel.getName());
+                }
+            });
         }
 
         @Override

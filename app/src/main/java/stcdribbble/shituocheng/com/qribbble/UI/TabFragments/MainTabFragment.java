@@ -1,19 +1,23 @@
 package stcdribbble.shituocheng.com.qribbble.UI.TabFragments;
 
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 
 import java.util.ArrayList;
 
 import stcdribbble.shituocheng.com.qribbble.Adapter.MainViewPagerAdapter;
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 
 /**
  * A simple {@link Fragment} subclass.

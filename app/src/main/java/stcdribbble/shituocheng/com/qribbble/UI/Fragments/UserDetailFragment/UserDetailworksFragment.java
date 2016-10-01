@@ -2,6 +2,7 @@ package stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment;
 
 
 import android.animation.Animator;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,11 +36,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.BaseFragment;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,6 +53,7 @@ public class UserDetailworksFragment extends Fragment {
     private RecyclerView user_detail_works_recyclerView;
     private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
     private ExecutorService pool = Executors.newCachedThreadPool();
+    private OnRecyclerViewOnClickListener mListener;
 
 
     public UserDetailworksFragment() {
@@ -83,33 +88,15 @@ public class UserDetailworksFragment extends Fragment {
     }
 
     public Runnable fetchData(final boolean isFirstLoading){
-        final HttpURLConnection[] connection = new HttpURLConnection[1];
-        final InputStream[] inputStream = new InputStream[1];
         Intent intent = getActivity().getIntent();
         final String name = intent.getStringExtra("user_name");
-        Log.d("name", name);
-        Log.w("user_detail_name", name);
         final String api= API.generic_api+"/users/"+name+"/shots?access_token="+ Access_Token.access_token;
-        Log.w("user_detail_artworks", api);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if (isFirstLoading){
                     try {
-                        connection[0] = (HttpURLConnection)new URL(api).openConnection();
-                        connection[0].setRequestMethod("GET");
-                        connection[0].connect();
-
-                        inputStream[0] = connection[0].getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream[0]));
-                        String line;
-                        StringBuilder stringBuilder = new StringBuilder();
-
-                        while ((line = bufferedReader.readLine())!=null){
-                            stringBuilder.append(line);
-                        }
-
-                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+                        JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
 
                         for (int i = 0; i < jsonArray.length(); i++){
                             ShotsModel shotsModel = new ShotsModel();
@@ -140,12 +127,31 @@ public class UserDetailworksFragment extends Fragment {
                                 controller.setDelay(0.5f);
                                 controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
                                 user_detail_works_recyclerView.setLayoutAnimation(controller);
+
+                                userDetailArtworkAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
+                                    @Override
+                                    public void OnItemClick(View v, int position) {
+
+                                        Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
+                                        ShotsModel shotsModel = shotsModels.get(position);
+                                        String imageUrl = shotsModel.getShots_thumbnail_url();
+                                        String fullImageUrl = shotsModel.getShots_full_imageUrl();
+                                        String imageName = shotsModel.getTitle();
+                                        int id = shotsModel.getShots_id();
+                                        boolean isGif = shotsModel.isAnimated();
+                                        intent.putExtra("imageName",imageName);
+                                        intent.putExtra("imageURL",imageUrl);
+                                        intent.putExtra("isGif",isGif);
+                                        intent.putExtra("fullImageUrl",fullImageUrl);
+                                        intent.putExtra("id",id);
+
+                                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                                    }
+                                });
                             }
                         });
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
+                    }catch (JSONException e) {
                         e.printStackTrace();
                     }
 
@@ -162,14 +168,25 @@ public class UserDetailworksFragment extends Fragment {
     private class UserDetailArtworkAdapter extends RecyclerView.Adapter<UserDetailArtworkAdapter.ViewHolder>{
 
         private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
+        private OnRecyclerViewOnClickListener mListener;
 
-        public class ViewHolder extends RecyclerView.ViewHolder{
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
             private NetworkImageView networkImageView;
+            private OnRecyclerViewOnClickListener listener;
 
-            public ViewHolder(View itemView) {
+            public ViewHolder(View itemView, OnRecyclerViewOnClickListener listener) {
                 super(itemView);
                 networkImageView = (NetworkImageView)itemView.findViewById(R.id.user_detail_artwork);
+                this.listener = listener;
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (listener != null){
+                    listener.OnItemClick(v,getLayoutPosition());
+                }
             }
         }
 
@@ -182,7 +199,7 @@ public class UserDetailworksFragment extends Fragment {
 
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_user_detail_artwork, null);
 
-            ViewHolder viewHolder = new ViewHolder(view);
+            ViewHolder viewHolder = new ViewHolder(view, mListener);
 
             return viewHolder;
         }
@@ -197,6 +214,10 @@ public class UserDetailworksFragment extends Fragment {
         @Override
         public int getItemCount() {
             return shotsModels.size();
+        }
+
+        public void setItemClickListener(OnRecyclerViewOnClickListener listener){
+            this.mListener = listener;
         }
     }
 }

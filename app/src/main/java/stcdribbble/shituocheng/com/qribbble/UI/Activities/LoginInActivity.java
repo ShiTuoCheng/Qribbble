@@ -20,7 +20,6 @@ import java.util.Map;
 
 import stcdribbble.shituocheng.com.qribbble.R;
 
-import static stcdribbble.shituocheng.com.qribbble.R.id.view;
 
 public class LoginInActivity extends AppCompatActivity {
 

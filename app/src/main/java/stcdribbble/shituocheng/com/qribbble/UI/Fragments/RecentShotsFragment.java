@@ -2,12 +2,15 @@ package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
 
 
 
+import android.animation.ObjectAnimator;
 import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.solver.widgets.Animator;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +43,7 @@ import stcdribbble.shituocheng.com.qribbble.Adapter.ShotsRecyclerViewAdapter;
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
+import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
 
 /**
@@ -52,6 +56,7 @@ public class RecentShotsFragment extends BaseFragment {
     private ProgressDialog loadingMoreProgressDialog;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FloatingActionButton floatingActionButton;
     public static final String ARGS_PAGE = "args_page";
 
     private List<ShotsModel> shotsModels = new ArrayList<>();
@@ -145,19 +150,25 @@ public class RecentShotsFragment extends BaseFragment {
         mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeColors(R.color.colorAccent);
+        floatingActionButton = (FloatingActionButton)view.findViewById(R.id.recent_shots_fab);
 
     }
 
     public Runnable fechData(final boolean isFirstLoading){
-        final HttpURLConnection[] connection = new HttpURLConnection[1];
-        final InputStream[] inputStream = new InputStream[1];
+       // final HttpURLConnection[] connection = new HttpURLConnection[1];
+       // final InputStream[] inputStream = new InputStream[1];
         final String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if (isFirstLoading){
                     shotsModels.clear();
+
+
+                    //待封装
+
                     try {
+                        /*
                         connection[0] = (HttpURLConnection)new URL(api).openConnection();
                         connection[0].setRequestMethod("GET");
                         connection[0].connect();
@@ -170,8 +181,9 @@ public class RecentShotsFragment extends BaseFragment {
                         while ((line = bufferedReader.readLine()) != null){
                             stringBuilder.append(line);
                         }
+                        */
 
-                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+                        JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
 
                         for (int i = 0; i < jsonArray.length(); i++){
                             ShotsModel shotsModel = new ShotsModel();
@@ -238,19 +250,18 @@ public class RecentShotsFragment extends BaseFragment {
 
                         }
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
+                    }catch (JSONException e) {
 
                         e.printStackTrace();
                     }
                 }else {
                     current_page +=1;
-                    HttpURLConnection connection;
-                    InputStream inputStream;
+                    //HttpURLConnection connection;
+                    //InputStream inputStream;
                     String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
 
                     try {
+                        /*
                         connection = (HttpURLConnection)new URL(api+"&page="+String.valueOf(current_page)).openConnection();
                         connection.setRequestMethod("GET");
                         connection.connect();
@@ -263,8 +274,8 @@ public class RecentShotsFragment extends BaseFragment {
                         while ((line = bufferedReader.readLine()) != null){
                             stringBuilder.append(line);
                         }
-
-                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+                        */
+                        JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
 
                         for (int i = 0; i < jsonArray.length(); i++){
                             ShotsModel shotsModel = new ShotsModel();
@@ -302,9 +313,7 @@ public class RecentShotsFragment extends BaseFragment {
 
                         }
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
+                    }catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }

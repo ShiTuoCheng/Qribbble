@@ -8,12 +8,6 @@
     android:fitsSystemWindows="true"
     tools:context="stcdribbble.shituocheng.com.qribbble.UI.Activities.UserDetailActivity">
 
-    <android.support.v4.view.ViewPager
-
-        android:id="@+id/user_detail_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -25,6 +19,7 @@
             android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="350dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:background="#ffffff">
 
             <RelativeLayout
@@ -105,6 +100,7 @@
                     app:tabSelectedTextColor="@color/colorAccent"
                     android:minHeight="?attr/actionBarSize"
                     android:background="@color/colorPrimary"
+                    app:tabGravity="fill"
                     android:translationZ="16dp"
                     android:layout_alignParentBottom="true"/>
 
@@ -113,6 +109,13 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+
+        android:id="@+id/user_detail_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
 </android.support.design.widget.CoordinatorLayout>

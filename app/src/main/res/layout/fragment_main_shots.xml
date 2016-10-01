@@ -1,9 +1,10 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/view"
-    tools:context="stcdribbble.shituocheng.com.qribbble.UI.Fragments.RecentShotsFragment">
+    android:fitsSystemWindows="true">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -23,4 +24,16 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-</FrameLayout>
+    <android.support.design.widget.FloatingActionButton
+        app:layout_behavior="stcdribbble.shituocheng.com.qribbble.Utilities.ScrollAwareFABBehavior"
+        android:id="@+id/recent_shots_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_file_upload_white_24dp"
+        android:clickable="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="76dp"
+        />
+
+</android.support.design.widget.CoordinatorLayout>
