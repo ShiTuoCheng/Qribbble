@@ -32,6 +32,9 @@ public class GetHttpString {
                 stringBuilder.append(line);
             }
 
+            inputStream.close();
+            connection.disconnect();
+
             return stringBuilder.toString();
         } catch (MalformedURLException e) {
             e.printStackTrace();

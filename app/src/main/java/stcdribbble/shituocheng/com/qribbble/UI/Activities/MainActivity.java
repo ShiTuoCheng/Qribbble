@@ -51,6 +51,7 @@ import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ExploreFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.TabFragments.MainTabFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -314,10 +315,8 @@ public class MainActivity extends AppCompatActivity
                         stringBuilder.append(line);
                     }
 
-                    inputStream.close();
-                    connection.disconnect();
 
-                    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+                    JSONObject jsonObject = new JSONObject(GetHttpString.getHttpDataString(url, "POST"));
                     String access_token = jsonObject.getString("access_token");
 
                     LoginUser loginUser = new LoginUser();

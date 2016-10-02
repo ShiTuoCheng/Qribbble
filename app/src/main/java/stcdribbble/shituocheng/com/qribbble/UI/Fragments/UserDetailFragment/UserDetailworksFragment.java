@@ -113,6 +113,10 @@ public class UserDetailworksFragment extends Fragment {
 
                         }
 
+                        if (getActivity() == null){
+                            return;
+                        }
+
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

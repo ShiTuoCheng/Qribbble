@@ -10,6 +10,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -54,6 +57,7 @@ import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment.ShotsDetailFavoriteFragment;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
+import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
 
 /**
  * Created by shituocheng on 27/07/2016.
@@ -65,6 +69,12 @@ public class ShotsDetailActivity extends AppCompatActivity {
     private String imageString;
     private String imageName;
     private int id;
+    private Handler workHandler;
+    private Handler uiHandler;
+    private HandlerThread handlerThread;
+    private final static String TAG = "work_handlerThread";
+
+    private final int MESSAGE_WHAT_IMAGE = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,9 +84,56 @@ public class ShotsDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         imageString = intent.getStringExtra("fullImageUrl");
+        id = intent.getIntExtra("id",0);
+        if (imageString == null){
+            handlerThread = new HandlerThread(TAG, Thread.NORM_PRIORITY);
+            handlerThread.start();
+
+            workHandler = new Handler(handlerThread.getLooper());
+            workHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    String api = API.generic_api+"shots/"+String.valueOf(id)+"?access_token="+Access_Token.access_token;
+                    Log.d("api", api);
+                    try {
+                        JSONObject jsonObject = new JSONObject(GetHttpString.getHttpDataString(api, "GET"));
+                        JSONObject imageJson = jsonObject.getJSONObject("images");
+                        String hidpi_image = imageJson.getString("hidpi");
+                        String normal_string = imageJson.getString("normal");
+                        Log.d("hidpi", hidpi_image);
+                        if (!hidpi_image.isEmpty()){
+                            imageString = hidpi_image;
+                        }else {
+                            imageString = normal_string;
+                        }
+
+                        Log.d("imageString", imageString);
+                        Message message = uiHandler.obtainMessage();
+                        message.what = MESSAGE_WHAT_IMAGE;
+                        message.obj = imageString;
+                        message.sendToTarget();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            uiHandler = new Handler(getMainLooper()){
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what){
+                        case MESSAGE_WHAT_IMAGE:
+                            loadBackdrop(String.valueOf(msg.obj), true);
+                            break;
+                        default:
+
+                    }
+                }
+            };
+        }
         imageName = intent.getStringExtra("imageName");
         final boolean isGif = intent.getBooleanExtra("isGif",false);
-        id = intent.getIntExtra("id",0);
 
         Log.d("isGif",String.valueOf(isGif));
         Log.d("imageString", String.valueOf(imageString));
@@ -89,7 +146,6 @@ public class ShotsDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final ShotsDetailFavoriteFragment shotsDetailFavoriteFragment = new ShotsDetailFavoriteFragment();
 
         fab = (FloatingActionButton)findViewById(R.id.fab);
         fab.animate();

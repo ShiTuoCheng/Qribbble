@@ -164,25 +164,7 @@ public class RecentShotsFragment extends BaseFragment {
                 if (isFirstLoading){
                     shotsModels.clear();
 
-
-                    //待封装
-
                     try {
-                        /*
-                        connection[0] = (HttpURLConnection)new URL(api).openConnection();
-                        connection[0].setRequestMethod("GET");
-                        connection[0].connect();
-
-                        inputStream[0] = connection[0].getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream[0]));
-                        String line;
-                        StringBuilder stringBuilder = new StringBuilder();
-
-                        while ((line = bufferedReader.readLine()) != null){
-                            stringBuilder.append(line);
-                        }
-                        */
-
                         JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
 
                         for (int i = 0; i < jsonArray.length(); i++){
@@ -256,25 +238,9 @@ public class RecentShotsFragment extends BaseFragment {
                     }
                 }else {
                     current_page +=1;
-                    //HttpURLConnection connection;
-                    //InputStream inputStream;
                     String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
 
                     try {
-                        /*
-                        connection = (HttpURLConnection)new URL(api+"&page="+String.valueOf(current_page)).openConnection();
-                        connection.setRequestMethod("GET");
-                        connection.connect();
-
-                        inputStream = connection.getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                        String line;
-                        StringBuilder stringBuilder = new StringBuilder();
-
-                        while ((line = bufferedReader.readLine()) != null){
-                            stringBuilder.append(line);
-                        }
-                        */
                         JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
 
                         for (int i = 0; i < jsonArray.length(); i++){

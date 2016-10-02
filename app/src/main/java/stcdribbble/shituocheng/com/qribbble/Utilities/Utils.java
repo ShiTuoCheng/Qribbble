@@ -5,17 +5,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorListener;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.util.AttributeSet;
 import android.view.Display;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Interpolator;
 
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.UserDetailActivity;
@@ -61,13 +52,13 @@ public class Utils {
     }
 
     public static void openProfile(Context context, String author_name) {
-        Intent intent = new Intent(context, UserDetailActivity.class);
+        Intent intent = new Intent(context.getApplicationContext(), UserDetailActivity.class);
         intent.putExtra("user_name", author_name);
         context.startActivity(intent);
     }
 
     public static void openShotsDetail(Context context, String imageName, String imageUrl, String fullImageUrl, boolean isGif, int id){
-        Intent intent = new Intent(context, ShotsDetailActivity.class);
+        Intent intent = new Intent(context.getApplicationContext(), ShotsDetailActivity.class);
         intent.putExtra("imageName",imageName);
         intent.putExtra("imageURL",imageUrl);
         intent.putExtra("isGif",isGif);
