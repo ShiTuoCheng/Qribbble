@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="notification_time_array">
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+    <string-array name="notification_time_array"
+        >
         <item>5 minutes</item>
         <item>15 minutes</item>
         <item>1 hour</item>
