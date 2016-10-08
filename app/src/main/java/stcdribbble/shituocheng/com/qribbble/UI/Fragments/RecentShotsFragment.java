@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -44,7 +45,10 @@ import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
+
+import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,13 +57,15 @@ public class RecentShotsFragment extends BaseFragment {
 
     private int pages;
     private ArrayList<String> title = new ArrayList<>();
-    private ProgressDialog loadingMoreProgressDialog;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton floatingActionButton;
+    private ShotsRecyclerViewAdapter shotsRecyclerViewAdapter;
+    private LinearLayoutManager linearLayoutManager;
     public static final String ARGS_PAGE = "args_page";
+    private ExecutorService pool = Executors.newCachedThreadPool();
 
-    private List<ShotsModel> shotsModels = new ArrayList<>();
+    private List<ShotsModel> shotsModels;
     private Handler handler = new Handler();
     private int current_page = 1;
 
@@ -86,7 +92,7 @@ public class RecentShotsFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_shots, container, false);
-        final ExecutorService pool = Executors.newCachedThreadPool();
+        shotsModels = new ArrayList<>();
         setUpView(view);
         swipeRefreshLayout.post(new Runnable() {
             @Override
@@ -101,7 +107,7 @@ public class RecentShotsFragment extends BaseFragment {
                     @Override
                     public void run() {
                         //fetchData(true);
-                        pool.execute(fechData(true));
+                        pool.execute(loadData());
                     }
                 }, 2000);
             }
@@ -110,36 +116,14 @@ public class RecentShotsFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                // fetchData(true);
-                pool.execute(fechData(true));
+                pool.execute(loadData());
             }
         });
 
-        pool.execute(fechData(true));
+        pool.execute(loadData());
         //fetchData(true);
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            boolean isSlidingToLast = false;
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                LinearLayoutManager manager = (LinearLayoutManager)recyclerView.getLayoutManager();
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
-                    int lastItemPosition = manager.findLastCompletelyVisibleItemPosition();
-                    int totalItemCount = manager.getItemCount();
-                    if (lastItemPosition == (totalItemCount - 1) && isSlidingToLast) {
 
-                        //fetchData(false);
-                        pool.execute(fechData(false));
-                    }
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                isSlidingToLast = dy > 0;
-            }
-        });
 
         return view;
     }
@@ -154,6 +138,159 @@ public class RecentShotsFragment extends BaseFragment {
 
     }
 
+    public Runnable loadData(){
+        return new Runnable() {
+            @Override
+            public void run() {
+                final String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
+                shotsModels.clear();
+
+                try {
+                    JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
+
+                    for (int i = 0; i < jsonArray.length(); i++){
+                        ShotsModel shotsModel = new ShotsModel();
+
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        shotsModel.setTitle(jsonObject.getString("title"));
+                        JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+                        shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                        shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                        shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                        shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                        shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                        shotsModel.setShots_id(jsonObject.getInt("id"));
+                        shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+
+                        JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                        shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                        shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                        shotsModels.add(shotsModel);
+
+                    }
+
+                    if (getActivity() == null){
+                        return;
+                    }else {
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                swipeRefreshLayout.setRefreshing(false);
+
+                                mRecyclerView.setVisibility(View.VISIBLE);
+
+                                linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+
+                                mRecyclerView.setLayoutManager(linearLayoutManager);
+
+                                shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,mRecyclerView);
+
+                                mRecyclerView.setAdapter(shotsRecyclerViewAdapter);
+                                shotsRecyclerViewAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+                                    @Override
+                                    public void onLoadMore() {
+                                        shotsModels.add(null);
+                                        shotsRecyclerViewAdapter.notifyItemInserted(shotsModels.size() - 1);
+                                        current_page += 1;
+
+                                        pool.execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                String more_api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&page="+current_page+ "&access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
+                                                final JSONArray more_jsonArray;
+                                                try {
+                                                    more_jsonArray = new JSONArray(GetHttpString.getHttpDataString(more_api, "GET"));
+
+                                                    getActivity().runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            shotsModels.remove(shotsModels.size() - 1);
+                                                            shotsRecyclerViewAdapter.notifyItemRemoved(shotsModels.size());
+                                                            for (int i = 0; i < more_jsonArray.length(); i++){
+                                                                ShotsModel shotsModel = new ShotsModel();
+
+                                                                JSONObject jsonObject;
+                                                                try {
+                                                                    jsonObject = more_jsonArray.getJSONObject(i);
+                                                                    shotsModel.setTitle(jsonObject.getString("title"));
+                                                                    JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+                                                                    shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                                                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                                                    shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                                                                    shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                                                                    shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                                                                    shotsModel.setShots_id(jsonObject.getInt("id"));
+                                                                    shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+
+                                                                    JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                                                                    shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                                                                    shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                                                                    shotsModels.add(shotsModel);
+                                                                    try {
+                                                                         shotsRecyclerViewAdapter.notifyItemInserted(shotsModels.size());
+                                                                    } catch (Exception e) {
+                                                                        Log.w(TAG, "notifyItemChanged failure");
+                                                                        e.printStackTrace();
+                                                                         shotsRecyclerViewAdapter.notifyDataSetChanged();
+                                                                    }
+                                                                } catch (JSONException e) {
+                                                                    e.printStackTrace();
+                                                                }
+
+                                                                shotsRecyclerViewAdapter.setLoaded();
+                                                            }
+
+                                                        }
+                                                    });
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+
+                                /**
+                                 * RecyclerView Animation Set Up
+                                 */
+
+                                shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
+                                    @Override
+                                    public void OnItemClick(View v, int position) {
+                                        Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
+                                        ShotsModel shotsModel = shotsModels.get(position);
+                                        String imageUrl = shotsModel.getShots_thumbnail_url();
+                                        String fullImageUrl = shotsModel.getShots_full_imageUrl();
+                                        String imageName = shotsModel.getTitle();
+                                        int id = shotsModel.getShots_id();
+                                        boolean isGif = shotsModel.isAnimated();
+                                        intent.putExtra("imageName",imageName);
+                                        intent.putExtra("imageURL",imageUrl);
+                                        intent.putExtra("isGif",isGif);
+                                        intent.putExtra("fullImageUrl",fullImageUrl);
+                                        intent.putExtra("id",id);
+
+                                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                                    }
+                                });
+                            }
+                        });
+
+                    }
+
+                }catch (JSONException e) {
+
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    /*
     public Runnable fechData(final boolean isFirstLoading){
        // final HttpURLConnection[] connection = new HttpURLConnection[1];
        // final InputStream[] inputStream = new InputStream[1];
@@ -204,9 +341,6 @@ public class RecentShotsFragment extends BaseFragment {
                                     mRecyclerView.setAdapter(shotsRecyclerViewAdapter);
                                     mRecyclerView.setLayoutManager(linearLayoutManager);
                                     mRecyclerView.setVisibility(View.VISIBLE);
-                                    /**
-                                     * RecyclerView Animation Set Up
-                                     */
 
                                     shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
                                         @Override
@@ -287,5 +421,7 @@ public class RecentShotsFragment extends BaseFragment {
             };
         return runnable;
     }
+
+        */
 
 }

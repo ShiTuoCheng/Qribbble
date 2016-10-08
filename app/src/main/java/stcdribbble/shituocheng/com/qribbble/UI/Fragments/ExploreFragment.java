@@ -40,6 +40,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,7 +53,11 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
+
+import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,8 +69,10 @@ public class ExploreFragment extends BaseFragment {
     private Spinner timeframe_spinner;
     private RecyclerView explore_recyclerView;
     private ProgressBar progressBar;
+    private LinearLayoutManager linearLayoutManager;
+    private ShotsRecyclerViewAdapter shotsRecyclerViewAdapter;
     private ExecutorService threadPool = Executors.newCachedThreadPool();
-    private ArrayList<ShotsModel> shotsModels = new ArrayList<>();
+    private List<ShotsModel> shotsModels = new ArrayList<>();
 
     private String sort_string;
     private String list_string;
@@ -93,7 +100,7 @@ public class ExploreFragment extends BaseFragment {
                 list_string = list[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(sort_string, list_string, timeframe_string, true));
+                threadPool.execute(fetchData(sort_string, list_string, timeframe_string));
                 //execute(list[i]);
             }
 
@@ -115,7 +122,7 @@ public class ExploreFragment extends BaseFragment {
                 sort_string = sort[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(list_string, sort_string, timeframe_string, true));
+                threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
             }
 
             @Override
@@ -136,36 +143,12 @@ public class ExploreFragment extends BaseFragment {
                 timeframe_string = timeframe[i];
                 progressBar.setVisibility(View.VISIBLE);
                 explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(list_string, sort_string, timeframe_string, true));
+                threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
-
-        //setUp explore_recyclerView
-
-        explore_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            boolean isSlidingtoLast = false;
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
-                    int lastItemPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
-                    int totalItemCount = linearLayoutManager.getItemCount();
-                    if (lastItemPosition == (totalItemCount - 1) && isSlidingtoLast){
-                        threadPool.execute(fetchData(list_string, sort_string, timeframe_string, false));
-                    }
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                isSlidingtoLast = dy > 0;
             }
         });
 
@@ -181,36 +164,15 @@ public class ExploreFragment extends BaseFragment {
         explore_recyclerView = (RecyclerView)view.findViewById(R.id.explore_recyclerView);
     }
 
-    public Runnable fetchData(final String shots_list, final String shots_sort, final String shots_timeframe, final boolean isFirstLoading){
+    public Runnable fetchData(final String shots_list, final String shots_sort, final String shots_timeframe){
 
         Runnable runnable = new Runnable() {
-            HttpURLConnection connection = null;
-            InputStream inputStream;
             String shots_api = API.getSortsShotsApi(shots_list, shots_sort, shots_timeframe);
             @Override
             public void run() {
-                if (isFirstLoading){
                     try {
-                        connection = (HttpURLConnection) new URL(shots_api).openConnection();
-                        connection.setRequestMethod("GET");
-                        connection.connect();
 
-                        Log.e("fetchDataApi", shots_api);
-
-                        inputStream = connection.getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                        String line;
-                        StringBuilder stringBuilder = new StringBuilder();
-
-                        while ((line = bufferedReader.readLine()) != null) {
-                            stringBuilder.append(line);
-                        }
-
-                        inputStream.close();
-                        connection.disconnect();
-
-                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+                        JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(shots_api, "GET"));
 
                         if (shotsModels.size() == 0){
                             for (int i = 0; i < jsonArray.length(); i++) {
@@ -280,18 +242,86 @@ public class ExploreFragment extends BaseFragment {
                             @Override
                             public void run() {
                                 progressBar.setVisibility(View.GONE);
-                                ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
-                                shotsRecyclerViewAdapter.notifyDataSetChanged();
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                                explore_recyclerView.setAdapter(shotsRecyclerViewAdapter);
-                                explore_recyclerView.setLayoutManager(linearLayoutManager);
                                 explore_recyclerView.setVisibility(View.VISIBLE);
-                                Animation animation = android.view.animation.AnimationUtils.loadAnimation(getActivity(), R.anim.anim_item);
-                                LayoutAnimationController controller = new LayoutAnimationController(animation);
-                                controller.setDelay(0.5f);
-                                controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
-                                explore_recyclerView.setLayoutAnimation(controller);
+                                linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+                                explore_recyclerView.setLayoutManager(linearLayoutManager);
+                                shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,explore_recyclerView);
+                                explore_recyclerView.setAdapter(shotsRecyclerViewAdapter);
+                                shotsRecyclerViewAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+                                    @Override
+                                    public void onLoadMore() {
+
+                                        shotsModels.add(null);
+                                        shotsRecyclerViewAdapter.notifyItemInserted(shotsModels.size() - 1);
+                                        current_page += 1;
+                                        Log.w("explore", "load more");
+
+                                        final String loadMore = API.generic_api+"shots"+"?"+"list="+shots_list+"&"+"sort="+shots_sort+"&"+"timeframe="+shots_timeframe+"&page="+current_page+"&access_token="+ Access_Token.access_token;
+
+                                        threadPool.execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+
+                                                    final JSONArray more_jsonArray = new JSONArray(GetHttpString.getHttpDataString(loadMore, "GET"));
+
+                                                    getActivity().runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+
+                                                            shotsModels.remove(shotsModels.size() - 1);
+                                                            shotsRecyclerViewAdapter.notifyItemRemoved(shotsModels.size());
+                                                            for (int i = 0; i < more_jsonArray.length(); i++) {
+
+                                                                ShotsModel shotsModel = new ShotsModel();
+                                                                JSONObject jsonObject;
+                                                                try {
+                                                                    jsonObject = more_jsonArray.getJSONObject(i);
+                                                                    shotsModel.setTitle(jsonObject.getString("title"));
+                                                                    JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+
+                                                                    if (imageJsonObj.getString("hidpi").equals("null")){
+                                                                        shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                                                                    }else {
+                                                                        shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                                                    }
+                                                                    shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                                                                    shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                                                                    shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                                                                    shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                                                                    shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                                                                    shotsModel.setShots_id(jsonObject.getInt("id"));
+
+                                                                    JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                                                                    shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                                                                    shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                                                                    shotsModels.add(shotsModel);
+
+                                                                    try {
+                                                                        shotsRecyclerViewAdapter.notifyItemInserted(shotsModels.size());
+                                                                    } catch (Exception e) {
+                                                                        Log.w(TAG, "notifyItemChanged failure");
+                                                                        e.printStackTrace();
+                                                                        shotsRecyclerViewAdapter.notifyDataSetChanged();
+                                                                    }
+                                                                    Log.d("fragment", String.valueOf(shotsModels.size()));
+                                                                } catch (JSONException e) {
+                                                                    e.printStackTrace();
+                                                                }
+
+                                                                shotsRecyclerViewAdapter.setLoaded();
+                                                            }
+                                                        }
+                                                    });
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
                                 shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
                                     @Override
                                     public void OnItemClick(View v, int position) {
@@ -316,77 +346,9 @@ public class ExploreFragment extends BaseFragment {
                                 });
                             }
                         });
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
+                    }catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }else {
-                    current_page +=1;
-                    String loadMore = API.generic_api+"shots"+"?"+"list="+shots_list+"&"+"sort="+shots_sort+"&"+"timeframe="+shots_timeframe+"&page="+current_page+"&access_token="+ Access_Token.access_token;
-                    try {
-                        connection = (HttpURLConnection) new URL(loadMore).openConnection();
-                        connection.setRequestMethod("GET");
-                        connection.connect();
-
-                        Log.e("loadMore", loadMore);
-
-                        inputStream = connection.getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                        String line;
-                        StringBuilder stringBuilder = new StringBuilder();
-
-                        while ((line = bufferedReader.readLine()) != null) {
-                            stringBuilder.append(line);
-                        }
-
-                        inputStream.close();
-                        connection.disconnect();
-
-                        JSONArray jsonArray = new JSONArray(stringBuilder.toString());
-
-                            for (int i = 0; i < jsonArray.length(); i++) {
-
-                                ShotsModel shotsModel = new ShotsModel();
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                shotsModel.setTitle(jsonObject.getString("title"));
-                                JSONObject imageJsonObj = jsonObject.getJSONObject("images");
-
-                                if (imageJsonObj.getString("hidpi").equals("null")){
-                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
-                                }else {
-                                    shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
-                                }
-                                shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
-                                shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                                shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
-                                shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
-                                shotsModel.setAnimated(jsonObject.getBoolean("animated"));
-                                shotsModel.setShots_id(jsonObject.getInt("id"));
-
-                                JSONObject userJsonObj = jsonObject.getJSONObject("user");
-                                shotsModel.setShots_author_name(userJsonObj.getString("username"));
-                                shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
-
-                                shotsModels.add(shotsModel);
-
-                                Log.d("fragment", String.valueOf(shotsModels.size()));
-
-                            }
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
-                                shotsRecyclerViewAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         };
         return runnable;

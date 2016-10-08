@@ -1,14 +1,15 @@
 package stcdribbble.shituocheng.com.qribbble.Adapter;
 
 import android.content.Context;
-import android.os.Message;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -22,30 +23,28 @@ import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.RecentShotsFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 /**
  * Created by shituocheng on 2016/7/18.
  */
-public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecyclerViewAdapter.ViewHolder> {
+public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter{
 
     private List<ShotsModel> mShotsModels = new ArrayList<>();
-    private Context context;
-    private final LayoutInflater inflater;
     private final int VIEW_TYPE_ITEM = 1;
     private final int VIEW_TYPE_PROGRESSBAR = 0;
-    private boolean isFooterEnabled = true;
+    private boolean loading;
+    private OnLoadMoreListener onLoadMoreListener;
+    private int lastVisibleItem, totalItemCount;
+    private int visibleThreshold = 5;
 
     private ImageLoader mImageLoader = AppController.getInstance().getImageLoader();
-
-    private RecentShotsFragment recentShotsFragment = new RecentShotsFragment();
-    private boolean animateItems = false;
-    private int lastAnimatedPosition = -1;
     private OnRecyclerViewOnClickListener mListener;
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class ShotsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private NetworkImageView each_shots_imageView;
         private TextView each_shots_textView;
@@ -54,12 +53,11 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
         private TextView each_shots_favorite_times_textView;
         private TextView each_shots_view_times_textView;
         private CircularNetworkImageView each_shots_author_avatar;
-        private CardView cardView;
         private ImageView isGifImageView;
         private OnRecyclerViewOnClickListener listener;
 
 
-        public ViewHolder(View itemView, OnRecyclerViewOnClickListener listener) {
+        public ShotsViewHolder(View itemView, OnRecyclerViewOnClickListener listener) {
             super(itemView);
             each_shots_imageView = (NetworkImageView)itemView.findViewById(R.id.shots_imageView);
             each_shots_textView = (TextView)itemView.findViewById(R.id.shots_title);
@@ -68,7 +66,6 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
             each_shots_review_times_textView = (TextView)itemView.findViewById(R.id.shots_review_times);
             each_shots_view_times_textView = (TextView)itemView.findViewById(R.id.shots_view_times);
             each_shots_author_avatar = (CircularNetworkImageView)itemView.findViewById(R.id.shots_author_avatar);
-            cardView = (CardView)itemView.findViewById(R.id.card_view);
             isGifImageView = (ImageView)itemView.findViewById(R.id.isGif);
             this.listener = listener;
             itemView.setOnClickListener(this);
@@ -83,62 +80,104 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
 
     }
 
-    /*
+
     public static class ProgressViewHolder extends RecyclerView.ViewHolder{
 
         public ProgressBar progressBar;
 
         public ProgressViewHolder(View itemView) {
             super(itemView);
-            progressBar = (ProgressBar)itemView.findViewById(R.id.progress_bar);
+            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar1);
         }
     }
-    */
 
-    public ShotsRecyclerViewAdapter(List<ShotsModel> shotsModels, Context context) {
+
+    public ShotsRecyclerViewAdapter(List<ShotsModel> shotsModels, RecyclerView recyclerView) {
         mShotsModels = shotsModels;
-        this.context = context;
-        this.inflater = LayoutInflater.from(context);
+
+        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager){
+            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
+
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    lastVisibleItem = linearLayoutManager
+                            .findLastVisibleItemPosition();
+                    if (!loading
+                            && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                        // End has been reached
+                        // Do something
+                        if (onLoadMoreListener != null) {
+                            onLoadMoreListener.onLoadMore();
+                        }
+                        loading = true;
+                    }
+                }
+            });
+        }
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_shots_item,null);
-
-        ViewHolder viewHolder = new ViewHolder(view, mListener);
-
-        return viewHolder;
+    public int getItemViewType(int position) {
+        return mShotsModels.get(position) != null ? VIEW_TYPE_ITEM : VIEW_TYPE_PROGRESSBAR;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        runEnterAnimation(holder.itemView,position);
+        RecyclerView.ViewHolder vh;
+        if (viewType == VIEW_TYPE_ITEM) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.layout_shots_item, parent, false);
 
-        ShotsModel shotsModel = mShotsModels.get(position);
+            vh = new ShotsViewHolder(v, mListener);
+        } else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.progress_item, parent, false);
 
-        holder.each_shots_textView.setText(shotsModel.getTitle());
+            vh = new ProgressViewHolder(v);
+        }
+        return vh;
+    }
 
-        holder.each_shots_imageView.setImageUrl(shotsModel.getShots_thumbnail_url(),mImageLoader);
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        holder.each_shots_view_times_textView.setText(String.valueOf(shotsModel.getShots_view_count()));
+        //runEnterAnimation(holder.itemView,position);
 
-        holder.each_shots_favorite_times_textView.setText(String.valueOf(shotsModel.getShots_like_count()));
+        if (holder instanceof ShotsViewHolder){
+            ShotsModel shotsModel = mShotsModels.get(position);
 
-        holder.each_shots_author_textView.setText(shotsModel.getShots_author_name());
+            ((ShotsViewHolder)holder).each_shots_textView.setText(shotsModel.getTitle());
 
-        holder.each_shots_review_times_textView.setText(String.valueOf(shotsModel.getShots_review_count()));
+            ((ShotsViewHolder)holder).each_shots_imageView.setImageUrl(shotsModel.getShots_thumbnail_url(),mImageLoader);
 
-        holder.each_shots_author_avatar.setImageUrl(shotsModel.getShots_author_avatar(),mImageLoader);
+            ((ShotsViewHolder)holder).each_shots_view_times_textView.setText(String.valueOf(shotsModel.getShots_view_count()));
 
-        if (shotsModel.isAnimated()){
-            holder.isGifImageView.setImageResource(R.drawable.ic_gif_black_24dp);
+            ((ShotsViewHolder)holder).each_shots_favorite_times_textView.setText(String.valueOf(shotsModel.getShots_like_count()));
+
+            ((ShotsViewHolder)holder).each_shots_author_textView.setText(shotsModel.getShots_author_name());
+
+            ((ShotsViewHolder)holder).each_shots_review_times_textView.setText(String.valueOf(shotsModel.getShots_review_count()));
+
+            ((ShotsViewHolder)holder).each_shots_author_avatar.setImageUrl(shotsModel.getShots_author_avatar(),mImageLoader);
+
+            if (shotsModel.isAnimated()){
+                ((ShotsViewHolder)holder).isGifImageView.setImageResource(R.drawable.ic_gif_black_24dp);
+            }else {
+
+            }
         }else {
-
-
+            ((ProgressViewHolder)holder).progressBar.setIndeterminate(true);
         }
 
+    }
+
+    public void setLoaded(){
+        loading = false;
     }
 
     @Override
@@ -146,24 +185,12 @@ public class ShotsRecyclerViewAdapter extends RecyclerView.Adapter<ShotsRecycler
         return mShotsModels.size();
     }
 
+    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener){
+        this.onLoadMoreListener = onLoadMoreListener;
+    }
+
     public void setItemClickListener(OnRecyclerViewOnClickListener listener){
         this.mListener = listener;
     }
 
-    private void runEnterAnimation(View view, int position) {
-        if (!animateItems || position >= 3) {
-            return;
-        }
-
-        if (position > lastAnimatedPosition) {
-            lastAnimatedPosition = position;
-            view.setTranslationY(Utils.getScreenHeight(recentShotsFragment.getActivity()));
-            view.animate()
-                    .translationY(0)
-                    .setStartDelay(100 * position)
-                    .setInterpolator(new DecelerateInterpolator(3.f))
-                    .setDuration(700)
-                    .start();
-        }
-    }
 }

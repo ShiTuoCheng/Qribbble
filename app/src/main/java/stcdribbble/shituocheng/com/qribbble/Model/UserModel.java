@@ -9,7 +9,16 @@ public class UserModel {
     String name;
     String comment;
     String avatar;
+    String user_name;
     int user_id;
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
 
     public String getName() {
         return name;

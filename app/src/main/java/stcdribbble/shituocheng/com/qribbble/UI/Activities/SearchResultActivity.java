@@ -118,12 +118,13 @@ public class SearchResultActivity extends AppCompatActivity {
                             public void run() {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 search_result_recyclerView.setVisibility(View.VISIBLE);
-                                ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getApplicationContext());
+                                ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,search_result_recyclerView);
                                 shotsRecyclerViewAdapter.notifyDataSetChanged();
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
                                 linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                                 search_result_recyclerView.setLayoutManager(linearLayoutManager);
                                 search_result_recyclerView.setAdapter(shotsRecyclerViewAdapter);
+                                /*
                                 shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
                                     @Override
                                     public void OnItemClick(View v, int position) {
@@ -142,6 +143,7 @@ public class SearchResultActivity extends AppCompatActivity {
                                         startActivity(intent);
                                     }
                                 });
+                                */
                             }
                         });
 

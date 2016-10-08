@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -25,6 +26,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.Model.UserModel;
 import stcdribbble.shituocheng.com.qribbble.R;
@@ -33,6 +36,8 @@ import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 /**
@@ -42,8 +47,9 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
 
     public  RecyclerView favorite_recyclerView;
     public  ArrayList<UserModel> users = new ArrayList<>();
+    private ExecutorService pool = Executors.newCachedThreadPool();
 
-    private MyTask myTask = new MyTask();
+    private int current_page = 1;
 
 
     public ShotsDetailFavoriteFragment() {
@@ -69,75 +75,92 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
     }
 
     public void update(int shots_id){
-        myTask.execute(String.valueOf(shots_id));
+        pool.execute(initData(String.valueOf(shots_id)));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        myTask.cancel(false);
     }
 
-    public class MyTask extends AsyncTask<String, Void, Void> {
+    public Runnable initData(final String shots_id){
 
-        @Override
-        protected Void doInBackground(String... params) {
+        return new Runnable() {
+            @Override
+            public void run() {
 
-            HttpURLConnection connection;
-            InputStream inputStream;
-            String shots_id = params[0];
-            String api = API.generic_api + "shots/" + shots_id + "/likes?access_token=" + Access_Token.access_token;
+                String api = API.generic_api + "shots/" + shots_id + "/likes?access_token=" + Access_Token.access_token;
+                Log.d("TEST_API",api);
 
-            try {
-                connection = (HttpURLConnection) new URL(api).openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
+                try {
+                    JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        UserModel userModel = new UserModel();
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        JSONObject userJson = jsonObject.getJSONObject("user");
+                        String user_name = userJson.getString("name");
+                        String user_avatar = userJson.getString("avatar_url");
+                        userModel.setAvatar(user_avatar);
+                        userModel.setName(user_name);
+                        users.add(userModel);
 
-                inputStream = connection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                StringBuilder stringBuilder = new StringBuilder();
+                    }
 
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line);
+                    if (getActivity() == null){
+                        return;
+                    }
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final UsersAdapter usersAdapter = new UsersAdapter(users);
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            favorite_recyclerView.setLayoutManager(linearLayoutManager);
+                            favorite_recyclerView.setAdapter(usersAdapter);
+                            favorite_recyclerView.setNestedScrollingEnabled(true);
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
-                Log.d("favorite_api", api);
-
-                JSONArray jsonArray = new JSONArray(stringBuilder.toString());
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    UserModel userModel = new UserModel();
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    JSONObject userJson = jsonObject.getJSONObject("user");
-                    String user_name = userJson.getString("name");
-                    String user_avatar = userJson.getString("avatar_url");
-                    userModel.setAvatar(user_avatar);
-                    userModel.setName(user_name);
-                    users.add(userModel);
-                }
-                return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            int num_favorite = users.size();
-            ShotsDetailFavoriteFragment.UsersAdapter usersAdapter = new ShotsDetailFavoriteFragment.UsersAdapter(users);
-            favorite_recyclerView.setAdapter(usersAdapter);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            favorite_recyclerView.setLayoutManager(linearLayoutManager);
-            favorite_recyclerView.setNestedScrollingEnabled(true);
-        }
+        };
     }
 
+    private Runnable loadMore(final String shots_id,final UsersAdapter usersAdapter){
 
+        return new Runnable() {
+            @Override
+            public void run() {
+                current_page += 1;
+                String api = API.generic_api + "shots/" + shots_id + "/likes?"+"page="+String.valueOf(current_page)+"&access_token=" + Access_Token.access_token;
+
+                try {
+                    JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
+                    int start = users.size();
+                    int end = start+jsonArray.length();
+                    for (int i = start + 1; i <= end; i++) {
+                        UserModel userModel = new UserModel();
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        JSONObject userJson = jsonObject.getJSONObject("user");
+                        String user_name = userJson.getString("name");
+                        String name = userJson.getString("user_name");
+                        String user_avatar = userJson.getString("avatar_url");
+                        userModel.setAvatar(user_avatar);
+                        userModel.setName(user_name);
+                        userModel.setUser_name(name);
+                        users.add(userModel);
+                        usersAdapter.notifyItemInserted(users.size());
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
 
     public  class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder>{
 
@@ -180,7 +203,7 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
             holder.avatar_imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.openProfile(getActivity(), userModel.getName());
+                    Utils.openProfile(getActivity(), userModel.getUser_name());
                 }
             });
         }
