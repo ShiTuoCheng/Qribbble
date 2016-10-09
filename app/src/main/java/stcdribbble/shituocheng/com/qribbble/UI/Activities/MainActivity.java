@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
 
-                    JSONObject jsonObject = new JSONObject(GetHttpString.getHttpDataString(url, "POST"));
+                    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
                     String access_token = jsonObject.getString("access_token");
 
                     LoginUser loginUser = new LoginUser();

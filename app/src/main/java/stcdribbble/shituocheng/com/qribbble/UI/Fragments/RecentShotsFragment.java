@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,13 +113,6 @@ public class RecentShotsFragment extends BaseFragment {
                 }, 2000);
             }
         });
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-               // fetchData(true);
-                pool.execute(loadData());
-            }
-        });
 
         pool.execute(loadData());
         //fetchData(true);
@@ -144,9 +138,29 @@ public class RecentShotsFragment extends BaseFragment {
             public void run() {
                 final String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
                 shotsModels.clear();
+                Log.d("api", api);
 
                 try {
-                    JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
+                    HttpURLConnection connection;
+                    InputStream inputStream;
+                        connection = (HttpURLConnection)new URL(api).openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.connect();
+
+                        inputStream = connection.getInputStream();
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                        String line;
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        while ((line = bufferedReader.readLine())!=null){
+                            stringBuilder.append(line);
+                        }
+
+                        inputStream.close();
+                        connection.disconnect();
+
+
+                    JSONArray jsonArray = new JSONArray(stringBuilder.toString());
 
                     for (int i = 0; i < jsonArray.length(); i++){
                         ShotsModel shotsModel = new ShotsModel();
@@ -284,6 +298,10 @@ public class RecentShotsFragment extends BaseFragment {
 
                 }catch (JSONException e) {
 
+                    e.printStackTrace();
+                }catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
