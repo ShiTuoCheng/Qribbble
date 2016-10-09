@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/user_detail_works_recyclerView"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:layoutAnimation="@anim/anim_layout"/>
 
 </FrameLayout>

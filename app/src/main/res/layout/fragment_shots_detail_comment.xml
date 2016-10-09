@@ -61,7 +61,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:id="@+id/shots_detail_comment_recyclerView"/>
+        android:id="@+id/shots_detail_comment_recyclerView"
+        android:layoutAnimation="@anim/anim_layout"/>
 
 
 </RelativeLayout>

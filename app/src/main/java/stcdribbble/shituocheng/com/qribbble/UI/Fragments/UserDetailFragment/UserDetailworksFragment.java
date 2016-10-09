@@ -38,6 +38,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import stcdribbble.shituocheng.com.qribbble.Adapter.ShotsRecyclerViewAdapter;
+import stcdribbble.shituocheng.com.qribbble.Adapter.UserDetailArtworkAdapter;
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
@@ -110,11 +111,19 @@ public class UserDetailworksFragment extends Fragment {
                         for (int i = 0; i < jsonArray.length(); i++){
                             ShotsModel shotsModel = new ShotsModel();
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            shotsModel.setShots_id(jsonObject.getInt("id"));
-
                             JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+
+                            if (imageJsonObj.getString("hidpi").equals("null")){
+                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                            }else {
+                                shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                            }
+                            shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
                             shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                            shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                            shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                            shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                            shotsModel.setShots_id(jsonObject.getInt("id"));
 
                             shotsModels.add(shotsModel);
 
@@ -230,124 +239,5 @@ public class UserDetailworksFragment extends Fragment {
 
     }
 
-    private class UserDetailArtworkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-        private List<ShotsModel> shotsModels = new ArrayList<>();
-        private final int VIEW_TYPE_ITEM = 1;
-        private final int VIEW_TYPE_PROGRESSBAR = 0;
-        private boolean loading;
-        private OnLoadMoreListener onLoadMoreListener;
-        private int lastVisibleItem, totalItemCount;
-        private int visibleThreshold = 5;
-        private OnRecyclerViewOnClickListener mListener;
-
-        public class ShotsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-            private NetworkImageView networkImageView;
-            private OnRecyclerViewOnClickListener listener;
-
-            public ShotsViewHolder(View itemView, OnRecyclerViewOnClickListener listener) {
-                super(itemView);
-                networkImageView = (NetworkImageView)itemView.findViewById(R.id.user_detail_artwork);
-                this.listener = listener;
-                itemView.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View v) {
-                if (listener != null){
-                    listener.OnItemClick(v,getLayoutPosition());
-                }
-            }
-        }
-
-        public class ProgressViewHolder extends RecyclerView.ViewHolder{
-
-            private ProgressBar progressBar;
-
-            public ProgressViewHolder(View itemView) {
-                super(itemView);
-                progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar1);
-            }
-        }
-
-        public UserDetailArtworkAdapter(List<ShotsModel> shotsModels, RecyclerView recyclerView) {
-            this.shotsModels = shotsModels;
-            if (recyclerView.getLayoutManager() instanceof LinearLayoutManager){
-                final GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-
-                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                        super.onScrolled(recyclerView, dx, dy);
-
-                        totalItemCount = gridLayoutManager.getItemCount();
-                        lastVisibleItem = gridLayoutManager
-                                .findLastVisibleItemPosition();
-                        if (!loading
-                                && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
-                            // End has been reached
-                            // Do something
-                            if (onLoadMoreListener != null) {
-                                onLoadMoreListener.onLoadMore();
-                            }
-                            loading = true;
-                        }
-                    }
-                });
-            }
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return shotsModels.get(position) != null ? VIEW_TYPE_ITEM : VIEW_TYPE_PROGRESSBAR;
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            RecyclerView.ViewHolder vh;
-            if (viewType == VIEW_TYPE_ITEM) {
-                View v = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.layout_user_detail_artwork, parent, false);
-
-                vh = new ShotsViewHolder(v, mListener);
-            } else {
-                View v = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.progress_item, parent, false);
-
-                vh = new ProgressViewHolder(v);
-            }
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            if (holder instanceof ShotsViewHolder){
-
-                ShotsModel shotsModel = shotsModels.get(position);
-                ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-                ((ShotsViewHolder)holder).networkImageView.setImageUrl(shotsModel.getShots_thumbnail_url(), imageLoader);
-            }else {
-                ((ProgressViewHolder)holder).progressBar.setIndeterminate(true);
-            }
-        }
-
-        public void setLoaded(){
-            loading = false;
-        }
-
-        @Override
-        public int getItemCount() {
-            return shotsModels.size();
-        }
-
-        public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener){
-            this.onLoadMoreListener = onLoadMoreListener;
-        }
-
-        public void setItemClickListener(OnRecyclerViewOnClickListener listener){
-            this.mListener = listener;
-        }
-    }
 }
