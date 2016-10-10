@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:background="@color/colorPrimary">
+
+    <TextView
+        android:id="@+id/shots_create_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/create_shots"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:textSize="25sp"/>
+
+    <ImageButton
+        android:id="@+id/shots_create_send_imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_send"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:clickable="true"
+        android:padding="5dp"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/shots_create_title_textInputLayout"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shots_create_title"
+        android:textColorHint="@color/colorAccent"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/shots_create_title_editText"
+            android:hint="Title(required)"
+            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorAccent"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/shots_create_description_textInputLayout"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shots_create_title_textInputLayout"
+        android:textColorHint="@color/colorAccent"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/shots_create_description_editText"
+            android:hint="Description"
+            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorAccent"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/shots_create_tags_textInputLayout"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shots_create_description_textInputLayout"
+        android:textColorHint="@color/colorAccent"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/shots_create_tags_editText"
+            android:hint="Tags"
+            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorAccent"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shots_create_tags_textInputLayout"
+        android:id="@+id/shots_create_select_title"
+        android:textSize="15sp"
+        android:text="select an image"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"/>
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/shots_create_select_title"
+        android:layout_margin="10dp"
+        android:id="@+id/shots_create_select_image"
+        android:src="@drawable/dribbble"/>
+
+</RelativeLayout>

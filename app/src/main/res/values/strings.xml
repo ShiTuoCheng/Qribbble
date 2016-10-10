@@ -22,12 +22,12 @@
     <string name="notification_setting_time" translatable="false">notification_setting_time</string>
     <string name="clear_cache" translatable="false">clear_cache</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="title_activity_search_result" translatable="false">SearchResultActivity</string>
     <string name="title_activity_user_detail" translatable="false">UserDetailActivity</string>
     <string name="appwidget_text" translatable="false">EXAMPLE</string>
     <string name="add_widget" translatable="false">Add widget</string>
+    <string name="create_shots">Create a shot</string>
 
 
 </resources>

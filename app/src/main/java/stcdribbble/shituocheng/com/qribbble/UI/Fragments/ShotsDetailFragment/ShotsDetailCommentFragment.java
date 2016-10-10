@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -64,7 +65,7 @@ public class ShotsDetailCommentFragment extends Fragment {
 
     private RecyclerView shots_detail_comment_recyclerView;
     private Toolbar shots_detail_comment_toolBat;
-    private FloatingActionButton shots_detail_comment_fab;
+    private ImageButton shots_detail_comment_fab;
     private EditText shots_detail_comment_editText;
 
     private ArrayList<CommentModel> commentModels = new ArrayList<>();
@@ -156,7 +157,7 @@ public class ShotsDetailCommentFragment extends Fragment {
     private void setUpView(View view){
         shots_detail_comment_recyclerView = (RecyclerView)view.findViewById(R.id.shots_detail_comment_recyclerView);
         shots_detail_comment_toolBat = (Toolbar)view.findViewById(R.id.comment_toolBar);
-        shots_detail_comment_fab = (FloatingActionButton)view.findViewById(R.id.comment_send_fab);
+        shots_detail_comment_fab = (ImageButton)view.findViewById(R.id.comment_send_fab);
         shots_detail_comment_editText = (EditText)view.findViewById(R.id.comment_input_editText);
     }
 

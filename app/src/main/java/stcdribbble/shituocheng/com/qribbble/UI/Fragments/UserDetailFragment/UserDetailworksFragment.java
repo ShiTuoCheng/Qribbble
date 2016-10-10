@@ -191,6 +191,9 @@ public class UserDetailworksFragment extends Fragment {
                                                     Log.d("user_load_more",more_api);
                                                     try {
                                                         final JSONArray more_jsonArray = new JSONArray(GetHttpString.getHttpDataString(more_api,"GET"));
+                                                        if (getActivity() == null){
+                                                            return;
+                                                        }
                                                         getActivity().runOnUiThread(new Runnable() {
                                                             @Override
                                                             public void run() {
@@ -202,12 +205,19 @@ public class UserDetailworksFragment extends Fragment {
                                                                     JSONObject jsonObject = null;
                                                                     try {
                                                                         jsonObject = more_jsonArray.getJSONObject(i);
-
-                                                                        shotsModel.setShots_id(jsonObject.getInt("id"));
-
                                                                         JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+
+                                                                        if (imageJsonObj.getString("hidpi").equals("null")){
+                                                                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                                                                        }else {
+                                                                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                                                        }
+                                                                        shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
                                                                         shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                                                                        shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                                                        shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                                                                        shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                                                                        shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                                                                        shotsModel.setShots_id(jsonObject.getInt("id"));
 
                                                                         shotsModels.add(shotsModel);
 

@@ -212,23 +212,17 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.profile) {
 
-            item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
 
-                    SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
-                    String access_token = sharedPreferences.getString("access_token","");
+            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
+            String access_token = sharedPreferences.getString("access_token","");
 
-                    if (access_token.isEmpty()){
-                        Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
-                    }else {
-                        Intent intent = new Intent(MainActivity.this, UserDetailActivity.class);
-                        intent.putExtra("user_name",user_name_string);
-                        startActivity(intent);
-                    }
-                    return true;
-                }
-            });
+            if (access_token.isEmpty()){
+                Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
+            }else {
+                Intent intent = new Intent(MainActivity.this, UserDetailActivity.class);
+                intent.putExtra("user_name",user_name_string);
+                startActivity(intent);
+            }
 
         } else if (id == R.id.setting) {
 
@@ -276,17 +270,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK && requestCode==1){
+        if (requestCode == 1){
+            if(resultCode==RESULT_OK){
 
-            progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setMessage(getString(R.string.success_login));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-            String result = data.getBundleExtra("bundle").getString("code");
-            threadPool.execute(fetchUserData(result));
-            Log.d("result",result);
-        }else {
-            Toast.makeText(getApplicationContext(), "failed to login", Toast.LENGTH_SHORT).show();
+                progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setMessage(getString(R.string.success_login));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                String result = data.getBundleExtra("bundle").getString("code");
+                threadPool.execute(fetchUserData(result));
+                Log.d("result",result);
+            }else {
+                Toast.makeText(getApplicationContext(), "failed to login", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

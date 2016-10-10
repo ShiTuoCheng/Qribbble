@@ -60,7 +60,6 @@ public class RecentShotsFragment extends BaseFragment {
     private ArrayList<String> title = new ArrayList<>();
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private FloatingActionButton floatingActionButton;
     private ShotsRecyclerViewAdapter shotsRecyclerViewAdapter;
     private LinearLayoutManager linearLayoutManager;
     public static final String ARGS_PAGE = "args_page";
@@ -128,7 +127,6 @@ public class RecentShotsFragment extends BaseFragment {
         mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeColors(R.color.colorAccent);
-        floatingActionButton = (FloatingActionButton)view.findViewById(R.id.recent_shots_fab);
 
     }
 
