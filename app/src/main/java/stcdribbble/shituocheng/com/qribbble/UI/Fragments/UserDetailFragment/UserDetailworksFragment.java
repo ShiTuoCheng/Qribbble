@@ -67,6 +67,7 @@ public class UserDetailworksFragment extends Fragment {
     private GridLayoutManager gridLayoutManager;
     private UserDetailArtworkAdapter userDetailArtworkAdapter;
     private TextView nothing_textView;
+    private ProgressBar progressBar;
     private OnRecyclerViewOnClickListener mListener;
     private int current_page = 1;
 
@@ -100,7 +101,7 @@ public class UserDetailworksFragment extends Fragment {
 
         user_detail_works_recyclerView = (RecyclerView)view.findViewById(R.id.user_detail_works_recyclerView);
         nothing_textView = (TextView)view.findViewById(R.id.nothing_textView);
-
+        progressBar = (ProgressBar)view.findViewById(R.id.user_detailworks_progressBar);
     }
 
     public Runnable fetchData(){
@@ -164,9 +165,9 @@ public class UserDetailworksFragment extends Fragment {
                                 @Override
                                 public void run() {
 
-                                    user_detail_works_recyclerView.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(View.INVISIBLE);
 
-                                    nothing_textView.setVisibility(View.GONE);
+                                    user_detail_works_recyclerView.setVisibility(View.VISIBLE);
 
                                     gridLayoutManager = new GridLayoutManager(getActivity(), 2);
 
@@ -269,6 +270,13 @@ public class UserDetailworksFragment extends Fragment {
                             });
                         }else {
 
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    nothing_textView.setVisibility(View.VISIBLE);
+                                }
+                            });
                         }
 
 
