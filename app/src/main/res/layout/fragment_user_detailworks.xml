@@ -1,15 +1,26 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment.UserDetailworksFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/user_detail_works_recyclerView"
         android:scrollbars="vertical"
-        android:layoutAnimation="@anim/anim_layout"/>
+        android:layoutAnimation="@anim/anim_layout"
+        android:visibility="gone"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/nothing_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="There is nothing!!"
+        android:textColor="@color/colorAccent"
+        android:fontFamily="cursive"
+        android:visibility="visible"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

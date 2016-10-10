@@ -99,8 +99,10 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         JSONObject userJson = jsonObject.getJSONObject("user");
                         String user_name = userJson.getString("name");
+                        String name = userJson.getString("username");
                         String user_avatar = userJson.getString("avatar_url");
                         userModel.setAvatar(user_avatar);
+                        userModel.setUser_name(name);
                         userModel.setName(user_name);
                         users.add(userModel);
 
@@ -146,7 +148,7 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         JSONObject userJson = jsonObject.getJSONObject("user");
                         String user_name = userJson.getString("name");
-                        String name = userJson.getString("user_name");
+                        String name = userJson.getString("username");
                         String user_avatar = userJson.getString("avatar_url");
                         userModel.setAvatar(user_avatar);
                         userModel.setName(user_name);

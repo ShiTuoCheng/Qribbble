@@ -129,11 +129,13 @@ public class SearchResultActivity extends AppCompatActivity {
                             public void run() {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 search_result_recyclerView.setVisibility(View.VISIBLE);
-                                shotsRecyclerViewAdapter = new UserDetailArtworkAdapter(shotsModels,search_result_recyclerView);
 
                                 gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
 
                                 search_result_recyclerView.setLayoutManager(gridLayoutManager);
+
+                                shotsRecyclerViewAdapter = new UserDetailArtworkAdapter(shotsModels,search_result_recyclerView);
+
                                 search_result_recyclerView.setAdapter(shotsRecyclerViewAdapter);
 
                                 shotsRecyclerViewAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -147,8 +149,6 @@ public class SearchResultActivity extends AppCompatActivity {
                                         pool.execute(new Runnable() {
                                             @Override
                                             public void run() {
-                                                shotsModels.remove(shotsModels.size() - 1);
-                                                shotsRecyclerViewAdapter.notifyItemRemoved(shotsModels.size());
                                                 String more_api = ("http://dribbble.com/search?q=" + search_string + "&page=" + current_page).replaceAll("\\s", "%20");
                                                 Elements more_elements = null;
                                                 try {
@@ -156,35 +156,49 @@ public class SearchResultActivity extends AppCompatActivity {
                                                             .cookie("shot_meta_preference", "with")
                                                             .cookie("shot_size", "large")
                                                             .get().select(".dribbble");
-                                                    for (Element element : more_elements) {
-                                                        Element shotImgElement = element.select(".dribbble-shot").first();
-                                                        String imageUrl = shotImgElement.select(".dribbble-img a div div").attr("data-src");
-                                                        String shotUrl = shotImgElement.select(".dribbble-img a").attr("href");
-                                                        String title = shotImgElement.select(".dribbble-over strong").html();
-                                                        int shotId = Integer.parseInt(shotUrl.substring(7, shotUrl.indexOf("-")));
 
-                                                        int likes = 0, views = 0, comments = 0;
-                                                        Element shotToolsElement = shotImgElement.select("[class=tools group]").first();
-                                                        likes = Integer.parseInt(shotToolsElement.select(".fav a").html().replaceAll(",", ""));
-                                                        comments = Integer.parseInt(shotToolsElement.select(".cmnt span").html().replaceAll(",", ""));
-                                                        views = Integer.parseInt(shotToolsElement.select(".views span").html().replaceAll(",", ""));
-                                                        Element shotExtrasElement = element.select(".extras").first();
-                                                        boolean hasRebounds = Integer.parseInt(shotExtrasElement.select("a span").html().substring(0, 1)) > 0;
-                                                        final ShotsModel shotsModel = new ShotsModel();
-                                                        shotsModel.setTitle(title);
-                                                        shotsModel.setShots_like_count(likes);
-                                                        shotsModel.setShots_id(shotId);
-                                                        shotsModel.setShots_review_count(comments);
-                                                        shotsModel.setShots_thumbnail_url(imageUrl);
-                                                        shotsModel.setShots_view_count(views);
-                                                        shotsModels.add(shotsModel);
-                                                        try {
-                                                            shotsRecyclerViewAdapter.notifyItemInserted(shotsModels.size());
-                                                        } catch (Exception e) {
-                                                            Log.w(TAG, "notifyItemChanged failure");
-                                                            e.printStackTrace();
+                                                    final Elements finalMore_elements = more_elements;
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+
+                                                            shotsModels.remove(shotsModels.size() - 1);
+                                                            shotsRecyclerViewAdapter.notifyItemRemoved(shotsModels.size());
+
+                                                            for (Element element : finalMore_elements) {
+                                                                Element shotImgElement = element.select(".dribbble-shot").first();
+                                                                String imageUrl = shotImgElement.select(".dribbble-img a div div").attr("data-src");
+                                                                String shotUrl = shotImgElement.select(".dribbble-img a").attr("href");
+                                                                String title = shotImgElement.select(".dribbble-over strong").html();
+                                                                int shotId = Integer.parseInt(shotUrl.substring(7, shotUrl.indexOf("-")));
+
+                                                                int likes = 0, views = 0, comments = 0;
+                                                                Element shotToolsElement = shotImgElement.select("[class=tools group]").first();
+                                                                likes = Integer.parseInt(shotToolsElement.select(".fav a").html().replaceAll(",", ""));
+                                                                comments = Integer.parseInt(shotToolsElement.select(".cmnt span").html().replaceAll(",", ""));
+                                                                views = Integer.parseInt(shotToolsElement.select(".views span").html().replaceAll(",", ""));
+                                                                Element shotExtrasElement = element.select(".extras").first();
+                                                                boolean hasRebounds = Integer.parseInt(shotExtrasElement.select("a span").html().substring(0, 1)) > 0;
+                                                                ShotsModel shotsModel = new ShotsModel();
+                                                                shotsModel.setTitle(title);
+                                                                shotsModel.setShots_like_count(likes);
+                                                                shotsModel.setShots_id(shotId);
+                                                                shotsModel.setShots_review_count(comments);
+                                                                shotsModel.setShots_thumbnail_url(imageUrl);
+                                                                shotsModel.setShots_view_count(views);
+                                                                shotsModels.add(shotsModel);
+                                                                try {
+                                                                    shotsRecyclerViewAdapter.notifyItemInserted(shotsModels.size());
+                                                                } catch (Exception e) {
+                                                                    Log.w(TAG, "notifyItemChanged failure");
+                                                                    e.printStackTrace();
+                                                                    shotsRecyclerViewAdapter.notifyDataSetChanged();
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    });
+
+
                                                 } catch (IOException e) {
                                                     e.printStackTrace();
                                                 }
@@ -210,7 +224,8 @@ public class SearchResultActivity extends AppCompatActivity {
                                         intent.putExtra("isGif",isGif);
                                         intent.putExtra("id",id);
 
-                                        startActivity(intent);
+
+                                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SearchResultActivity.this).toBundle());
                                     }
                                 });
 
