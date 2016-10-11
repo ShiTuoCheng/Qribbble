@@ -1,11 +1,15 @@
 package stcdribbble.shituocheng.com.qribbble.Model;
 
+import android.content.PeriodicSync;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
  * Created by shituocheng on 2016/7/18.
  */
-public class ShotsModel{
+public class ShotsModel implements Serializable{
     private String title;
     private int shots_like_count;
     private int shots_view_count;
@@ -15,8 +19,16 @@ public class ShotsModel{
     private String shots_author_name;
     private String shots_author_avatar;
     private String shots_full_imageUrl;
+    private String shots_share_url;
     private boolean animated;
 
+    public String getShots_share_url() {
+        return shots_share_url;
+    }
+
+    public void setShots_share_url(String shots_share_url) {
+        this.shots_share_url = shots_share_url;
+    }
 
     public int getShots_like_count() {
         return shots_like_count;
@@ -97,4 +109,5 @@ public class ShotsModel{
     public void setShots_id(int shots_id) {
         this.shots_id = shots_id;
     }
+
 }

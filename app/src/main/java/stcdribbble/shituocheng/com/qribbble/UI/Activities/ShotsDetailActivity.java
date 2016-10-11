@@ -333,7 +333,54 @@ public class ShotsDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        Intent intent = getIntent();
+        final int shots_id = intent.getIntExtra("id", 0);
         if (id == R.id.shots_detail_share){
+
+            pool.execute(new Runnable() {
+                @Override
+                public void run() {
+
+                    HttpURLConnection connection;
+                    InputStream inputStream;
+                    String api = API.generic_api + "shots/"+shots_id+"?access_token="+ Access_Token.access_token;
+
+                    try {
+                        connection = (HttpURLConnection)new URL(api).openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.connect();
+
+                        inputStream = connection.getInputStream();
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+
+                        while ((line = bufferedReader.readLine())!=null){
+                            stringBuilder.append(line);
+                        }
+
+                        JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+
+                        final String shared_url = jsonObject.getString("html_url");
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Intent shareIntent = new Intent().setAction(Intent.ACTION_SEND).setType("text/plain");
+                                shareIntent.putExtra(Intent.EXTRA_TEXT,shared_url);
+                                startActivity(Intent.createChooser(shareIntent,"Share to"));
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
 
         }else if (id == R.id.shots_detail_download){
 

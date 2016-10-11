@@ -166,6 +166,12 @@ public class RecentShotsFragment extends BaseFragment {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         shotsModel.setTitle(jsonObject.getString("title"));
                         JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+
+                        if (imageJsonObj.getString("hidpi").equals("null")){
+                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                        }else {
+                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                        }
                         shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
                         shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
                         shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
@@ -173,6 +179,7 @@ public class RecentShotsFragment extends BaseFragment {
                         shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
                         shotsModel.setShots_id(jsonObject.getInt("id"));
                         shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                        shotsModel.setShots_share_url(jsonObject.getString("html_url"));
 
                         JSONObject userJsonObj = jsonObject.getJSONObject("user");
                         shotsModel.setShots_author_name(userJsonObj.getString("username"));
@@ -229,6 +236,12 @@ public class RecentShotsFragment extends BaseFragment {
                                                                     jsonObject = more_jsonArray.getJSONObject(i);
                                                                     shotsModel.setTitle(jsonObject.getString("title"));
                                                                     JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+
+                                                                    if (imageJsonObj.getString("hidpi").equals("null")){
+                                                                        shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                                                                    }else {
+                                                                        shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                                                    }
                                                                     shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
                                                                     shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
                                                                     shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
@@ -305,139 +318,4 @@ public class RecentShotsFragment extends BaseFragment {
             }
         };
     }
-
-    /*
-    public Runnable fechData(final boolean isFirstLoading){
-       // final HttpURLConnection[] connection = new HttpURLConnection[1];
-       // final InputStream[] inputStream = new InputStream[1];
-        final String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (isFirstLoading){
-                    shotsModels.clear();
-
-                    try {
-                        JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
-
-                        for (int i = 0; i < jsonArray.length(); i++){
-                            ShotsModel shotsModel = new ShotsModel();
-
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            shotsModel.setTitle(jsonObject.getString("title"));
-                            JSONObject imageJsonObj = jsonObject.getJSONObject("images");
-                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
-                            shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
-                            shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
-                            shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
-                            shotsModel.setShots_id(jsonObject.getInt("id"));
-                            shotsModel.setAnimated(jsonObject.getBoolean("animated"));
-
-                            JSONObject userJsonObj = jsonObject.getJSONObject("user");
-                            shotsModel.setShots_author_name(userJsonObj.getString("username"));
-                            shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
-
-                            shotsModels.add(shotsModel);
-
-                        }
-
-                        if (getActivity() == null){
-                            return;
-                        }else {
-
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity().getApplicationContext());
-                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                                    shotsRecyclerViewAdapter.notifyDataSetChanged();
-                                    swipeRefreshLayout.setRefreshing(false);
-                                    mRecyclerView.setAdapter(shotsRecyclerViewAdapter);
-                                    mRecyclerView.setLayoutManager(linearLayoutManager);
-                                    mRecyclerView.setVisibility(View.VISIBLE);
-
-                                    shotsRecyclerViewAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
-                                        @Override
-                                        public void OnItemClick(View v, int position) {
-                                            Intent intent = new Intent(getActivity(), ShotsDetailActivity.class);
-                                            ShotsModel shotsModel = shotsModels.get(position);
-                                            String imageUrl = shotsModel.getShots_thumbnail_url();
-                                            String fullImageUrl = shotsModel.getShots_full_imageUrl();
-                                            String imageName = shotsModel.getTitle();
-                                            int id = shotsModel.getShots_id();
-                                            boolean isGif = shotsModel.isAnimated();
-                                            intent.putExtra("imageName",imageName);
-                                            intent.putExtra("imageURL",imageUrl);
-                                            intent.putExtra("isGif",isGif);
-                                            intent.putExtra("fullImageUrl",fullImageUrl);
-                                            intent.putExtra("id",id);
-
-                                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
-                                        }
-                                    });
-                                }
-                            });
-
-                        }
-
-                    }catch (JSONException e) {
-
-                        e.printStackTrace();
-                    }
-                }else {
-                    current_page +=1;
-                    String api = "https://api.dribbble.com/v1/"+"shots"+"?"+title.get(pages -1 )+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
-
-                    try {
-                        JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
-
-                        for (int i = 0; i < jsonArray.length(); i++){
-                            ShotsModel shotsModel = new ShotsModel();
-
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            shotsModel.setTitle(jsonObject.getString("title"));
-                            JSONObject imageJsonObj = jsonObject.getJSONObject("images");
-                            shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
-                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
-                            shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
-                            shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
-                            shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
-                            shotsModel.setAnimated(jsonObject.getBoolean("animated"));
-                            shotsModel.setShots_id(jsonObject.getInt("id"));
-
-                            JSONObject userJsonObj = jsonObject.getJSONObject("user");
-                            shotsModel.setShots_author_name(userJsonObj.getString("username"));
-                            shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
-
-                            shotsModels.add(shotsModel);
-
-                        }
-                        if (getActivity() == null){
-                            return;
-                        }else {
-
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ShotsRecyclerViewAdapter shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,getActivity());
-                                    shotsRecyclerViewAdapter.notifyDataSetChanged();
-
-                                }
-                            });
-
-                        }
-
-                    }catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                }
-            };
-        return runnable;
-    }
-
-        */
-
 }
