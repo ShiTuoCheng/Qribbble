@@ -241,12 +241,21 @@ public class ExploreFragment extends BaseFragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
                                 progressBar.setVisibility(View.GONE);
+
                                 explore_recyclerView.setVisibility(View.VISIBLE);
+
                                 linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+
                                 explore_recyclerView.setLayoutManager(linearLayoutManager);
+
+                                explore_recyclerView.setHasFixedSize(true);
+
                                 shotsRecyclerViewAdapter = new ShotsRecyclerViewAdapter(shotsModels,explore_recyclerView);
+
                                 explore_recyclerView.setAdapter(shotsRecyclerViewAdapter);
+
                                 shotsRecyclerViewAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                                     @Override
                                     public void onLoadMore() {

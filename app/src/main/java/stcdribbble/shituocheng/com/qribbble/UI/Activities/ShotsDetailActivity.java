@@ -233,6 +233,14 @@ public class ShotsDetailActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * post a like
+     * @param access_token
+     * @param shots_id
+     * @param isLiked
+     * @return
+     */
+
         private Runnable postShotsLike(final String access_token, final String shots_id, final boolean isLiked){
 
         Runnable runnable = new Runnable() {
@@ -441,6 +449,13 @@ public class ShotsDetailActivity extends AppCompatActivity {
             mgr.enqueue(request);
         }
     }
+
+    /**
+     * 获取下载权限
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

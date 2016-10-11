@@ -130,6 +130,8 @@ public class SearchResultActivity extends AppCompatActivity {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 search_result_recyclerView.setVisibility(View.VISIBLE);
 
+                                search_result_recyclerView.setHasFixedSize(true);
+
                                 gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
 
                                 search_result_recyclerView.setLayoutManager(gridLayoutManager);

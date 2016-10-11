@@ -122,8 +122,13 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
                         @Override
                         public void run() {
                             linearLayoutManager = new LinearLayoutManager(getActivity());
+
                             favorite_recyclerView.setLayoutManager(linearLayoutManager);
+
+                            favorite_recyclerView.setHasFixedSize(true);
+
                             usersAdapter = new UsersAdapter(users, favorite_recyclerView);
+
                             favorite_recyclerView.setAdapter(usersAdapter);
                             usersAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                                 @Override
@@ -185,39 +190,6 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
                     e.printStackTrace();
                 }
 
-            }
-        };
-    }
-
-    private Runnable loadMore(final String shots_id,final UsersAdapter usersAdapter){
-
-        return new Runnable() {
-            @Override
-            public void run() {
-                current_page += 1;
-                String api = API.generic_api + "shots/" + shots_id + "/likes?"+"page="+String.valueOf(current_page)+"&access_token=" + Access_Token.access_token;
-
-                try {
-                    JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
-                    int start = users.size();
-                    int end = start+jsonArray.length();
-                    for (int i = start + 1; i <= end; i++) {
-                        UserModel userModel = new UserModel();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        JSONObject userJson = jsonObject.getJSONObject("user");
-                        String user_name = userJson.getString("name");
-                        String name = userJson.getString("username");
-                        String user_avatar = userJson.getString("avatar_url");
-                        userModel.setAvatar(user_avatar);
-                        userModel.setName(user_name);
-                        userModel.setUser_name(name);
-                        users.add(userModel);
-                        usersAdapter.notifyItemInserted(users.size());
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
         };
     }

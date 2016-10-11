@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -42,6 +43,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,9 +56,12 @@ import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 import static android.content.Context.MODE_PRIVATE;
+import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,11 +73,14 @@ public class ShotsDetailCommentFragment extends Fragment {
     private ImageButton shots_detail_comment_fab;
     private EditText shots_detail_comment_editText;
 
-    private ArrayList<CommentModel> commentModels = new ArrayList<>();
+    private List<CommentModel> commentModels = new ArrayList<>();
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private static final int MESSAGE_WHAT = 0;
     private static final int MESSAGE_WHAT_SCROLL_DOWN=1;
+
+    private LinearLayoutManager linearLayoutManager;
+    private CommentAdapter commentAdapter;
 
     private int current_page = 1;
 
@@ -90,29 +98,7 @@ public class ShotsDetailCommentFragment extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_shots_detail_comment, container, false);
         final int shots_id = getActivity().getIntent().getIntExtra("id",0);
         setUpView(v);
-        threadPool.execute(initComment(String.valueOf(shots_id), true));
-
-        shots_detail_comment_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            boolean isSlidingToLast = false;
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                isSlidingToLast = dy > 0;
-            }
-
-            @Override
-            public void onScrollStateChanged(final RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
-                    int lastItemPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
-                    int totalItemCount = linearLayoutManager.getItemCount();
-                    if (lastItemPosition == (totalItemCount - 1) && isSlidingToLast) {
-                        threadPool.execute(initComment(String.valueOf(shots_id), false));
-                    }
-                }
-            }
-        });
+        threadPool.execute(initComment(String.valueOf(shots_id)));
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_login_data",MODE_PRIVATE);
         final String access_token = sharedPreferences.getString("access_token","");
 
@@ -126,7 +112,7 @@ public class ShotsDetailCommentFragment extends Fragment {
                         if (!String.valueOf(code).equals("201")){
                             Snackbar.make(v, "Upload comments error!", Snackbar.LENGTH_SHORT).show();
                         }else {
-                            threadPool.execute(initComment(String.valueOf(shots_id), true));
+                            threadPool.execute(initComment(String.valueOf(shots_id)));
                             Snackbar.make(v, "Upload comments successful!", Snackbar.LENGTH_SHORT).show();
                         }
                 }
@@ -161,14 +147,14 @@ public class ShotsDetailCommentFragment extends Fragment {
         shots_detail_comment_editText = (EditText)view.findViewById(R.id.comment_input_editText);
     }
 
-    private Runnable initComment(final String shots_id, final boolean isFirstLaoding){
+    private Runnable initComment(final String shots_id){
         return new Runnable() {
             @Override
             public void run() {
                 HttpURLConnection connection;
                 InputStream inputStream;
                 String api = API.generic_api + "shots/"+shots_id+"/comments?access_token=" + Access_Token.access_token;
-                if (isFirstLaoding){
+
                     try {
                         connection = (HttpURLConnection)new URL(api).openConnection();
                         connection.setRequestMethod("GET");
@@ -199,12 +185,64 @@ public class ShotsDetailCommentFragment extends Fragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    CommentAdapter commentAdapter = new CommentAdapter(commentModels);
-                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                                    shots_detail_comment_recyclerView.setAdapter(commentAdapter);
+                                    linearLayoutManager = new LinearLayoutManager(getActivity());
                                     shots_detail_comment_recyclerView.setLayoutManager(linearLayoutManager);
-                                    commentAdapter.notifyDataSetChanged();
+                                    commentAdapter = new CommentAdapter(commentModels, shots_detail_comment_recyclerView);
+                                    shots_detail_comment_recyclerView.setAdapter(commentAdapter);
+                                    commentAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+                                        @Override
+                                        public void onLoadMore() {
+                                            commentModels.add(null);
+                                            commentAdapter.notifyItemInserted(commentModels.size() - 1);
+                                            current_page += 1;
+
+                                            threadPool.execute(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    String load_more_api = API.generic_api + "shots/"+shots_id+"/comments?"+"page="+current_page+"&access_token=" + Access_Token.access_token;
+
+                                                    try {
+                                                        final JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(load_more_api, "GET"));
+
+                                                        getActivity().runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                for (int i = 0; i<jsonArray.length(); i++){
+                                                                    CommentModel commentModel = new CommentModel();
+                                                                    JSONObject eachCommentObj;
+                                                                    try {
+                                                                        eachCommentObj = jsonArray.getJSONObject(i);
+                                                                        commentModel.setComment_cotent(eachCommentObj.getString("body"));
+                                                                        JSONObject userJsonObj = eachCommentObj.getJSONObject("user");
+                                                                        commentModel.setComment_user_avatar(userJsonObj.getString("avatar_url"));
+                                                                        commentModel.setComment_user_name(userJsonObj.getString("name"));
+                                                                        commentModel.setComment_name(userJsonObj.getString("username"));
+                                                                        commentModels.add(commentModel);
+
+                                                                        try {
+                                                                            commentAdapter.notifyItemInserted(commentModels.size());
+                                                                        } catch (Exception e) {
+                                                                            Log.w(TAG, "notifyItemChanged failure");
+                                                                            e.printStackTrace();
+                                                                            commentAdapter.notifyDataSetChanged();
+                                                                        }
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+
+                                                                    commentAdapter.setLoaded();
+                                                                }
+                                                            }
+                                                        });
+
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -212,60 +250,11 @@ public class ShotsDetailCommentFragment extends Fragment {
                         e.printStackTrace();
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    }
-                }else {
-                    current_page += 1;
-                    String load_more_api = API.generic_api + "shots/"+shots_id+"/comments?page="+ current_page +"&access_token=" + Access_Token.access_token;
-                    try {
-                        connection = (HttpURLConnection)new URL(load_more_api).openConnection();
-                        connection.setRequestMethod("GET");
-                        connection.connect();
-
-                        inputStream = connection.getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                        String line;
-                        StringBuilder stringBuilder = new StringBuilder();
-
-                        while ((line = bufferedReader.readLine())!=null){
-                            stringBuilder.append(line);
-                        }
-
-                        JSONArray comments_jsonArray = new JSONArray(stringBuilder.toString());
-                        for (int i = 0; i<comments_jsonArray.length(); i++){
-                            CommentModel commentModel = new CommentModel();
-                            JSONObject eachCommentObj = comments_jsonArray.getJSONObject(i);
-                            commentModel.setComment_cotent(eachCommentObj.getString("body"));
-                            JSONObject userJsonObj = eachCommentObj.getJSONObject("user");
-                            commentModel.setComment_user_avatar(userJsonObj.getString("avatar_url"));
-                            commentModel.setComment_user_name(userJsonObj.getString("name"));
-                            commentModel.setComment_name(userJsonObj.getString("username"));
-                            commentModels.add(commentModel);
-                        }
-
-                        if (getActivity() != null){
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    CommentAdapter commentAdapter = new CommentAdapter(commentModels);
-                                    commentAdapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Snackbar.make(getView(), "there is nothing else!!", Snackbar.LENGTH_SHORT).show();
-                            }
-                        });
                     }
                 }
-            }
-        };
-    }
+            };
+        }
+
 
     private Runnable postComment(final String access_token, final String shots_id, final String comment_content){
         return new Runnable() {
@@ -300,17 +289,25 @@ public class ShotsDetailCommentFragment extends Fragment {
         };
     }
 
-    private class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder>{
+    private class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-        private ArrayList<CommentModel> commentModels = new ArrayList<>();
+        private List<CommentModel> commentModels = new ArrayList<>();
+        private final int VIEW_TYPE_ITEM = 1;
+        private final int VIEW_TYPE_PROGRESSBAR = 0;
+        private boolean loading;
+        private OnLoadMoreListener onLoadMoreListener;
+        private int lastVisibleItem, totalItemCount;
+        private int visibleThreshold = 5;
 
-        public class ViewHolder  extends RecyclerView.ViewHolder{
+        public class CommentViewHolder  extends RecyclerView.ViewHolder{
 
             private TextView comment_textView;
             private CircularNetworkImageView comment_user_avatar;
             private TextView comment_user_name;
 
-            public ViewHolder(View itemView) {
+
+
+            public CommentViewHolder(View itemView) {
                 super(itemView);
                 comment_textView = (TextView) itemView.findViewById(R.id.shots_detail_comment_textView);
                 comment_user_avatar = (CircularNetworkImageView)itemView.findViewById(R.id.shots_detail_comment_avatar);
@@ -318,71 +315,105 @@ public class ShotsDetailCommentFragment extends Fragment {
             }
         }
 
-        public CommentAdapter(ArrayList<CommentModel> commentModels) {
+        public  class ProgressViewHolder extends RecyclerView.ViewHolder{
+
+            public ProgressBar progressBar;
+
+            public ProgressViewHolder(View itemView) {
+                super(itemView);
+                progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar1);
+            }
+        }
+
+        public CommentAdapter(List<CommentModel> commentModels, RecyclerView recyclerView) {
             this.commentModels = commentModels;
+            if (recyclerView.getLayoutManager() instanceof LinearLayoutManager){
+                final LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
+
+                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+
+                        totalItemCount = linearLayoutManager.getItemCount();
+                        lastVisibleItem = linearLayoutManager
+                                .findLastVisibleItemPosition();
+                        if (!loading
+                                && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                            // End has been reached
+                            // Do something
+                            if (onLoadMoreListener != null) {
+                                onLoadMoreListener.onLoadMore();
+                            }
+                            loading = true;
+                        }
+                    }
+                });
+            }
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public int getItemViewType(int position) {
+            return commentModels.get(position) != null ? VIEW_TYPE_ITEM : VIEW_TYPE_PROGRESSBAR;
+        }
 
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_comment_item, null);
-            ViewHolder viewHolder = new ViewHolder(v);
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            return viewHolder;
+            RecyclerView.ViewHolder viewHolder;
+
+            if (viewType == VIEW_TYPE_ITEM){
+
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_comment_item, null);
+                viewHolder = new CommentViewHolder(v);
+
+                return viewHolder;
+            }else {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_loadmore_progressbar, null);
+                viewHolder = new ProgressViewHolder(v);
+
+                return viewHolder;
+            }
         }
 
         @Override
         @SuppressWarnings("deprecated")
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-            ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+            if (holder instanceof CommentViewHolder){
+                ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
-            final CommentModel commentModel = commentModels.get(position);
+                final CommentModel commentModel = commentModels.get(position);
 
-            holder.comment_user_avatar.setImageUrl(commentModel.getComment_user_avatar(), imageLoader);
-            holder.comment_user_avatar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Utils.openProfile(getContext(), commentModel.getComment_name());
-                }
-            });
-            String pish = "<html><head><style type=\"text/css\">@font-face {font-family: MyFont;src: url(\"file:///android_asset/BMitra.ttf\")}body {font-family: MyFont;font-size: medium;text-align: justify;color: #fff; background-color: #000;}a{color:#ff4091; text-decoration:none}</style></head><body>";
-            String pas = "</body></html>";
-            holder.comment_textView.setText(Html.fromHtml(commentModel.getComment_cotent()));
-            holder.comment_textView.setMovementMethod(LinkMovementMethod.getInstance());
-            holder.comment_textView.setTextColor(getResources().getColor(R.color.whiteColor));
-            holder.comment_user_name.setText(commentModel.getComment_user_name());
+                ((CommentViewHolder)holder).comment_user_avatar.setImageUrl(commentModel.getComment_user_avatar(), imageLoader);
+                ((CommentViewHolder)holder).comment_user_avatar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Utils.openProfile(getContext(), commentModel.getComment_name());
+                    }
+                });
+                String pish = "<html><head><style type=\"text/css\">@font-face {font-family: MyFont;src: url(\"file:///android_asset/BMitra.ttf\")}body {font-family: MyFont;font-size: medium;text-align: justify;color: #fff; background-color: #000;}a{color:#ff4091; text-decoration:none}</style></head><body>";
+                String pas = "</body></html>";
+                ((CommentViewHolder)holder).comment_textView.setText(Html.fromHtml(commentModel.getComment_cotent()));
+                ((CommentViewHolder)holder).comment_textView.setMovementMethod(LinkMovementMethod.getInstance());
+                ((CommentViewHolder)holder).comment_textView.setTextColor(getResources().getColor(R.color.whiteColor));
+                ((CommentViewHolder)holder).comment_user_name.setText(commentModel.getComment_user_name());
+            }else {
+                ((ProgressViewHolder)holder).progressBar.setIndeterminate(true);
+            }
+        }
+
+        public void setLoaded(){
+            loading = false;
         }
 
         @Override
         public int getItemCount() {
             return commentModels.size();
         }
-    }
 
-    private class ItemDecoration extends RecyclerView.ItemDecoration{
-
-        int space;
-
-        public ItemDecoration(int space) {
-            this.space = space;
-        }
-
-        @Override
-        public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-            super.onDraw(c, parent, state);
-            c.clipRect(parent.getLeft(), 0, parent.getRight(), 0);
-            c.drawARGB(255, 255, 64, 145);
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            outRect.left = space;
-            outRect.right = space;
-            outRect.bottom = space;
-            if (parent.getChildPosition(view) == 0){
-                outRect.top = space;
-            }
+        public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener){
+            this.onLoadMoreListener = onLoadMoreListener;
         }
     }
 
