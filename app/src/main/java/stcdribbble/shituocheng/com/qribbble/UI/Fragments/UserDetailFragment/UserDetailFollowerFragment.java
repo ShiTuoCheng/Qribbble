@@ -3,7 +3,6 @@ package stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,8 +31,11 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 
 import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class UserDetailFollowerFragment extends BaseFragment {
 
-public class UserDetailFollowingFragment extends BaseFragment {
 
     private RecyclerView user_detail_following_recyclerView;
     private List<UserModel> userModels = new ArrayList<>();
@@ -67,7 +69,7 @@ public class UserDetailFollowingFragment extends BaseFragment {
             public void run() {
                 Intent intent = getActivity().getIntent();
                 final String name = intent.getStringExtra("user_name");
-                final String api= API.generic_api+"/users/"+name+"/followers?access_token="+ Access_Token.access_token;
+                final String api= API.generic_api+"/users/"+name+"/following?access_token="+ Access_Token.access_token;
 
                 Log.d("follow_api", api );
 
@@ -78,7 +80,7 @@ public class UserDetailFollowingFragment extends BaseFragment {
 
                         UserModel userModel = new UserModel();
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        JSONObject userJson = jsonObject.getJSONObject("follower");
+                        JSONObject userJson = jsonObject.getJSONObject("followee");
                         String user_name = userJson.getString("name");
                         String username = userJson.getString("username");
                         String user_avatar = userJson.getString("avatar_url");
@@ -116,7 +118,7 @@ public class UserDetailFollowingFragment extends BaseFragment {
                                     pool.execute(new Runnable() {
                                         @Override
                                         public void run() {
-                                            String more_api = API.generic_api+"/users/"+name+"/followers?"+"page="+current_page+"&access_token="+ Access_Token.access_token;
+                                            String more_api = API.generic_api+"/users/"+name+"/following?"+"page="+current_page+"&access_token="+ Access_Token.access_token;
 
                                             try {
                                                 final JSONArray moreJson  = new JSONArray(GetHttpString.getHttpDataString(more_api, "GET"));
@@ -133,7 +135,7 @@ public class UserDetailFollowingFragment extends BaseFragment {
                                                             JSONObject jsonObject = null;
                                                             try {
                                                                 jsonObject = moreJson.getJSONObject(i);
-                                                                JSONObject userJson = jsonObject.getJSONObject("follower");
+                                                                JSONObject userJson = jsonObject.getJSONObject("followee");
                                                                 String user_name = userJson.getString("name");
                                                                 String username = userJson.getString("username");
                                                                 String user_avatar = userJson.getString("avatar_url");
@@ -174,4 +176,5 @@ public class UserDetailFollowingFragment extends BaseFragment {
             }
         };
     }
+
 }

@@ -39,6 +39,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment.UserDetailFollowerFragment;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment.UserDetailFollowingFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment.UserDetailworksFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
@@ -360,11 +362,11 @@ public class UserDetailActivity extends AppCompatActivity {
                     UserDetailworksFragment userDetailworksFragment = new UserDetailworksFragment();
                     return userDetailworksFragment;
                 case 1:
-                    UserDetailworksFragment userDetailworksFragment1 = new UserDetailworksFragment();
-                    return userDetailworksFragment1;
+                    UserDetailFollowingFragment userDetailFollowingFragment = new UserDetailFollowingFragment();
+                    return userDetailFollowingFragment;
                 case 2:
-                    UserDetailworksFragment userDetailworksFragment2 = new UserDetailworksFragment();
-                    return userDetailworksFragment2;
+                    UserDetailFollowerFragment userDetailFollowerFragment = new UserDetailFollowerFragment();
+                    return userDetailFollowerFragment;
                 default:
                     return null;
             }

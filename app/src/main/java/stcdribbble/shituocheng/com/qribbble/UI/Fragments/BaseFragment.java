@@ -30,8 +30,14 @@ public class BaseFragment extends Fragment {
         return null;
     }
 
-    public void fetchData(){
+    public Runnable fetchData(){
 
+        return new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
     }
 
     public void setUpView(View view){

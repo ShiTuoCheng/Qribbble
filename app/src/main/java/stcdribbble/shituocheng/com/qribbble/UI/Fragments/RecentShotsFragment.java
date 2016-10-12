@@ -203,7 +203,7 @@ public class RecentShotsFragment extends BaseFragment {
 
                                 mRecyclerView.setHasFixedSize(true);
 
-                                linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+                                linearLayoutManager = new LinearLayoutManager(getActivity());
 
                                 mRecyclerView.setLayoutManager(linearLayoutManager);
 

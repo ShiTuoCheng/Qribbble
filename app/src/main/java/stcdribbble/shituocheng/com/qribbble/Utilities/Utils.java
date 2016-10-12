@@ -52,7 +52,7 @@ public class Utils {
     }
 
     public static void openProfile(Context context, String author_name) {
-        Intent intent = new Intent(context.getApplicationContext(), UserDetailActivity.class);
+        Intent intent = new Intent(context, UserDetailActivity.class);
         intent.putExtra("user_name", author_name);
         context.startActivity(intent);
     }

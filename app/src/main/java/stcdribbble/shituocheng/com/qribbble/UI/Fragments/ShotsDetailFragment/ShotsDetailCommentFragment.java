@@ -169,6 +169,10 @@ public class ShotsDetailCommentFragment extends Fragment {
                             stringBuilder.append(line);
                         }
 
+                        connection.disconnect();
+                        inputStream.close();
+                        bufferedReader.close();
+
                         JSONArray comments_jsonArray = new JSONArray(stringBuilder.toString());
                         for (int i = 0; i<comments_jsonArray.length(); i++){
                             CommentModel commentModel = new CommentModel();
@@ -187,6 +191,7 @@ public class ShotsDetailCommentFragment extends Fragment {
                                 public void run() {
                                     linearLayoutManager = new LinearLayoutManager(getActivity());
                                     shots_detail_comment_recyclerView.setLayoutManager(linearLayoutManager);
+                                    shots_detail_comment_recyclerView.setHasFixedSize(true);
                                     commentAdapter = new CommentAdapter(commentModels, shots_detail_comment_recyclerView);
                                     shots_detail_comment_recyclerView.setAdapter(commentAdapter);
                                     commentAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -207,6 +212,9 @@ public class ShotsDetailCommentFragment extends Fragment {
                                                         getActivity().runOnUiThread(new Runnable() {
                                                             @Override
                                                             public void run() {
+
+                                                                commentModels.remove(commentModels.size() - 1);
+                                                                commentAdapter.notifyItemRemoved(commentModels.size());
                                                                 for (int i = 0; i<jsonArray.length(); i++){
                                                                     CommentModel commentModel = new CommentModel();
                                                                     JSONObject eachCommentObj;
@@ -304,14 +312,14 @@ public class ShotsDetailCommentFragment extends Fragment {
             private TextView comment_textView;
             private CircularNetworkImageView comment_user_avatar;
             private TextView comment_user_name;
-
-
+            private TextView comment_user_floor;
 
             public CommentViewHolder(View itemView) {
                 super(itemView);
                 comment_textView = (TextView) itemView.findViewById(R.id.shots_detail_comment_textView);
                 comment_user_avatar = (CircularNetworkImageView)itemView.findViewById(R.id.shots_detail_comment_avatar);
                 comment_user_name = (TextView)itemView.findViewById(R.id.shots_detail_comment_name);
+                comment_user_floor = (TextView)itemView.findViewById(R.id.comment_floor);
             }
         }
 
@@ -364,12 +372,12 @@ public class ShotsDetailCommentFragment extends Fragment {
 
             if (viewType == VIEW_TYPE_ITEM){
 
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_comment_item, null);
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_comment_item, parent, false);
                 viewHolder = new CommentViewHolder(v);
 
                 return viewHolder;
             }else {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_loadmore_progressbar, null);
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.progress_item, parent, false);
                 viewHolder = new ProgressViewHolder(v);
 
                 return viewHolder;
@@ -398,6 +406,7 @@ public class ShotsDetailCommentFragment extends Fragment {
                 ((CommentViewHolder)holder).comment_textView.setMovementMethod(LinkMovementMethod.getInstance());
                 ((CommentViewHolder)holder).comment_textView.setTextColor(getResources().getColor(R.color.whiteColor));
                 ((CommentViewHolder)holder).comment_user_name.setText(commentModel.getComment_user_name());
+                ((CommentViewHolder)holder).comment_user_floor.setText("#"+String.valueOf(position+1));
             }else {
                 ((ProgressViewHolder)holder).progressBar.setIndeterminate(true);
             }

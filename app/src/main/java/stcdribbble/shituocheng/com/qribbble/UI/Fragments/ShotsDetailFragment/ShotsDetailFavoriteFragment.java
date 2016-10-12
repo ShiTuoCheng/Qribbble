@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.Adapter.ShotsRecyclerViewAdapter;
+import stcdribbble.shituocheng.com.qribbble.Adapter.UsersAdapter;
 import stcdribbble.shituocheng.com.qribbble.Model.UserModel;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.BaseFragment;
@@ -127,7 +128,7 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
 
                             favorite_recyclerView.setHasFixedSize(true);
 
-                            usersAdapter = new UsersAdapter(users, favorite_recyclerView);
+                            usersAdapter = new UsersAdapter(getActivity(),users, favorite_recyclerView);
 
                             favorite_recyclerView.setAdapter(usersAdapter);
                             usersAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -144,6 +145,9 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
                                             try {
                                                 final JSONArray more_jsonArray = new JSONArray(GetHttpString.getHttpDataString(more_api, "GET"));
 
+                                                if (getActivity()==null){
+                                                    return;
+                                                }
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -192,124 +196,6 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
 
             }
         };
-    }
-
-    public  class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-
-        public List<UserModel> userModels = new ArrayList<>();
-        public ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-        private final int VIEW_TYPE_ITEM = 1;
-        private final int VIEW_TYPE_PROGRESSBAR = 0;
-        private boolean loading;
-        private OnLoadMoreListener onLoadMoreListener;
-        private int lastVisibleItem, totalItemCount;
-        private int visibleThreshold = 5;
-
-        public UsersAdapter(List<UserModel> userModels, RecyclerView recyclerView) {
-            this.userModels = userModels;
-            if (recyclerView.getLayoutManager() instanceof LinearLayoutManager){
-                final LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
-
-                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                        super.onScrolled(recyclerView, dx, dy);
-
-                        totalItemCount = linearLayoutManager.getItemCount();
-                        lastVisibleItem = linearLayoutManager
-                                .findLastVisibleItemPosition();
-                        if (!loading
-                                && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
-                            // End has been reached
-                            // Do something
-                            if (onLoadMoreListener != null) {
-                                onLoadMoreListener.onLoadMore();
-                            }
-                            loading = true;
-                        }
-                    }
-                });
-            }
-        }
-
-        public class ItemViewHolder extends RecyclerView.ViewHolder{
-
-            private CircularNetworkImageView avatar_imageView;
-            private TextView name_textView;
-
-            public ItemViewHolder(View itemView) {
-                super(itemView);
-                avatar_imageView = (CircularNetworkImageView)itemView.findViewById(R.id.shots_detail_favorite_avatar);
-                name_textView = (TextView)itemView.findViewById(R.id.shots_detail_favorite_name);
-            }
-        }
-
-
-        public  class ProgressViewHolder extends RecyclerView.ViewHolder{
-
-            public ProgressBar progressBar;
-
-            public ProgressViewHolder(View itemView) {
-                super(itemView);
-                progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar1);
-            }
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return userModels.get(position) != null ? VIEW_TYPE_ITEM : VIEW_TYPE_PROGRESSBAR;
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            RecyclerView.ViewHolder vh;
-            if (viewType == VIEW_TYPE_ITEM) {
-                View v = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.layout_favorite_item, parent, false);
-
-                vh = new ItemViewHolder(v);
-            } else {
-                View v = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.progress_item, parent, false);
-
-                vh = new ProgressViewHolder(v);
-            }
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-            if (holder instanceof ItemViewHolder){
-                final UserModel userModel = userModels.get(position);
-
-                ((ItemViewHolder)holder).name_textView.setText(userModel.getName());
-                ((ItemViewHolder)holder).avatar_imageView.setImageUrl(userModel.getAvatar(),imageLoader);
-
-                ((ItemViewHolder)holder).avatar_imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Utils.openProfile(getActivity(), userModel.getUser_name());
-                    }
-                });
-            }else {
-                ((ProgressViewHolder)holder).progressBar.setIndeterminate(true);
-            }
-        }
-
-        public void setLoaded(){
-            loading = false;
-        }
-
-        @Override
-        public int getItemCount() {
-            return userModels.size();
-        }
-
-        public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener){
-            this.onLoadMoreListener = onLoadMoreListener;
-        }
     }
 
 }

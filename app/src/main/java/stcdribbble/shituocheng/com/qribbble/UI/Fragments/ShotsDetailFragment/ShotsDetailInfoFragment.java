@@ -28,6 +28,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
@@ -50,6 +52,7 @@ public class ShotsDetailInfoFragment extends BaseFragment {
     private TextView shots_author_textView;
     private RecyclerView tagsRecyclerView;
     private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    private ExecutorService pool = Executors.newCachedThreadPool();
 
     private ArrayList<String> tagsList = new ArrayList<>();
 
@@ -60,10 +63,8 @@ public class ShotsDetailInfoFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_shots_detail_info, container, false);
 
-
-
         setUpView(view);
-        fetchData();
+        pool.execute(fetchData());
         return view;
     }
 
@@ -79,9 +80,9 @@ public class ShotsDetailInfoFragment extends BaseFragment {
     }
 
     @Override
-    public void fetchData(){
+    public Runnable fetchData(){
 
-        new Thread(new Runnable() {
+        return new Runnable() {
             HttpURLConnection connection;
             InputStream inputStream;
             int shots_id = getActivity().getIntent().getIntExtra("id",0);
@@ -174,7 +175,7 @@ public class ShotsDetailInfoFragment extends BaseFragment {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        };
 
     }
 
