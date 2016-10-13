@@ -37,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Handler;
 
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment.UserDetailFollowerFragment;
@@ -57,6 +58,7 @@ public class UserDetailActivity extends AppCompatActivity {
     private TextView user_bio_textView;
     private TabLayout user_detail_tabLayout;
     private ViewPager user_detail_viewPager;
+    private Handler handler;
 
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();

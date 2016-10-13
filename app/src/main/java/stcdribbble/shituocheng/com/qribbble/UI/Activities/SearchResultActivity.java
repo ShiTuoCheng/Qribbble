@@ -55,12 +55,21 @@ public class SearchResultActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+
         if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
             search_string = getIntent().getStringExtra(SearchManager.QUERY);
             Log.d("RESULT_SEARCH", search_string);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("The search results of \""+search_string+"\"");
             pool.execute(query(search_string));
+        }
+
+        String tag = intent.getStringExtra("tag");
+        if (tag != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Tag: "+tag);
+            pool.execute(query(tag));
         }
         setUpViews();
     }

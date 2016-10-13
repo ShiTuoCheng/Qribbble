@@ -320,4 +320,9 @@ public class RecentShotsFragment extends BaseFragment {
             }
         };
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.UI.Activities.SearchResultActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.UserDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.BaseFragment;
@@ -39,11 +40,9 @@ import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ShotsDetailInfoFragment extends BaseFragment {
 
     private TextView shots_detail_title;
@@ -152,12 +151,24 @@ public class ShotsDetailInfoFragment extends BaseFragment {
                             }
                             shots_author_avatar.setImageUrl(shots_author_avatar_img, imageLoader);
                             shots_author_textView.setText(shots_author_name);
+
+
                             TagAdapter tagAdapter = new TagAdapter(tagsList);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
                             linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                             tagsRecyclerView.setLayoutManager(linearLayoutManager);
                             tagsRecyclerView.setAdapter(tagAdapter);
                             tagsRecyclerView.setNestedScrollingEnabled(false);
+
+                            tagAdapter.setItemClickListener(new OnRecyclerViewOnClickListener() {
+                                @Override
+                                public void OnItemClick(View v, int position) {
+                                    String tag = tagsList.get(position);
+                                    Intent intent = new Intent(getActivity(), SearchResultActivity.class);
+                                    intent.putExtra("tag", tag);
+                                    startActivity(intent);
+                                }
+                            });
                             shots_author_avatar.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -182,16 +193,26 @@ public class ShotsDetailInfoFragment extends BaseFragment {
     public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder>{
 
         private ArrayList<String> tags = new ArrayList<>();
+        private OnRecyclerViewOnClickListener mListener;
 
-        public class ViewHolder extends RecyclerView.ViewHolder{
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
             private TextView tag_textView;
+            private OnRecyclerViewOnClickListener listener;
 
-            public ViewHolder(View itemView) {
+            public ViewHolder(View itemView, OnRecyclerViewOnClickListener listener) {
                 super(itemView);
                 tag_textView = (TextView)itemView.findViewById(R.id.tag_textView);
+                this.listener = listener;
+                itemView.setOnClickListener(this);
             }
 
+            @Override
+            public void onClick(View v) {
+                if (listener != null){
+                    listener.OnItemClick(v,getLayoutPosition());
+                }
+            }
         }
 
         public TagAdapter(ArrayList<String> tags) {
@@ -201,7 +222,7 @@ public class ShotsDetailInfoFragment extends BaseFragment {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_tag_item,null);
-            ViewHolder viewHolder = new ViewHolder(view);
+            ViewHolder viewHolder = new ViewHolder(view, mListener);
             return viewHolder;
         }
 
@@ -215,6 +236,10 @@ public class ShotsDetailInfoFragment extends BaseFragment {
         @Override
         public int getItemCount() {
             return tags.size();
+        }
+
+        public void setItemClickListener(OnRecyclerViewOnClickListener listener){
+            this.mListener = listener;
         }
     }
 

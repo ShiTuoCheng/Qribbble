@@ -131,6 +131,8 @@ public class ShotsDetailActivity extends AppCompatActivity {
                     }
                 }
             };
+
+            handlerThread.quitSafely();
         }
         imageName = intent.getStringExtra("imageName");
         final boolean isGif = intent.getBooleanExtra("isGif",false);
