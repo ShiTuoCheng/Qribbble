@@ -8,6 +8,9 @@ import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.UserDetailActivity;
 
@@ -66,6 +69,4 @@ public class Utils {
         intent.putExtra("id",id);
         context.startActivity(intent);
     }
-
-
 }

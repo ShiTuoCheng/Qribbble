@@ -12,6 +12,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+
+                <ImageView
+                    android:id="@+id/isGif"
+                    android:layout_width="35dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="6dp"
+                    android:layout_toEndOf="@id/shots_favorite_times"/>
+
                 <com.android.volley.toolbox.NetworkImageView
                     android:id="@+id/user_detail_artwork"
                     android:layout_width="260dp"
@@ -21,6 +29,7 @@
                     android:id="@+id/view_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_below="@id/user_detail_artwork"
                     android:src="@drawable/ic_remove_red_eye_black_48dp"/>
 
@@ -31,16 +40,19 @@
                     android:layout_toRightOf="@id/view_icon"
                     android:layout_below="@id/user_detail_artwork"
                     android:textColor="@color/colorAccent"
-                    android:paddingLeft="2dp"
-                    android:paddingRight="2dp"
+                    android:layout_marginLeft="2dp"
                     android:text="9999"
+                    android:fontFamily="casual"
                     android:textSize="12sp"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:id="@+id/review_icon"
-                    android:src="@drawable/ic_chat_bubble_48pt_2x"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginRight="10dp"
+                    android:padding="1dp"
+                    android:src="@drawable/ic_chat_bubble_black_48dp"
                     android:layout_below="@+id/user_detail_artwork"
                     android:layout_toEndOf="@id/shots_view_times" />
 
@@ -51,16 +63,17 @@
                     android:layout_below="@id/user_detail_artwork"
                     android:layout_toEndOf="@id/review_icon"
                     android:text="9999"
+                    android:fontFamily="casual"
                     android:textColor="@color/colorAccent"
                     android:textSize="12sp"
-                    android:paddingLeft="2dp"
-                    android:paddingRight="2dp"
+                    android:layout_marginLeft="2dp"
                     android:layout_centerHorizontal="true"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:id="@+id/favorite_icon"
+                    android:layout_marginStart="10dp"
                     android:layout_below="@id/user_detail_artwork"
                     android:layout_toEndOf="@id/shots_review_times"
                     android:src="@drawable/ic_favorite_black_48dp"/>
@@ -72,19 +85,12 @@
                     android:layout_below="@id/user_detail_artwork"
                     android:layout_toEndOf="@id/favorite_icon"
                     android:text="9999"
+                    android:fontFamily="casual"
                     android:textColor="@color/colorAccent"
                     android:textSize="12sp"
-                    android:paddingLeft="2dp"
-                    android:paddingRight="2dp"/>
+                    android:layout_marginLeft="2dp"/>
 
 
-                <ImageView
-                    android:id="@+id/isGif"
-                    android:layout_width="35dp"
-                    android:layout_height="25dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_toEndOf="@id/shots_favorite_times"
-                    android:layout_below="@id/user_detail_artwork"/>
 
         </RelativeLayout>
 

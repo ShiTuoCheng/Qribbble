@@ -68,49 +68,53 @@
 
             <ImageView
                 android:id="@+id/view_icon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_below="@id/by"
-                android:padding="4dp"
+                android:layout_marginLeft="5dp"
                 android:src="@drawable/ic_remove_red_eye_black_48dp"/>
 
             <TextView
                 android:id="@+id/shots_view_times"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/view_icon"
+                android:layout_toEndOf="@id/view_icon"
                 android:layout_below="@id/by"
-                android:padding="5dp"
+                android:layout_marginLeft="2dp"
                 android:textColor="@color/colorAccent"
+                android:fontFamily="casual"
                 android:text="9999"/>
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:id="@+id/review_icon"
-                android:padding="4dp"
-                android:src="@drawable/ic_chat_bubble_48pt_2x"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="10dp"
+                android:padding="1dp"
+                android:src="@drawable/ic_chat_bubble_black_48dp"
                 android:layout_below="@+id/shots_author_textView"
-                android:layout_toRightOf="@id/shots_view_times" />
+                android:layout_toEndOf="@id/shots_view_times" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/shots_review_times"
                 android:layout_below="@id/by"
-                android:padding="5dp"
-                android:layout_toRightOf="@id/review_icon"
+                android:layout_marginLeft="2dp"
+                android:layout_toEndOf="@id/review_icon"
                 android:text="9999"
-                android:textColor="@color/colorAccent"
-                android:layout_centerHorizontal="true"/>
+                android:fontFamily="casual"
+                android:textColor="@color/colorAccent"/>
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:id="@+id/favorite_icon"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_below="@id/by"
-                android:layout_toRightOf="@id/shots_review_times"
-                android:padding="4dp"
+                android:layout_toEndOf="@id/shots_review_times"
                 android:src="@drawable/ic_favorite_black_48dp"/>
 
             <TextView
@@ -118,9 +122,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/shots_favorite_times"
                 android:layout_below="@id/by"
-                android:padding="5dp"
+                android:layout_marginLeft="2dp"
                 android:layout_toRightOf="@id/favorite_icon"
                 android:text="9999"
+                android:fontFamily="casual"
                 android:textColor="@color/colorAccent"/>
 
 

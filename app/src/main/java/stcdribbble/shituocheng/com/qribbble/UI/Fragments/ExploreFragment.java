@@ -274,6 +274,10 @@ public class ExploreFragment extends BaseFragment {
 
                                                     final JSONArray more_jsonArray = new JSONArray(GetHttpString.getHttpDataString(loadMore, "GET"));
 
+                                                    if (getActivity() == null){
+                                                        return;
+                                                    }
+
                                                     getActivity().runOnUiThread(new Runnable() {
                                                         @Override
                                                         public void run() {

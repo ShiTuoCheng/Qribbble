@@ -48,6 +48,7 @@ import stcdribbble.shituocheng.com.qribbble.Model.LoginUser;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.Services.UpdateService;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ExploreFragment;
+import stcdribbble.shituocheng.com.qribbble.UI.Fragments.MyFavoriteFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.TabFragments.MainTabFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
@@ -212,7 +213,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.profile) {
 
-
             SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
             String access_token = sharedPreferences.getString("access_token","");
 
@@ -224,7 +224,48 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
 
-        } else if (id == R.id.setting) {
+        }else if (id == R.id.like){
+
+            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
+            String access_token = sharedPreferences.getString("access_token","");
+
+            if (access_token.isEmpty()){
+                item.setCheckable(false);
+                item.setChecked(false);
+                Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
+            }else {
+
+                item.setChecked(true);
+                item.setCheckable(true);
+                Bundle bundle = new Bundle();
+                bundle.putString("my_category", "likes");
+                MyFavoriteFragment myFavoriteFragment = new MyFavoriteFragment();
+                myFavoriteFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_main, myFavoriteFragment).setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+
+            }
+
+        }else if(id == R.id.follow){
+
+            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
+            String access_token = sharedPreferences.getString("access_token","");
+
+            if (access_token.isEmpty()){
+                item.setCheckable(false);
+                item.setChecked(false);
+                Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
+            }else {
+
+                item.setChecked(true);
+                item.setCheckable(true);
+                Bundle bundle = new Bundle();
+                bundle.putString("my_category", "following/shots");
+                MyFavoriteFragment myFavoriteFragment = new MyFavoriteFragment();
+                myFavoriteFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_main, myFavoriteFragment).setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+
+            }
+        }else if (id == R.id.setting) {
 
 
             Intent intent = new Intent(this, SettingActivity.class);

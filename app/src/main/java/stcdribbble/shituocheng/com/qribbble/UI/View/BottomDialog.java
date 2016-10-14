@@ -142,9 +142,6 @@ public class BottomDialog extends DialogFragment {
 
             imageView.setImageBitmap(bitmap);
 
-            bitmap.recycle();
-
-
         } catch (FileNotFoundException e) {
             // handle errors
         } finally {
