@@ -13,4 +13,5 @@
     <string name="login_your_account">请用你的Dribbble账户登陆</string>
     <string name="create_shots">新建一个shot</string>
     <string name="my_favorite">我的最爱</string>
+    <string name="my_following">我的关注</string>
 </resources>
