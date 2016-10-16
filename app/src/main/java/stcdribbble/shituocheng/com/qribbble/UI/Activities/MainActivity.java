@@ -67,8 +67,6 @@ public class MainActivity extends AppCompatActivity
 
     public static final String CHECK_SERVICE = "checkUpdate";
 
-    private boolean isConnected = Utils.networkConnected(getApplicationContext());
-
     private ExecutorService threadPool = Executors.newCachedThreadPool();
 
     private ProgressDialog progressDialog;

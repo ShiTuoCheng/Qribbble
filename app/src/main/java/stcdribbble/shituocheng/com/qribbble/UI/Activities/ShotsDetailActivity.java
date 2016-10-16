@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -53,6 +54,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import stcdribbble.shituocheng.com.qribbble.Adapter.DetailViewPagerAdapter;
+import stcdribbble.shituocheng.com.qribbble.BroadcastReceiver.DownloadSuccessReceiver;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.ShotsDetailFragment.ShotsDetailFavoriteFragment;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
@@ -75,6 +77,7 @@ public class ShotsDetailActivity extends AppCompatActivity {
     private final static String TAG = "work_handlerThread";
 
     private final int MESSAGE_WHAT_IMAGE = 0;
+    private DownloadSuccessReceiver downloadSuccessReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -131,8 +134,6 @@ public class ShotsDetailActivity extends AppCompatActivity {
                     }
                 }
             };
-
-            handlerThread.quitSafely();
         }
         imageName = intent.getStringExtra("imageName");
         final boolean isGif = intent.getBooleanExtra("isGif",false);
@@ -193,6 +194,12 @@ public class ShotsDetailActivity extends AppCompatActivity {
         });
 
         loadBackdrop(imageString, isGif);
+
+        downloadSuccessReceiver = new DownloadSuccessReceiver();
+
+        IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+
+        registerReceiver(downloadSuccessReceiver, intentFilter);
         setUpView();
     }
 
@@ -415,6 +422,10 @@ public class ShotsDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (handlerThread != null){
+            handlerThread.quitSafely();
+        }
+        unregisterReceiver(downloadSuccessReceiver);
     }
 
     @Override
@@ -436,7 +447,6 @@ public class ShotsDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Please wait, is Loading", Toast.LENGTH_SHORT).show();
         }else{
             DownloadManager mgr = (DownloadManager)this.getSystemService(Context.DOWNLOAD_SERVICE);
-
 
             DownloadManager.Request request = new DownloadManager.Request(
                     downloadUri);
@@ -465,6 +475,7 @@ public class ShotsDetailActivity extends AppCompatActivity {
             case 0:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this,"Get permissions successfully, You can download resources now", Toast.LENGTH_SHORT).show();
+                    downloadFile(imageString);
                 }else {
                     Toast.makeText(this,"Failed to get permissions, You can give permission in the Setting", Toast.LENGTH_SHORT).show();
                 }

@@ -15,4 +15,5 @@
     <string name="my_favorite">我的最爱</string>
     <string name="my_following">我的关注</string>
     <string name="fail_to_connect">请检查网络连接</string>
+    <string name="download_success">下载完成</string>
 </resources>

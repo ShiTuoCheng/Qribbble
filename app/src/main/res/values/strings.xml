@@ -12,6 +12,7 @@
     <string name="success_login">Login successful! Loading User Data</string>
 
     <string name="main_home">Main Home</string>
+    <string name="download_success">Download successfully!!</string>
     <string name="explore">Explore</string>
     <string name="my_profile">My Profile</string>
     <string name="my_favorite">My Favorite</string>
