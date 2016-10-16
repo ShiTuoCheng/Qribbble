@@ -36,6 +36,7 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
 
 import static android.content.Context.MODE_PRIVATE;
+import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
 public class MyFavoriteFragment extends BaseFragment {
 
@@ -48,6 +49,8 @@ public class MyFavoriteFragment extends BaseFragment {
     private GridLayoutManager gridLayoutManager;
     private UserDetailArtworkAdapter userDetailArtworkAdapter;
     private ProgressBar progressBar;
+
+    private int current_page = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,7 +90,7 @@ public class MyFavoriteFragment extends BaseFragment {
             public void run() {
 
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_login_data",MODE_PRIVATE);
-                String access_token = sharedPreferences.getString("access_token","");
+                final String access_token = sharedPreferences.getString("access_token","");
 
                 String api;
 
@@ -202,7 +205,121 @@ public class MyFavoriteFragment extends BaseFragment {
                                 userDetailArtworkAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                                     @Override
                                     public void onLoadMore() {
+                                        shotsModels.add(null);
+                                        userDetailArtworkAdapter.notifyItemInserted(shotsModels.size()-1);
+                                        current_page += 1;
+                                        final String load_more_api;
 
+                                        if (category.equals("likes")){
+
+                                            load_more_api = API.generic_api + "users/" + name + "/" + category + "?" +"page="+current_page+"&access_token=" + access_token;
+                                        }else {
+                                            load_more_api = API.generic_api + "user/following/shots?"+"page="+current_page+"&access_token=" + access_token;
+
+                                        }
+
+                                        Log.d("loadmore", load_more_api);
+
+                                        threadPool.execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                final JSONArray more_jsonArray;
+
+                                                try {
+                                                    more_jsonArray = new JSONArray(GetHttpString.getHttpDataString(load_more_api, "GET"));
+
+                                                    getActivity().runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            shotsModels.remove(shotsModels.size()-1);
+                                                            userDetailArtworkAdapter.notifyItemRemoved(shotsModels.size());
+                                                            if (category.equals("likes")) {
+                                                                for (int i = 0; i < more_jsonArray.length(); i++) {
+
+                                                                    ShotsModel shotsModel = new ShotsModel();
+                                                                    JSONObject jsonObject = null;
+                                                                    try {
+                                                                        jsonObject = more_jsonArray.getJSONObject(i);
+                                                                        JSONObject shotJsonObj = jsonObject.getJSONObject("shot");
+                                                                        JSONObject imageJsonObj = shotJsonObj.getJSONObject("images");
+
+                                                                        if (imageJsonObj.getString("hidpi").equals("null")) {
+                                                                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                                                                        } else {
+                                                                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                                                        }
+                                                                        shotsModel.setShots_like_count(shotJsonObj.getInt("likes_count"));
+                                                                        shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                                                                        shotsModel.setShots_review_count(shotJsonObj.getInt("comments_count"));
+                                                                        shotsModel.setShots_view_count(shotJsonObj.getInt("views_count"));
+                                                                        shotsModel.setAnimated(shotJsonObj.getBoolean("animated"));
+                                                                        shotsModel.setShots_id(shotJsonObj.getInt("id"));
+
+                                                                        shotsModels.add(shotsModel);
+
+                                                                        Log.w("size_shots_model", String.valueOf(shotsModels.size()));
+                                                                        try {
+                                                                            userDetailArtworkAdapter.notifyItemInserted(shotsModels.size());
+                                                                        } catch (Exception e) {
+                                                                            Log.w(TAG, "notifyItemChanged failure");
+                                                                            e.printStackTrace();
+                                                                            userDetailArtworkAdapter.notifyDataSetChanged();
+                                                                        }
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                    userDetailArtworkAdapter.setLoaded();
+
+                                                                }
+                                                            }else {
+                                                                for (int i = 0; i < more_jsonArray.length(); i++) {
+
+                                                                    ShotsModel shotsModel = new ShotsModel();
+                                                                    JSONObject jsonObject = null;
+                                                                    try {
+                                                                        jsonObject = more_jsonArray.getJSONObject(i);
+                                                                        shotsModel.setTitle(jsonObject.getString("title"));
+                                                                        JSONObject imageJsonObj = jsonObject.getJSONObject("images");
+                                                                        if (imageJsonObj.getString("hidpi").equals("null")){
+                                                                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("normal"));
+                                                                        }else {
+                                                                            shotsModel.setShots_full_imageUrl(imageJsonObj.getString("hidpi"));
+                                                                        }
+                                                                        shotsModel.setShots_thumbnail_url(imageJsonObj.getString("normal"));
+                                                                        shotsModel.setShots_like_count(jsonObject.getInt("likes_count"));
+                                                                        shotsModel.setShots_review_count(jsonObject.getInt("comments_count"));
+                                                                        shotsModel.setShots_view_count(jsonObject.getInt("views_count"));
+                                                                        shotsModel.setAnimated(jsonObject.getBoolean("animated"));
+                                                                        shotsModel.setShots_id(jsonObject.getInt("id"));
+
+                                                                        JSONObject userJsonObj = jsonObject.getJSONObject("user");
+                                                                        shotsModel.setShots_author_name(userJsonObj.getString("username"));
+                                                                        shotsModel.setShots_author_avatar(userJsonObj.getString("avatar_url"));
+
+                                                                        shotsModels.add(shotsModel);
+
+                                                                        Log.d("fragment", String.valueOf(shotsModels.size()));
+                                                                        try {
+                                                                            userDetailArtworkAdapter.notifyItemInserted(shotsModels.size());
+                                                                        } catch (Exception e) {
+                                                                            Log.w(TAG, "notifyItemChanged failure");
+                                                                            e.printStackTrace();
+                                                                            userDetailArtworkAdapter.notifyDataSetChanged();
+                                                                        }
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                    userDetailArtworkAdapter.setLoaded();
+                                                                }
+
+                                                            }
+                                                        }
+                                                    });
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
                                     }
                                 });
 

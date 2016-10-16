@@ -58,7 +58,6 @@ public class UserDetailActivity extends AppCompatActivity {
     private TextView user_bio_textView;
     private TabLayout user_detail_tabLayout;
     private ViewPager user_detail_viewPager;
-    private Handler handler;
 
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
@@ -145,6 +144,7 @@ public class UserDetailActivity extends AppCompatActivity {
     }
 
     private void setUpView(){
+
         follow_button = (Button)findViewById(R.id.follow_button);
         name_textView = (TextView)findViewById(R.id.name_textView);
         user_name_textView = (TextView)findViewById(R.id.user_name_textView);
@@ -347,7 +347,13 @@ public class UserDetailActivity extends AppCompatActivity {
         };
     }
 
-    private class UserDetailPageAdapter extends FragmentStatePagerAdapter{
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        threadPool.shutdown();
+    }
+
+    private static class UserDetailPageAdapter extends FragmentStatePagerAdapter{
 
         int number;
 

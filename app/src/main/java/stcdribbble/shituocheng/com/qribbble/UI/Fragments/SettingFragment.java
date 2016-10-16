@@ -17,12 +17,9 @@ import android.preference.SwitchPreference;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
@@ -40,7 +37,7 @@ import java.util.concurrent.Executors;
 import stcdribbble.shituocheng.com.qribbble.Model.LoginUser;
 import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Activities.LoginInActivity;
-import stcdribbble.shituocheng.com.qribbble.UI.Activities.MainActivity;
+import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
@@ -364,5 +361,11 @@ public class SettingFragment extends PreferenceFragment {
                 Glide.get(getActivity()).clearMemory();
             }
         };
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        threadHandler.removeCallbacksAndMessages(null);
     }
 }

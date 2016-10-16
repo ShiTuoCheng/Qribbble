@@ -65,7 +65,7 @@ public  class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    public class ItemViewHolder extends RecyclerView.ViewHolder{
+    public static class ItemViewHolder extends RecyclerView.ViewHolder{
 
         private CircularNetworkImageView avatar_imageView;
         private TextView name_textView;
@@ -78,7 +78,7 @@ public  class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
 
-    public  class ProgressViewHolder extends RecyclerView.ViewHolder{
+    public static class ProgressViewHolder extends RecyclerView.ViewHolder{
 
         public ProgressBar progressBar;
 
