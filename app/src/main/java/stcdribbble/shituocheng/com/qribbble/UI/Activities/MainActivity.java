@@ -53,6 +53,7 @@ import stcdribbble.shituocheng.com.qribbble.UI.TabFragments.MainTabFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
 import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity
     private String user_name_string;
 
     public static final String CHECK_SERVICE = "checkUpdate";
+
+    private boolean isConnected = Utils.networkConnected(getApplicationContext());
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
 

@@ -2,15 +2,11 @@ package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
 
 
 
-import android.animation.ObjectAnimator;
 import android.app.ActivityOptions;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.widgets.Animator;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,12 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LayoutAnimationController;
-import android.widget.ProgressBar;
-import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +40,7 @@ import stcdribbble.shituocheng.com.qribbble.UI.Activities.ShotsDetailActivity;
 import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
@@ -94,26 +87,32 @@ public class RecentShotsFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_main_shots, container, false);
         shotsModels = new ArrayList<>();
         setUpView(view);
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(true);
-            }
-        });
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //fetchData(true);
-                        pool.execute(loadData());
-                    }
-                }, 2000);
-            }
-        });
+        if (Utils.networkConnected(getActivity().getApplicationContext())){
 
-        pool.execute(loadData());
+            swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
+                }
+            });
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //fetchData(true);
+                            pool.execute(loadData());
+                        }
+                    }, 2000);
+                }
+            });
+
+            pool.execute(loadData());
+        }else {
+            Toast.makeText(getActivity(), getResources().getText(R.string.fail_to_connect), Toast.LENGTH_SHORT).show();
+        }
+
         //fetchData(true);
 
 

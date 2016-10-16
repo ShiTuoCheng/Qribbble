@@ -14,4 +14,5 @@
     <string name="create_shots">新建一个shot</string>
     <string name="my_favorite">我的最爱</string>
     <string name="my_following">我的关注</string>
+    <string name="fail_to_connect">请检查网络连接</string>
 </resources>

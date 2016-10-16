@@ -56,6 +56,7 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
 import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
@@ -73,6 +74,9 @@ public class ExploreFragment extends BaseFragment {
     private ShotsRecyclerViewAdapter shotsRecyclerViewAdapter;
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private List<ShotsModel> shotsModels = new ArrayList<>();
+    private ArrayAdapter<String> list_spinner_adapter;
+    private ArrayAdapter<String> sort_spinner_adapter;
+    private ArrayAdapter<String> timeframe_spinner_adapter;
 
     private String sort_string;
     private String list_string;
@@ -88,69 +92,64 @@ public class ExploreFragment extends BaseFragment {
         setUpView(v);
 
         //list_spinner_setup
-        String[] lists = getResources().getStringArray(R.array.list_array);
-        ArrayAdapter<String> list_spinner_adapter = new ArrayAdapter<>(getActivity(),R.layout.custom_array_list, lists);
-        list_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
-        list_spinner.setAdapter(list_spinner_adapter);
-        list_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        if (Utils.networkConnected(getActivity().getApplicationContext())){
+            list_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                String[] list = getResources().getStringArray(R.array.list_array);
-                list_string = list[i];
-                progressBar.setVisibility(View.VISIBLE);
-                explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(sort_string, list_string, timeframe_string));
-                //execute(list[i]);
-            }
+                    String[] list = getResources().getStringArray(R.array.list_array);
+                    list_string = list[i];
+                    progressBar.setVisibility(View.VISIBLE);
+                    explore_recyclerView.setVisibility(View.GONE);
+                    threadPool.execute(fetchData(sort_string, list_string, timeframe_string));
+                    //execute(list[i]);
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
+                }
+            });
 
-        //sort_spinner_setup
-        String[] sorts = getResources().getStringArray(R.array.sort_array);
-        ArrayAdapter<String> sort_spinner_adapter = new ArrayAdapter<>(getActivity(),R.layout.custom_array_list, sorts);
-        sort_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
-        sort_spinner.setAdapter(sort_spinner_adapter);
-        sort_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String[] sort = getResources().getStringArray(R.array.sort_array);
-                sort_string = sort[i];
-                progressBar.setVisibility(View.VISIBLE);
-                explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
-            }
+            //sort_spinner_setup
+            sort_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    String[] sort = getResources().getStringArray(R.array.sort_array);
+                    sort_string = sort[i];
+                    progressBar.setVisibility(View.VISIBLE);
+                    explore_recyclerView.setVisibility(View.GONE);
+                    threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
+                }
+            });
 
-        //timeframe_spinner_setup
-        String[] timeframes = getResources().getStringArray(R.array.timeframe_array);
-        ArrayAdapter<String> timeframe_spinner_adapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_array_list,timeframes);
-        timeframe_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
-        timeframe_spinner.setAdapter(timeframe_spinner_adapter);
-        timeframe_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String[] timeframe = getResources().getStringArray(R.array.timeframe_array);
-                timeframe_string = timeframe[i];
-                progressBar.setVisibility(View.VISIBLE);
-                explore_recyclerView.setVisibility(View.GONE);
-                threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
-            }
+            //timeframe_spinner_setup
+            timeframe_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    String[] timeframe = getResources().getStringArray(R.array.timeframe_array);
+                    timeframe_string = timeframe[i];
+                    progressBar.setVisibility(View.VISIBLE);
+                    explore_recyclerView.setVisibility(View.GONE);
+                    threadPool.execute(fetchData(list_string, sort_string, timeframe_string));
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
+                }
+            });
+        }else {
+
+            progressBar.setVisibility(View.GONE);
+
+            Toast.makeText(getActivity(), "failed to login", Toast.LENGTH_SHORT).show();
+        }
 
         return v;
     }
@@ -162,6 +161,23 @@ public class ExploreFragment extends BaseFragment {
         timeframe_spinner = (Spinner)view.findViewById(R.id.timeframe_spinner);
         progressBar = (ProgressBar)view.findViewById(R.id.explore_progressBar);
         explore_recyclerView = (RecyclerView)view.findViewById(R.id.explore_recyclerView);
+
+        String[] lists = getResources().getStringArray(R.array.list_array);
+        list_spinner_adapter = new ArrayAdapter<>(getActivity(),R.layout.custom_array_list, lists);
+        list_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
+        list_spinner.setAdapter(list_spinner_adapter);
+
+
+        String[] sorts = getResources().getStringArray(R.array.sort_array);
+        sort_spinner_adapter = new ArrayAdapter<>(getActivity(),R.layout.custom_array_list, sorts);
+        sort_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
+        sort_spinner.setAdapter(sort_spinner_adapter);
+
+
+        String[] timeframes = getResources().getStringArray(R.array.timeframe_array);
+        timeframe_spinner_adapter = new ArrayAdapter<>(getActivity(), R.layout.custom_array_list,timeframes);
+        timeframe_spinner_adapter.setDropDownViewResource(R.layout.custom_drop_down);
+        timeframe_spinner.setAdapter(timeframe_spinner_adapter);
     }
 
     public Runnable fetchData(final String shots_list, final String shots_sort, final String shots_timeframe){

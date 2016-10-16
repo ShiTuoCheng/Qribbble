@@ -22,6 +22,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -47,6 +48,7 @@ import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.API;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 public class UserDetailActivity extends AppCompatActivity {
 
@@ -86,7 +88,7 @@ public class UserDetailActivity extends AppCompatActivity {
          */
         final String user_name = initData();
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null && Utils.networkConnected(getApplicationContext())){
             final String name = intent.getStringExtra("user_name");
             Log.d("name", name);
             //Log.d("user_name", user_name);
@@ -131,6 +133,8 @@ public class UserDetailActivity extends AppCompatActivity {
                 });
             }
             threadPool.execute(fetchData(name));
+        }else {
+            Toast.makeText(this, "failed to login", Toast.LENGTH_SHORT).show();
         }
     }
 

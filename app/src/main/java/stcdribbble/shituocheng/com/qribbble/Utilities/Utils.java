@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Bundle;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -68,5 +71,17 @@ public class Utils {
         intent.putExtra("fullImageUrl",fullImageUrl);
         intent.putExtra("id",id);
         context.startActivity(intent);
+    }
+
+    public static boolean networkConnected(Context context) {
+
+        if(context != null){
+            ConnectivityManager manager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+            if (networkInfo != null){
+                return networkInfo.isAvailable();
+            }
+        }
+        return false;
     }
 }

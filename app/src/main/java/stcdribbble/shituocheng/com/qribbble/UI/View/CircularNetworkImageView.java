@@ -47,13 +47,7 @@ public class CircularNetworkImageView extends NetworkImageView {
                 getCircularBitmap(bm)));
     }
 
-    /**
-     * Creates a circular bitmap and uses whichever dimension is smaller to determine the width
-     * <br/>Also constrains the circle to the leftmost part of the image
-     *
-     * @param bitmap
-     * @return bitmap
-     */
+
     public Bitmap getCircularBitmap(Bitmap bitmap) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
                 bitmap.getHeight(), Config.ARGB_8888);

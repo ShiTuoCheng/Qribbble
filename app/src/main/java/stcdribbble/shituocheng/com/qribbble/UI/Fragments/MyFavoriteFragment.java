@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +35,7 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 import static android.content.Context.MODE_PRIVATE;
 import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
@@ -71,7 +73,14 @@ public class MyFavoriteFragment extends BaseFragment {
 
         setUpView(v);
 
-        threadPool.execute(fetchData(user_name, category_string));
+        if (Utils.networkConnected(getActivity().getApplicationContext())){
+
+            threadPool.execute(fetchData(user_name, category_string));
+
+        }else {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), getResources().getText(R.string.fail_to_connect), Toast.LENGTH_SHORT).show();
+        }
 
         return v;
     }

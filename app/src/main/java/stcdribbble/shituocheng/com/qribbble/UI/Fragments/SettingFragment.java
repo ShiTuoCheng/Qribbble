@@ -367,5 +367,6 @@ public class SettingFragment extends PreferenceFragment {
     public void onDestroyView() {
         super.onDestroyView();
         threadHandler.removeCallbacksAndMessages(null);
+        handlerThread.quit();
     }
 }
