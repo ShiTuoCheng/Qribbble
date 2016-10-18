@@ -22,6 +22,7 @@
 
                 <com.android.volley.toolbox.NetworkImageView
                     android:id="@+id/user_detail_artwork"
+                    android:layout_alignParentTop="true"
                     android:layout_width="260dp"
                     android:layout_height="260dp" />
 

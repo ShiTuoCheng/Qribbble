@@ -72,22 +72,29 @@ public class UserDetailFollowingFragment extends BaseFragment {
                 Log.d("follow_api", api );
 
                 try {
-                    JSONArray jsonArray = new JSONArray(GetHttpString.getHttpDataString(api, "GET"));
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
+                    String jsonString = GetHttpString.getHttpDataString(api, "GET");
 
-                        UserModel userModel = new UserModel();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        JSONObject userJson = jsonObject.getJSONObject("follower");
-                        String user_name = userJson.getString("name");
-                        String username = userJson.getString("username");
-                        String user_avatar = userJson.getString("avatar_url");
-                        userModel.setAvatar(user_avatar);
-                        userModel.setUser_name(username);
-                        userModel.setName(user_name);
-                        userModels.add(userModel);
+                    if (jsonString != null){
 
+                        JSONArray jsonArray = new JSONArray(jsonString);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+
+                            UserModel userModel = new UserModel();
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            JSONObject userJson = jsonObject.getJSONObject("follower");
+                            String user_name = userJson.getString("name");
+                            String username = userJson.getString("username");
+                            String user_avatar = userJson.getString("avatar_url");
+                            userModel.setAvatar(user_avatar);
+                            userModel.setUser_name(username);
+                            userModel.setName(user_name);
+                            userModels.add(userModel);
+
+                        }
                     }
+
+
 
                     if (getActivity() == null){
                         return;

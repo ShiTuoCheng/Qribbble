@@ -123,6 +123,9 @@ public class UserDetailFollowerFragment extends BaseFragment {
                                             try {
                                                 final JSONArray moreJson  = new JSONArray(GetHttpString.getHttpDataString(more_api, "GET"));
 
+                                                if (getActivity() == null){
+                                                    return;
+                                                }
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {

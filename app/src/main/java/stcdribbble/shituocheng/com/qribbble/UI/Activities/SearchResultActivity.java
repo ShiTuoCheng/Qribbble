@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -33,6 +34,7 @@ import stcdribbble.shituocheng.com.qribbble.R;
 import stcdribbble.shituocheng.com.qribbble.UI.Fragments.UserDetailFragment.UserDetailworksFragment;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnLoadMoreListener;
 import stcdribbble.shituocheng.com.qribbble.Utilities.OnRecyclerViewOnClickListener;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
@@ -57,20 +59,26 @@ public class SearchResultActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
-            search_string = getIntent().getStringExtra(SearchManager.QUERY);
-            Log.d("RESULT_SEARCH", search_string);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("The search results of \""+search_string+"\"");
-            pool.execute(query(search_string));
+        if (Utils.networkConnected(this)){
+            if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
+                search_string = getIntent().getStringExtra(SearchManager.QUERY);
+                Log.d("RESULT_SEARCH", search_string);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle("The search results of \""+search_string+"\"");
+                pool.execute(query(search_string));
+            }
+
+            String tag = intent.getStringExtra("tag");
+            if (tag != null){
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle("Tag: "+tag);
+                pool.execute(query(tag));
+            }
+        }else {
+
+            Toast.makeText(this, getResources().getString(R.string.fail_to_connect), Toast.LENGTH_SHORT).show();
         }
 
-        String tag = intent.getStringExtra("tag");
-        if (tag != null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Tag: "+tag);
-            pool.execute(query(tag));
-        }
         setUpViews();
     }
 

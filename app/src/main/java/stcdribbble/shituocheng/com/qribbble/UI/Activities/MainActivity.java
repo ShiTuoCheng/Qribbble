@@ -208,9 +208,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.main_home) {
             MainTabFragment mainTabFragment = new MainTabFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_main,mainTabFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+            getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
         } else if (id == R.id.explore) {
             ExploreFragment exploreFragment = new ExploreFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_main,exploreFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+            getSupportActionBar().setTitle(getResources().getString(R.string.explore));
 
         } else if (id == R.id.profile) {
 
@@ -243,7 +245,7 @@ public class MainActivity extends AppCompatActivity
                 MyFavoriteFragment myFavoriteFragment = new MyFavoriteFragment();
                 myFavoriteFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_main, myFavoriteFragment).setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
-
+                getSupportActionBar().setTitle(getResources().getString(R.string.my_favorite));
             }
 
         }else if(id == R.id.follow){
@@ -264,7 +266,7 @@ public class MainActivity extends AppCompatActivity
                 MyFavoriteFragment myFavoriteFragment = new MyFavoriteFragment();
                 myFavoriteFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_main, myFavoriteFragment).setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
-
+                getSupportActionBar().setTitle(getResources().getString(R.string.my_following));
             }
         }else if (id == R.id.setting) {
 
