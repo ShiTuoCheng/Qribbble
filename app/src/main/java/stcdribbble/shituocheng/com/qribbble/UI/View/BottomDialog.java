@@ -2,6 +2,7 @@ package stcdribbble.shituocheng.com.qribbble.UI.View;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,9 +10,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -21,18 +25,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import stcdribbble.shituocheng.com.qribbble.R;
+import stcdribbble.shituocheng.com.qribbble.Utilities.API;
+import stcdribbble.shituocheng.com.qribbble.Utilities.Access_Token;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AnimationUtils;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by shituocheng on 2016/10/10.
@@ -41,9 +54,13 @@ import static android.app.Activity.RESULT_OK;
 public class BottomDialog extends DialogFragment {
 
     private ImageView imageView;
-    private int SELECT_PICTURE = 2;
+    private static final int MSG_WHAT_RESP = 1;
     public final static int CONSULT_DOC_PICTURE = 1000;
     private ImageButton imageButton;
+    private TextInputEditText title_textInput;
+    private TextInputEditText description_textInput;
+    private TextInputEditText tags_textInput;
+    private Handler handler;
 
 
 
@@ -73,6 +90,8 @@ public class BottomDialog extends DialogFragment {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         View view = inflater.inflate(R.layout.bottom_dialog_view,container,false);
         setUpView(view);
+
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,12 +111,36 @@ public class BottomDialog extends DialogFragment {
             }
         });
         AnimationUtils.slideToUp(view);
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case MSG_WHAT_RESP:
+                        int code = (int) msg.obj;
+                        if (code != 202 ){
+                            Toast.makeText(getActivity(), "Failed to post", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(getActivity(), "post successfully!!", Toast.LENGTH_SHORT).show();
+                        }
+                }
+            }
+        };
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         return view;
     }
 
     private void setUpView(View view){
         imageView = (ImageView)view.findViewById(R.id.shots_create_select_image);
         imageButton = (ImageButton)view.findViewById(R.id.shots_create_send_imageButton);
+        title_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_title_textInputLayout);
+        description_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_description_textInputLayout);
+        tags_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_tags_textInputLayout);
     }
 
     @Override
@@ -109,11 +152,68 @@ public class BottomDialog extends DialogFragment {
         }
     }
 
+    public void upLoadFile(Uri uri){
+
+        File file = new File(String.valueOf(uri));
+        String title = title_textInput.getText().toString();
+        String description = description_textInput.getText().toString();
+        String tags = tags_textInput.getText().toString();
+
+        //check isLogin
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_login_data",MODE_PRIVATE);
+        final String access_token = sharedPreferences.getString("access_token","");
+
+        if (title.isEmpty()){
+
+            Toast.makeText(getActivity(), "Title is required", Toast.LENGTH_SHORT).show();
+
+        }else if (access_token.isEmpty()){
+            Toast.makeText(getActivity(), getResources().getText(R.string.login_your_account), Toast.LENGTH_SHORT).show();
+        }else {
+            HttpURLConnection connection;
+            String api = API.generic_api+"shots?access_token="+ Access_Token.access_token;
+
+            try {
+                connection = (HttpURLConnection)new URL(api).openConnection();
+                connection.setRequestMethod("POST");
+                connection.connect();
+
+                PrintWriter printWriter = new PrintWriter(connection.getOutputStream());
+                printWriter.print(title);
+                if (!description.isEmpty()){
+                    printWriter.print(description);
+                }else if (!tags.isEmpty()){
+                    printWriter.print(tags);
+                }
+                printWriter.print(file);
+
+                printWriter.flush();
+                printWriter.close();
+
+                int code = connection.getResponseCode();
+
+                Message message = handler.obtainMessage();
+                message.what = MSG_WHAT_RESP;
+                message.obj = code;
+                message.sendToTarget();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+    }
+
     public void decodeUri(Uri uri) {
         ParcelFileDescriptor parcelFD = null;
         try {
             parcelFD = getActivity().getContentResolver().openFileDescriptor(uri, "r");
-            FileDescriptor imageSource = parcelFD.getFileDescriptor();
+            FileDescriptor imageSource = parcelFD != null ? parcelFD.getFileDescriptor() : null;
+
+            Log.d("URI", String.valueOf(uri));
 
             // Decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -141,6 +241,8 @@ public class BottomDialog extends DialogFragment {
             Bitmap bitmap = BitmapFactory.decodeFileDescriptor(imageSource, null, o2);
 
             imageView.setImageBitmap(bitmap);
+
+            File file = new File(String.valueOf(uri));
 
         } catch (FileNotFoundException e) {
             // handle errors
