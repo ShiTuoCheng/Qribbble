@@ -132,8 +132,6 @@ public class UserDetailworksFragment extends Fragment {
 
                         Log.d("json_size", String.valueOf(jsonArray.length()));
 
-                        if (jsonArray.length() != 0){
-
                             for (int i = 0; i < jsonArray.length(); i++){
                                 ShotsModel shotsModel = new ShotsModel();
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -203,7 +201,7 @@ public class UserDetailworksFragment extends Fragment {
                                                                 userDetailArtworkAdapter.notifyItemRemoved(shotsModels.size());
                                                                 for (int i = 0; i < more_jsonArray.length(); i++){
                                                                     ShotsModel shotsModel = new ShotsModel();
-                                                                    JSONObject jsonObject = null;
+                                                                    JSONObject jsonObject;
                                                                     try {
                                                                         jsonObject = more_jsonArray.getJSONObject(i);
                                                                         JSONObject imageJsonObj = jsonObject.getJSONObject("images");
@@ -268,16 +266,6 @@ public class UserDetailworksFragment extends Fragment {
                                     });
                                 }
                             });
-                        }else {
-
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    nothing_textView.setVisibility(View.VISIBLE);
-                                }
-                            });
-                        }
 
 
                     }catch (JSONException e) {

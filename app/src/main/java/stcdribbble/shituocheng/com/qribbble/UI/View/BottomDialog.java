@@ -101,15 +101,7 @@ public class BottomDialog extends DialogFragment {
                 startActivityForResult(Intent.createChooser(intent, "Choose an image"), CONSULT_DOC_PICTURE);
             }
         });
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ProgressDialog dialog = new ProgressDialog(getActivity());
-                dialog.create();
-                dialog.setMessage("Sending...(不用等了，本功能还没完善，发不出去的)");
-                dialog.show();
-            }
-        });
+
         AnimationUtils.slideToUp(view);
         handler = new Handler(){
             @Override
@@ -126,28 +118,32 @@ public class BottomDialog extends DialogFragment {
                 }
             }
         };
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
         return view;
     }
 
     private void setUpView(View view){
         imageView = (ImageView)view.findViewById(R.id.shots_create_select_image);
         imageButton = (ImageButton)view.findViewById(R.id.shots_create_send_imageButton);
-        title_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_title_textInputLayout);
-        description_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_description_textInputLayout);
-        tags_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_tags_textInputLayout);
+        title_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_title_editText);
+        description_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_description_editText);
+        tags_textInput = (TextInputEditText)view.findViewById(R.id.shots_create_tags_editText);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == CONSULT_DOC_PICTURE){
             if (resultCode == RESULT_OK && data != null){
                 decodeUri(data.getData());
+                imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ProgressDialog dialog = new ProgressDialog(getActivity());
+                        dialog.create();
+                        dialog.setMessage("Sending...(不用等了，本功能还没完善，发不出去的)");
+                        upLoadFile(data.getData());
+                        dialog.show();
+                    }
+                });
             }
         }
     }
