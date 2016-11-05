@@ -6,6 +6,7 @@ package stcdribbble.shituocheng.com.qribbble.UI.View;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuffXfermode;
@@ -49,6 +50,7 @@ public class CircularNetworkImageView extends NetworkImageView {
 
 
     public Bitmap getCircularBitmap(Bitmap bitmap) {
+
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
                 bitmap.getHeight(), Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
@@ -68,7 +70,6 @@ public class CircularNetworkImageView extends NetworkImageView {
 
         paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
-
         return output;
     }
 }

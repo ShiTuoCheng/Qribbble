@@ -175,13 +175,15 @@ public class ShotsDetailCommentFragment extends Fragment {
 
                         JSONArray comments_jsonArray = new JSONArray(stringBuilder.toString());
                         for (int i = 0; i<comments_jsonArray.length(); i++){
-                            CommentModel commentModel = new CommentModel();
+                            CommentModel.Builder builder = new CommentModel.Builder();
                             JSONObject eachCommentObj = comments_jsonArray.getJSONObject(i);
-                            commentModel.setComment_cotent(eachCommentObj.getString("body"));
                             JSONObject userJsonObj = eachCommentObj.getJSONObject("user");
-                            commentModel.setComment_user_avatar(userJsonObj.getString("avatar_url"));
-                            commentModel.setComment_user_name(userJsonObj.getString("name"));
-                            commentModel.setComment_name(userJsonObj.getString("username"));
+                            CommentModel commentModel = builder
+                                    .comment_cotent(eachCommentObj.getString("body"))
+                                    .comment_name(userJsonObj.getString("username"))
+                                    .comment_user_avatar(userJsonObj.getString("avatar_url"))
+                                    .comment_user_name(userJsonObj.getString("name"))
+                                    .build();
                             commentModels.add(commentModel);
                         }
 
@@ -216,15 +218,17 @@ public class ShotsDetailCommentFragment extends Fragment {
                                                                 commentModels.remove(commentModels.size() - 1);
                                                                 commentAdapter.notifyItemRemoved(commentModels.size());
                                                                 for (int i = 0; i<jsonArray.length(); i++){
-                                                                    CommentModel commentModel = new CommentModel();
                                                                     JSONObject eachCommentObj;
                                                                     try {
                                                                         eachCommentObj = jsonArray.getJSONObject(i);
-                                                                        commentModel.setComment_cotent(eachCommentObj.getString("body"));
                                                                         JSONObject userJsonObj = eachCommentObj.getJSONObject("user");
-                                                                        commentModel.setComment_user_avatar(userJsonObj.getString("avatar_url"));
-                                                                        commentModel.setComment_user_name(userJsonObj.getString("name"));
-                                                                        commentModel.setComment_name(userJsonObj.getString("username"));
+                                                                        CommentModel.Builder builder = new CommentModel.Builder();
+                                                                        CommentModel commentModel = builder
+                                                                                .comment_cotent(eachCommentObj.getString("body"))
+                                                                                .comment_name(userJsonObj.getString("username"))
+                                                                                .comment_user_avatar(userJsonObj.getString("avatar_url"))
+                                                                                .comment_user_name(userJsonObj.getString("name"))
+                                                                                .build();
                                                                         commentModels.add(commentModel);
 
                                                                         try {

@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -41,6 +44,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -111,6 +115,21 @@ public class MainActivity extends AppCompatActivity
         boolean shouldStartAlarm = !UpdateService.isServiceAlarmOn(this);
         UpdateService.setServiceAlarm(this, shouldStartAlarm);
 
+        /**
+         * Intent 跳转页面配置
+         */
+
+        Intent intent = getIntent();
+        int mainId = intent.getIntExtra("homeFragment",111);
+        int exploreId = intent.getIntExtra("exploreFragment",111);
+
+        if (mainId == 1){
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new MainTabFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+        }else if (exploreId == 2){
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new ExploreFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+        }
+
+        setUpShortcuts();
     }
 
     @Override
@@ -133,6 +152,15 @@ public class MainActivity extends AppCompatActivity
             login_in_textView.setText(user_name);
             user_name_textView.setText(name);
             login_in_textView.setClickable(false);
+        }
+        Intent intent = getIntent();
+        int mainId = intent.getIntExtra("homeFragment",111);
+        int exploreId = intent.getIntExtra("exploreFragment",111);
+
+        if (mainId == 1){
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new MainTabFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+        }else if (exploreId == 2){
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new ExploreFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
         }
     }
 
@@ -455,5 +483,35 @@ public class MainActivity extends AppCompatActivity
             }
         };
         return updateRunnable;
+    }
+
+    private void setUpShortcuts(){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+
+            Intent mainIntent = new Intent(MainActivity.this, MainActivity.class);
+            mainIntent.putExtra("homeFragment", 1);
+            mainIntent.setAction(Intent.ACTION_DEFAULT);
+
+            Intent exploreIntent = new Intent(MainActivity.this ,MainActivity.class);
+            exploreIntent.putExtra("exploreFragment", 2);
+            exploreIntent.setAction(Intent.ACTION_DEFAULT);
+
+            ShortcutInfo homeShortcutInfo = new ShortcutInfo.Builder(this, "home")
+                    .setShortLabel("Home")
+                    .setLongLabel("Home Screen")
+                    .setIcon(Icon.createWithResource(this, R.drawable.home))
+                    .setIntent(mainIntent)
+                    .build();
+
+            ShortcutInfo exploreShortcutInfo = new ShortcutInfo.Builder(this, "explore")
+                    .setShortLabel("Explore")
+                    .setLongLabel("Explore Screen")
+                    .setIcon(Icon.createWithResource(this, R.drawable.explore))
+                    .setIntent(exploreIntent)
+                    .build();
+
+            shortcutManager.addDynamicShortcuts(Arrays.asList(homeShortcutInfo,exploreShortcutInfo));
+        }
     }
 }

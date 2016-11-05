@@ -6,11 +6,10 @@
         android:id="@+id/shots_detail_share"
         android:icon="@drawable/ic_menu_share"
         android:title="Share"
-        app:showAsAction="ifRoom"></item>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/shots_detail_download"
         android:title="Download"
-        android:showAsAction="never">
-    </item>
+        android:showAsAction="never"/>
 
 </menu>
