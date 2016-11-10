@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 import stcdribbble.shituocheng.com.qribbble.Model.ShotsModel;
@@ -74,22 +75,24 @@ public class UpdateService extends IntentService {
             return;
         }
 
-        if (!query.equals(user)){
+        if (query != null) {
+            if (!query.equals(user)){
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class),0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class),0);
 
-            Notification notification = new NotificationCompat.Builder(this)
-                    .setContentTitle(user+" and other authors post new shots")
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.notification_icon)
-                    .build();
+                Notification notification = new NotificationCompat.Builder(this)
+                        .setContentTitle(user+" and other authors post new shots")
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .build();
 
-            notification.flags |= Notification.FLAG_AUTO_CANCEL;
-            notification.defaults=Notification.DEFAULT_SOUND;
-            NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify(0, notification);
-        }else{
-            return;
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                notification.defaults=Notification.DEFAULT_SOUND;
+                NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.notify(0, notification);
+            }else{
+                return;
+            }
         }
 
     }
@@ -111,6 +114,7 @@ public class UpdateService extends IntentService {
 
             inputStream = connection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
             StringBuilder stringBuilder = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null){

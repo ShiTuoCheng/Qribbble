@@ -303,8 +303,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
 
 
-        } else if (id == R.id.nav_share) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -486,6 +484,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpShortcuts(){
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
             ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
 

@@ -301,7 +301,7 @@ public class ShotsDetailCommentFragment extends Fragment {
         };
     }
 
-    private class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    private  class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         private List<CommentModel> commentModels = new ArrayList<>();
         private final int VIEW_TYPE_ITEM = 1;
