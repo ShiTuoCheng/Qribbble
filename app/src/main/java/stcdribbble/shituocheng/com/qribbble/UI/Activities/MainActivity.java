@@ -36,6 +36,7 @@ import com.android.volley.toolbox.ImageLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,6 +46,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -324,8 +326,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
-        user_name_textView = (TextView)headerView.findViewById(R.id.user_name_textView);
         login_in_textView = (TextView)headerView.findViewById(R.id.login_in_textView);
+        user_name_textView = (TextView)headerView.findViewById(R.id.user_name_textView);
         circularNetworkImageView = (CircularNetworkImageView)headerView.findViewById(R.id.user_login_avatar);
         navigationView.setCheckedItem(R.id.main_home);
         navigationView.setNavigationItemSelectedListener(this);
