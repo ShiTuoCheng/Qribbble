@@ -19,6 +19,8 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
@@ -64,6 +66,7 @@ public class UserDetailActivity extends AppCompatActivity {
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    private static final Interpolator INTERPOLATOR = new DecelerateInterpolator();
 
     private boolean isFollow = true;
 
@@ -168,6 +171,8 @@ public class UserDetailActivity extends AppCompatActivity {
         user_detail_viewPager.setAdapter(userDetailPageAdapter);
         userDetailPageAdapter.notifyDataSetChanged();
 
+        follow_button.setAlpha(0);
+
 
         user_detail_viewPager.setOffscreenPageLimit(user_detail_tabLayout.getTabCount() * 10);
         user_detail_viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -261,6 +266,7 @@ public class UserDetailActivity extends AppCompatActivity {
                             networkImageView.setImageUrl(user_avatar, imageLoader);
                             user_bio_textView.setBackgroundColor(Color.TRANSPARENT);
                             user_bio_textView.setTextColor(getResources().getColor(R.color.user_bio_text_color));
+                            animateUserProfileHeader();
                             if (!user_bio.isEmpty()){
                                 user_bio_textView.setText(Html.fromHtml(user_bio));
                                 user_bio_textView.setTextColor(R.color.user_bio_text_color);
@@ -393,5 +399,17 @@ public class UserDetailActivity extends AppCompatActivity {
         public int getCount() {
             return number;
         }
+    }
+
+    private void animateUserProfileHeader() {
+        name_avatar_imageView.setTranslationY(-name_avatar_imageView.getHeight());
+        user_name_textView.setTranslationY(-user_name_textView.getHeight());
+        networkImageView.setTranslationY(-networkImageView.getHeight());
+        follow_button.setAlpha(0);
+
+        name_avatar_imageView.animate().translationY(0).setDuration(300).setInterpolator(INTERPOLATOR);
+        user_name_textView.animate().translationY(0).setDuration(300).setStartDelay(100).setInterpolator(INTERPOLATOR);
+        networkImageView.animate().translationY(0).setDuration(300).setStartDelay(200).setInterpolator(INTERPOLATOR);
+        follow_button.animate().alpha(1).setDuration(200).setStartDelay(400).setInterpolator(INTERPOLATOR).start();
     }
 }

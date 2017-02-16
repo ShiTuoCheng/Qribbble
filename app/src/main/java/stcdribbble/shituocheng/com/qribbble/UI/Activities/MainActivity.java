@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private CircularNetworkImageView circularNetworkImageView;
+    private static final int ANIM_DURATION_TOOLBAR = 300;
     private TextView login_in_textView;
     private TextView user_name_textView;
     public static boolean isLogin;
@@ -88,30 +89,30 @@ public class MainActivity extends AppCompatActivity
 
                 String url = "https://dribbble.com/oauth/authorize?client_id=18163f14877c483e440804ad5e0ce54c53b09f41ff87bdce332b3c734f312583&scope=public+write+comment+upload";
                 Intent intent = new Intent(MainActivity.this, LoginInActivity.class);
-                intent.putExtra("url",url);
-                startActivityForResult(intent,1);
+                intent.putExtra("url", url);
+                startActivityForResult(intent, 1);
             }
         });
 
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-        SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
-        String access_token = sharedPreferences.getString("access_token","");
-        String user_name = sharedPreferences.getString("user_name","");
-        String name = sharedPreferences.getString("name","");
-        String user_avatar = sharedPreferences.getString("user_avatar","");
-        user_name_string = sharedPreferences.getString("user_name","");
-        if (!access_token.isEmpty()){
+        SharedPreferences sharedPreferences = getSharedPreferences("user_login_data", MODE_PRIVATE);
+        String access_token = sharedPreferences.getString("access_token", "");
+        String user_name = sharedPreferences.getString("user_name", "");
+        String name = sharedPreferences.getString("name", "");
+        String user_avatar = sharedPreferences.getString("user_avatar", "");
+        user_name_string = sharedPreferences.getString("user_name", "");
+        if (!access_token.isEmpty()) {
             isLogin = true;
             login_in_textView.setText(user_name);
             user_name_textView.setText(name);
-            circularNetworkImageView.setImageUrl(user_avatar,imageLoader);
+            circularNetworkImageView.setImageUrl(user_avatar, imageLoader);
             login_in_textView.setClickable(!isLogin);
-        }else {
+        } else {
             isLogin = false;
         }
         /**
          * service setUp
-          */
+         */
 
         threadPool.execute(updateShots());
         boolean shouldStartAlarm = !UpdateService.isServiceAlarmOn(this);
@@ -122,12 +123,12 @@ public class MainActivity extends AppCompatActivity
          */
 
         Intent intent = getIntent();
-        int mainId = intent.getIntExtra("homeFragment",111);
-        int exploreId = intent.getIntExtra("exploreFragment",111);
+        int mainId = intent.getIntExtra("homeFragment", 111);
+        int exploreId = intent.getIntExtra("exploreFragment", 111);
 
-        if (mainId == 1){
+        if (mainId == 1) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new MainTabFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
-        }else if (exploreId == 2){
+        } else if (exploreId == 2) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new ExploreFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
         }
 
@@ -138,30 +139,30 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-        SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
-        String access_token = sharedPreferences.getString("access_token","");
-        String user_name = sharedPreferences.getString("user_name","");
-        String name = sharedPreferences.getString("name","");
-        String user_avatar = sharedPreferences.getString("user_avatar","");
-        if (access_token.isEmpty() && user_avatar.isEmpty() && user_name.isEmpty() && name.isEmpty()){
+        SharedPreferences sharedPreferences = getSharedPreferences("user_login_data", MODE_PRIVATE);
+        String access_token = sharedPreferences.getString("access_token", "");
+        String user_name = sharedPreferences.getString("user_name", "");
+        String name = sharedPreferences.getString("name", "");
+        String user_avatar = sharedPreferences.getString("user_avatar", "");
+        if (access_token.isEmpty() && user_avatar.isEmpty() && user_name.isEmpty() && name.isEmpty()) {
             isLogin = false;
             login_in_textView.setText(R.string.login_in);
             user_name_textView.setText("");
-            circularNetworkImageView.setImageUrl(null,imageLoader);
+            circularNetworkImageView.setImageUrl(null, imageLoader);
             login_in_textView.setClickable(!isLogin);
-        }else {
+        } else {
             circularNetworkImageView.setImageUrl(user_avatar, imageLoader);
             login_in_textView.setText(user_name);
             user_name_textView.setText(name);
             login_in_textView.setClickable(false);
         }
         Intent intent = getIntent();
-        int mainId = intent.getIntExtra("homeFragment",111);
-        int exploreId = intent.getIntExtra("exploreFragment",111);
+        int mainId = intent.getIntExtra("homeFragment", 111);
+        int exploreId = intent.getIntExtra("exploreFragment", 111);
 
-        if (mainId == 1){
+        if (mainId == 1) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new MainTabFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
-        }else if (exploreId == 2){
+        } else if (exploreId == 2) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new ExploreFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
         }
     }
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this, SearchResultActivity.class)));
         searchView.setQueryHint(getResources().getString(R.string.query_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())){
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
         }
     }
@@ -237,36 +238,36 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.main_home) {
             MainTabFragment mainTabFragment = new MainTabFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_main,mainTabFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, mainTabFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
         } else if (id == R.id.explore) {
             ExploreFragment exploreFragment = new ExploreFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_main,exploreFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, exploreFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
             getSupportActionBar().setTitle(getResources().getString(R.string.explore));
 
         } else if (id == R.id.profile) {
 
-            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
-            String access_token = sharedPreferences.getString("access_token","");
+            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data", MODE_PRIVATE);
+            String access_token = sharedPreferences.getString("access_token", "");
 
-            if (access_token.isEmpty()){
+            if (access_token.isEmpty()) {
                 Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 Intent intent = new Intent(MainActivity.this, UserDetailActivity.class);
-                intent.putExtra("user_name",user_name_string);
+                intent.putExtra("user_name", user_name_string);
                 startActivity(intent);
             }
 
-        }else if (id == R.id.like){
+        } else if (id == R.id.like) {
 
-            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
-            String access_token = sharedPreferences.getString("access_token","");
+            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data", MODE_PRIVATE);
+            String access_token = sharedPreferences.getString("access_token", "");
 
-            if (access_token.isEmpty()){
+            if (access_token.isEmpty()) {
                 item.setCheckable(false);
                 item.setChecked(false);
                 Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
 
                 item.setChecked(true);
                 item.setCheckable(true);
@@ -278,16 +279,16 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(getResources().getString(R.string.my_favorite));
             }
 
-        }else if(id == R.id.follow){
+        } else if (id == R.id.follow) {
 
-            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data",MODE_PRIVATE);
-            String access_token = sharedPreferences.getString("access_token","");
+            SharedPreferences sharedPreferences = getSharedPreferences("user_login_data", MODE_PRIVATE);
+            String access_token = sharedPreferences.getString("access_token", "");
 
-            if (access_token.isEmpty()){
+            if (access_token.isEmpty()) {
                 item.setCheckable(false);
                 item.setChecked(false);
                 Toast.makeText(MainActivity.this, getString(R.string.login_in), Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
 
                 item.setChecked(true);
                 item.setCheckable(true);
@@ -298,7 +299,7 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_main, myFavoriteFragment).setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
                 getSupportActionBar().setTitle(getResources().getString(R.string.my_following));
             }
-        }else if (id == R.id.setting) {
+        } else if (id == R.id.setting) {
 
 
             Intent intent = new Intent(this, SettingActivity.class);
@@ -312,9 +313,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void setUpView(){
+    private void setUpView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        int actionbarSize = Utils.dpToPx(56);
+        toolbar.setTranslationY(-actionbarSize);
         setSupportActionBar(toolbar);
+
+        toolbar.animate()
+                .translationY(0)
+                .setDuration(ANIM_DURATION_TOOLBAR)
+                .setStartDelay(300);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -326,24 +334,24 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
-        login_in_textView = (TextView)headerView.findViewById(R.id.login_in_textView);
-        user_name_textView = (TextView)headerView.findViewById(R.id.user_name_textView);
-        circularNetworkImageView = (CircularNetworkImageView)headerView.findViewById(R.id.user_login_avatar);
+        login_in_textView = (TextView) headerView.findViewById(R.id.login_in_textView);
+        user_name_textView = (TextView) headerView.findViewById(R.id.user_name_textView);
+        circularNetworkImageView = (CircularNetworkImageView) headerView.findViewById(R.id.user_login_avatar);
         navigationView.setCheckedItem(R.id.main_home);
         navigationView.setNavigationItemSelectedListener(this);
 
 
         MainTabFragment mainTabFragment = new MainTabFragment();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_main,mainTabFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, mainTabFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1){
-            if(resultCode==RESULT_OK){
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
 
                 progressDialog = new ProgressDialog(MainActivity.this);
                 progressDialog.setMessage(getString(R.string.success_login));
@@ -351,8 +359,8 @@ public class MainActivity extends AppCompatActivity
                 progressDialog.show();
                 String result = data.getBundleExtra("bundle").getString("code");
                 threadPool.execute(fetchUserData(result));
-                Log.d("result",result);
-            }else {
+                Log.d("result", result);
+            } else {
                 Toast.makeText(getApplicationContext(), "failed to login", Toast.LENGTH_SHORT).show();
             }
         }
@@ -360,7 +368,7 @@ public class MainActivity extends AppCompatActivity
 
     private Runnable fetchUserData(final String code) {
 
-      return new Runnable() {
+        return new Runnable() {
             HttpURLConnection connection;
             BufferedReader bufferedReader;
             InputStream inputStream;
@@ -439,17 +447,17 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
-    private Runnable updateShots(){
+    private Runnable updateShots() {
 
         Runnable updateRunnable = new Runnable() {
             @Override
             public void run() {
                 HttpURLConnection connection;
                 InputStream inputStream;
-                String api = "https://api.dribbble.com/v1/"+"shots"+"?"+"sort"+"="+"recent"+"&"+ "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
+                String api = "https://api.dribbble.com/v1/" + "shots" + "?" + "sort" + "=" + "recent" + "&" + "access_token=" + "aef92385e190422a5f27496da51e9e95f47a18391b002bf6b1473e9b601e6216";
 
                 try {
-                    connection = (HttpURLConnection)new URL(api).openConnection();
+                    connection = (HttpURLConnection) new URL(api).openConnection();
                     connection.setRequestMethod("GET");
                     connection.connect();
 
@@ -457,7 +465,7 @@ public class MainActivity extends AppCompatActivity
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                     StringBuilder stringBuilder = new StringBuilder();
                     String line;
-                    while ((line = bufferedReader.readLine()) != null){
+                    while ((line = bufferedReader.readLine()) != null) {
                         stringBuilder.append(line);
                     }
 
@@ -465,11 +473,11 @@ public class MainActivity extends AppCompatActivity
 
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
                     JSONObject userJsonObj = jsonObject.getJSONObject("user");
-                    String user =(userJsonObj.getString("username"));
+                    String user = (userJsonObj.getString("username"));
 
                     Log.d("user", user);
 
-                    SharedPreferences preference = getApplicationContext().getSharedPreferences("update",MODE_PRIVATE);
+                    SharedPreferences preference = getApplicationContext().getSharedPreferences("update", MODE_PRIVATE);
                     SharedPreferences.Editor editor = preference.edit();
                     editor.putString("check", user);
 
@@ -485,7 +493,7 @@ public class MainActivity extends AppCompatActivity
         return updateRunnable;
     }
 
-    private void setUpShortcuts(){
+    private void setUpShortcuts() {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
             ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
@@ -494,7 +502,7 @@ public class MainActivity extends AppCompatActivity
             mainIntent.putExtra("homeFragment", 1);
             mainIntent.setAction(Intent.ACTION_DEFAULT);
 
-            Intent exploreIntent = new Intent(MainActivity.this ,MainActivity.class);
+            Intent exploreIntent = new Intent(MainActivity.this, MainActivity.class);
             exploreIntent.putExtra("exploreFragment", 2);
             exploreIntent.setAction(Intent.ACTION_DEFAULT);
 
@@ -512,7 +520,7 @@ public class MainActivity extends AppCompatActivity
                     .setIntent(exploreIntent)
                     .build();
 
-            shortcutManager.addDynamicShortcuts(Arrays.asList(homeShortcutInfo,exploreShortcutInfo));
+            shortcutManager.addDynamicShortcuts(Arrays.asList(homeShortcutInfo, exploreShortcutInfo));
         }
     }
 }

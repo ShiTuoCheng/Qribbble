@@ -223,6 +223,17 @@ public class ShotsDetailActivity extends AppCompatActivity {
                 @Override
                 public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                     progressBar.setVisibility(View.GONE);
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            int[] startingLocation = new int[2];
+                            view.getLocationOnScreen(startingLocation);
+                            startingLocation[0] += view.getWidth() / 2;
+                            ShotBigDetailActivity.startUserProfileFromLocation(startingLocation, ShotsDetailActivity.this);
+                            overridePendingTransition(0, 0);
+                        }
+                    });
                     return false;
                 }
             }).into(imageView);

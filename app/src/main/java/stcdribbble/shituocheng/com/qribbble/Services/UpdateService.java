@@ -143,7 +143,7 @@ public class UpdateService extends IntentService {
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         if (isOn){
-            alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), FIFTEEN_MINUTES_POLL_INTERVAL, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), FIVE_MINUTES_POLL_INTERVAL, pendingIntent);
         }else{
             alarmManager.cancel(pendingIntent);
             pendingIntent.cancel();

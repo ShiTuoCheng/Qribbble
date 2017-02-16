@@ -5,32 +5,21 @@
     android:id="@+id/activity_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
+    android:background="@color/splash_background_color"
     tools:context="stcdribbble.shituocheng.com.qribbble.UI.Activities.SplashActivity">
 
     <ImageView
+        android:id="@+id/slash_imageView"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:id="@+id/loading_logo"
-        android:src="@drawable/qribbble_loading"
-        android:layout_centerInParent="true"
-        />
-
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/loading_load"
-        android:src="@drawable/loading_load"
-        android:layout_margin="16dp"
-        android:layout_below="@+id/loading_logo"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
     <ProgressBar
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="30dp"
         android:id="@+id/splash_progressBar"
-        android:layout_below="@id/loading_load"
-        android:layout_centerInParent="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 
 </RelativeLayout>

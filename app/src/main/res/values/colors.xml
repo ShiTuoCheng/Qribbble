@@ -5,4 +5,5 @@
     <color name="colorAccent">#ff4091</color>
     <color name="whiteColor">#ffffff</color>
     <color name="user_bio_text_color">#212121</color>
+    <color name="splash_background_color">#303030</color>
 </resources>
