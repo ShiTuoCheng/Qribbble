@@ -3,6 +3,7 @@ package stcdribbble.shituocheng.com.qribbble.UI.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -53,7 +54,10 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        getWindow().setEnterTransition(new Slide());
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+            getWindow().setEnterTransition(new Slide());
+        }
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingFragment()).commit();
         getSupportActionBar().setTitle(getString(R.string.setting));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -68,7 +72,10 @@ public class SettingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home){
-            getWindow().setExitTransition(new Slide());
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+                getWindow().setExitTransition(new Slide());
+            }
             this.finish();
         }
         return true;
@@ -77,12 +84,18 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        this.getWindow().setExitTransition(new Slide());
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+            this.getWindow().setExitTransition(new Slide());
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getWindow().setExitTransition(new Slide());
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+            getWindow().setExitTransition(new Slide());
+        }
     }
 }

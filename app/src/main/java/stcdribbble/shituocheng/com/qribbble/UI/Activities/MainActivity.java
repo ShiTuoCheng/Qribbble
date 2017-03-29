@@ -5,18 +5,15 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +33,6 @@ import com.android.volley.toolbox.ImageLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,9 +40,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,7 +52,6 @@ import stcdribbble.shituocheng.com.qribbble.UI.Fragments.MyFavoriteFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.TabFragments.MainTabFragment;
 import stcdribbble.shituocheng.com.qribbble.UI.View.CircularNetworkImageView;
 import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
-import stcdribbble.shituocheng.com.qribbble.Utilities.GetHttpString;
 import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 public class MainActivity extends AppCompatActivity
@@ -157,8 +150,8 @@ public class MainActivity extends AppCompatActivity
             login_in_textView.setClickable(false);
         }
         Intent intent = getIntent();
-        int mainId = intent.getIntExtra("homeFragment", 111);
-        int exploreId = intent.getIntExtra("exploreFragment", 111);
+        int mainId = intent.getIntExtra("homeFragment", 0);
+        int exploreId = intent.getIntExtra("exploreFragment", 1);
 
         if (mainId == 1) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new MainTabFragment()).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
@@ -303,7 +296,9 @@ public class MainActivity extends AppCompatActivity
 
 
             Intent intent = new Intent(this, SettingActivity.class);
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            }
 
 
         }
@@ -509,14 +504,14 @@ public class MainActivity extends AppCompatActivity
             ShortcutInfo homeShortcutInfo = new ShortcutInfo.Builder(this, "home")
                     .setShortLabel("Home")
                     .setLongLabel("Home Screen")
-                    .setIcon(Icon.createWithResource(this, R.drawable.home))
+                    .setIcon(Icon.createWithResource(this, R.drawable.home_touch))
                     .setIntent(mainIntent)
                     .build();
 
             ShortcutInfo exploreShortcutInfo = new ShortcutInfo.Builder(this, "explore")
                     .setShortLabel("Explore")
                     .setLongLabel("Explore Screen")
-                    .setIcon(Icon.createWithResource(this, R.drawable.explore))
+                    .setIcon(Icon.createWithResource(this, R.drawable.explore_touch))
                     .setIntent(exploreIntent)
                     .build();
 

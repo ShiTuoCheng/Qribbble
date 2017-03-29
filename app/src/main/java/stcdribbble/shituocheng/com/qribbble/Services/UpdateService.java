@@ -83,11 +83,12 @@ public class UpdateService extends IntentService {
                 Notification notification = new NotificationCompat.Builder(this)
                         .setContentTitle(user+" and other authors post new shots")
                         .setContentIntent(pendingIntent)
-                        .setSmallIcon(R.drawable.notification_icon)
+                        .setSmallIcon(R.drawable.notification_logo)
                         .build();
 
-                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                notification.flags = Notification.FLAG_AUTO_CANCEL;
                 notification.defaults=Notification.DEFAULT_SOUND;
+                notification.defaults = Notification.DEFAULT_LIGHTS;
                 NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                 notificationManager.notify(0, notification);
             }else{

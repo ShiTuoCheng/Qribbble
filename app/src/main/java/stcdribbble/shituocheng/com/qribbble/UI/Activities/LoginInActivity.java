@@ -43,12 +43,6 @@ public class LoginInActivity extends AppCompatActivity {
         webView.getSettings().setSavePassword(false);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        /*
-        CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.setAcceptCookie(false);
-        WebSettings ws = webView.getSettings();
-        ws.setSaveFormData(false);
-        */
         Map<String, String> noCacheHeaders = new HashMap<String, String>(2);
         noCacheHeaders.put("Pragma", "no-cache");
         noCacheHeaders.put("Cache-Control", "no-cache");

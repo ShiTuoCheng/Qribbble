@@ -29,7 +29,6 @@ import stcdribbble.shituocheng.com.qribbble.R;
 public class SplashActivity extends AppCompatActivity {
 
     private Handler handler;
-    private Glide glide;
     private ImageView mImageView;
 
 
@@ -50,6 +49,7 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
+                SplashActivity.this.finish();
 
             }
         }, 1000);

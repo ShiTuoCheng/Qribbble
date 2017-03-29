@@ -4,6 +4,7 @@ package stcdribbble.shituocheng.com.qribbble.UI.Fragments;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,9 +46,6 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 
 import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class RecentShotsFragment extends BaseFragment {
 
     private int pages;
@@ -300,7 +299,13 @@ public class RecentShotsFragment extends BaseFragment {
                                         intent.putExtra("fullImageUrl",fullImageUrl);
                                         intent.putExtra("id",id);
 
-                                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+                                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                                        }else {
+
+                                            startActivity(intent);
+                                        }
                                     }
                                 });
                             }

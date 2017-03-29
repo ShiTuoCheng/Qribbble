@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -82,7 +83,9 @@ public class ShotsDetailActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setEnterTransition(new Explode());
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            getWindow().setEnterTransition(new Explode());
+        }
         setContentView(R.layout.activity_shots_detail);
 
         Intent intent = getIntent();
@@ -424,7 +427,9 @@ public class ShotsDetailActivity extends AppCompatActivity {
 
             TransitionInflater transitionInflater = TransitionInflater.from(this);
             Transition transition = transitionInflater.inflateTransition(R.transition.slide_out);
-            getWindow().setExitTransition(transition);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                getWindow().setExitTransition(transition);
+            }
             this.finish();
         }
         return true;
@@ -442,7 +447,9 @@ public class ShotsDetailActivity extends AppCompatActivity {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        this.getWindow().setExitTransition(new Explode());
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            this.getWindow().setExitTransition(new Explode());
+        }
     }
 
     /**
