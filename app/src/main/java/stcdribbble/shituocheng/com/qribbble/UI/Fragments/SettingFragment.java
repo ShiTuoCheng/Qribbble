@@ -42,9 +42,7 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.AppController;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class SettingFragment extends PreferenceFragment {
 
     /**
