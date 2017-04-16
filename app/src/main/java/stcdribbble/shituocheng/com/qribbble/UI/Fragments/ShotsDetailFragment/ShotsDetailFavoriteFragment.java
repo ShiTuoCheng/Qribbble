@@ -58,20 +58,15 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
     private UsersAdapter usersAdapter;
     private int current_page = 1;
 
-
-    public ShotsDetailFavoriteFragment() {
-        // Required empty public constructor
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_shots_detail_favorite, container, false);
         setUpView(v);
+
         int shots_id = getActivity().getIntent().getIntExtra("id",0);
-        //fetchData(true, shots_id);
+
         update(shots_id);
         return v;
     }
@@ -88,6 +83,10 @@ public class ShotsDetailFavoriteFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (!pool.isShutdown()){
+
+            pool.shutdownNow();
+        }
     }
 
     public Runnable initData(final String shots_id){

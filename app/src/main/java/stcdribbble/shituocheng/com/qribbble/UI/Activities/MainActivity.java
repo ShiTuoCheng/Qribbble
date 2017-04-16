@@ -470,8 +470,6 @@ public class MainActivity extends AppCompatActivity
                     JSONObject userJsonObj = jsonObject.getJSONObject("user");
                     String user = (userJsonObj.getString("username"));
 
-                    Log.d("user", user);
-
                     SharedPreferences preference = getApplicationContext().getSharedPreferences("update", MODE_PRIVATE);
                     SharedPreferences.Editor editor = preference.edit();
                     editor.putString("check", user);

@@ -54,8 +54,6 @@ public class LoginInActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-                Log.d("url",url);
-
                 view.loadUrl(url);
 
                 if (url.contains("code")){
@@ -66,11 +64,13 @@ public class LoginInActivity extends AppCompatActivity {
 
                     if (!code.isEmpty()){
                         Intent intent = new Intent();
+
                         Bundle bundle = new Bundle();
                         bundle.putString("code",code);
                         intent.putExtra("bundle",bundle);
                         setResult(RESULT_OK,intent);
                         finish();
+
                     }else {
                         Toast.makeText(getApplicationContext(),"Log in failed. Please retry",Toast.LENGTH_SHORT).show();
                     }
@@ -111,7 +111,7 @@ public class LoginInActivity extends AppCompatActivity {
     private String getCodeFromUrl(String url) {
         int startIndex = url.indexOf("code=") + "code=".length();
         String code = url.substring(startIndex);
-        Log.i("code", "code=" + code);
+
         return code;
     }
 

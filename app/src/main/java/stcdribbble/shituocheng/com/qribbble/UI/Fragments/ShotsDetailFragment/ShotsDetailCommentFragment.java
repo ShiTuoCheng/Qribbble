@@ -63,9 +63,6 @@ import stcdribbble.shituocheng.com.qribbble.Utilities.Utils;
 import static android.content.Context.MODE_PRIVATE;
 import static stcdribbble.shituocheng.com.qribbble.Utilities.AppController.TAG;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ShotsDetailCommentFragment extends Fragment {
 
     private RecyclerView shots_detail_comment_recyclerView;
@@ -404,8 +401,6 @@ public class ShotsDetailCommentFragment extends Fragment {
                         Utils.openProfile(getContext(), commentModel.getComment_name());
                     }
                 });
-                String pish = "<html><head><style type=\"text/css\">@font-face {font-family: MyFont;src: url(\"file:///android_asset/BMitra.ttf\")}body {font-family: MyFont;font-size: medium;text-align: justify;color: #fff; background-color: #000;}a{color:#ff4091; text-decoration:none}</style></head><body>";
-                String pas = "</body></html>";
                 ((CommentViewHolder)holder).comment_textView.setText(Html.fromHtml(commentModel.getComment_cotent()));
                 ((CommentViewHolder)holder).comment_textView.setMovementMethod(LinkMovementMethod.getInstance());
                 ((CommentViewHolder)holder).comment_textView.setTextColor(getResources().getColor(R.color.whiteColor));
